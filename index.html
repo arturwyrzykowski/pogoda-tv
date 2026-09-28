@@ -343,7 +343,7 @@
   // migajace komunikaty w wybranych porach (edytuj liste ponizej)
   const REMINDERS = [
     { from:"20:00", to:"20:30", text:"🏋 Czas poćwiczyć" },
-    { from:"22:30", to:"05:00", text:"😴 Pora spać" }
+    { from:"22:30", to:"03:00", text:"😴 Pora spać" }
   ];
   const toMin = hhmm => { const [h,m]=hhmm.split(":").map(Number); return h*60+m; };
   const inWindow = (n,a,b) => a<=b ? (n>=a && n<=b) : (n>=a || n<=b); // b<a = przez pólnoc
