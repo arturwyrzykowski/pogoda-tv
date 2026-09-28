@@ -171,11 +171,11 @@
   .ticker-label::before { content:""; width:.55em; height:.55em; border-radius:50%;
     background:var(--hot); box-shadow:0 0 0 0 rgba(255,138,107,.5); animation:pulse 2.2s infinite; }
   .ticker-view { flex:1; overflow:hidden; }
-  .ticker-track { display:inline-block; white-space:nowrap; padding-left:100%;
+  .ticker-track { display:inline-block; white-space:nowrap; will-change:transform;
     font-size:clamp(.85rem,1.5vw,1.2rem); color:var(--ink);
-    animation:marquee 60s linear infinite; }
-  .ticker-track .sep { color:var(--acc); margin:0 .8em; }
-  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-100%)} }
+    animation:marquee 80s linear infinite; }
+  .ticker-track .sep { color:var(--acc); margin:0 1em; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
   @media (prefers-reduced-motion:reduce){ .dot{animation:none;} .ticker-track{ animation:none; padding-left:0; } .ticker-label::before{ animation:none; } }
 
@@ -429,8 +429,10 @@
     const titles = await fetchNews();
     if (!titles){ $("ticker").hidden = true; return; }
     const track = $("tickerTrack");
-    track.innerHTML = titles.join('<span class="sep">•</span>');
-    track.style.animationDuration = Math.max(40, Math.round(titles.join("   ").length*0.35)) + "s";
+    const one = titles.join('<span class="sep">•</span>');
+    track.innerHTML = one + '<span class="sep">•</span>' + one; // dwie kopie = plynna petla
+    const chars = titles.join("   ").length;
+    track.style.animationDuration = Math.max(40, Math.round(chars*0.12)) + "s";
     $("ticker").hidden = false;
   }
   loadNews();
