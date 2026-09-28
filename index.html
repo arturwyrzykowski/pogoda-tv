@@ -31,10 +31,19 @@
   }
   header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; }
   .clock {
+    display:inline-flex; align-items:baseline; align-self:flex-start;
     font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
-    font-size:clamp(2.6rem,7vw,6.2rem); line-height:.9; letter-spacing:-.01em;
+    font-size:clamp(1.7rem,4vw,3.4rem); line-height:1; letter-spacing:.01em;
+    color:var(--ink);
+    background:linear-gradient(180deg,#121826,#090d14);
+    border:1px solid var(--line); border-radius:16px;
+    padding:.34em .62em;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06),
+                inset 0 0 0 4px rgba(0,0,0,.28),
+                0 10px 22px rgba(0,0,0,.5);
+    text-shadow:0 0 14px rgba(87,182,255,.28);
   }
-  .clock .sec { color:var(--ink-faint); }
+  .clock .sec { color:var(--ink-faint); font-size:.62em; text-shadow:none; }
   .head-right { text-align:right; }
   .place {
     font-family:var(--mono); text-transform:uppercase; letter-spacing:.2em;
