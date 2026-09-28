@@ -41,6 +41,10 @@
     font-size:clamp(.7rem,1.3vw,1rem); color:var(--acc);
   }
   .date { color:var(--ink-dim); font-size:clamp(.95rem,2vw,1.6rem); margin-top:.3em; text-transform:capitalize; }
+  .nameday { color:var(--ink); font-size:clamp(.8rem,1.5vw,1.15rem); margin-top:.35em; }
+  .nameday b { color:var(--acc); font-weight:600; }
+  .event { color:var(--sun); font-size:clamp(.72rem,1.3vw,1rem); margin-top:.25em; max-width:min(46ch,60vw);
+    margin-left:auto; line-height:1.35; }
   .status {
     display:inline-flex; align-items:center; gap:.5em; font-family:var(--mono);
     font-size:clamp(.6rem,1.1vw,.8rem); letter-spacing:.18em; text-transform:uppercase;
@@ -173,6 +177,8 @@
     <div class="head-right">
       <div class="place">Zambski Kościelne</div>
       <div class="date" id="date">—</div>
+      <div class="nameday" id="nameday">—</div>
+      <div class="event" id="event"></div>
       <div class="status"><span class="dot" id="dot"></span><span id="statusTxt">pobieranie…</span><span id="upd"></span></div>
     </div>
   </header>
@@ -204,6 +210,7 @@
 </button>
 
 <audio id="player" preload="none"></audio>
+<script src="pogoda-data.js"></script>
 
 <script>
   const $ = id => document.getElementById(id);
@@ -216,6 +223,16 @@
     $("clock").firstChild.nodeValue = p(d.getHours())+":"+p(d.getMinutes());
     $("sec").textContent=":"+p(d.getSeconds());
     $("date").textContent = dni[d.getDay()]+", "+d.getDate()+" "+mies[d.getMonth()];
+    updateDayInfo(d);
+  }
+  function updateDayInfo(d){
+    const key = (d.getMonth()+1)+"-"+d.getDate();
+    if (typeof IMIENINY!=="undefined" && IMIENINY[key])
+      $("nameday").innerHTML = "Imieniny: <b>"+IMIENINY[key].join(", ")+"</b>";
+    else $("nameday").textContent = "";
+    if (typeof SWIETA!=="undefined" && SWIETA[key])
+      $("event").textContent = SWIETA[key].join(" · ");
+    else $("event").textContent = "";
   }
   setInterval(tickClock,1000); tickClock();
 
