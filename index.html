@@ -10,8 +10,8 @@
 <style>
   :root {
     color-scheme: dark;
-    --bg-0:#090c12; --bg-1:#0f141d; --panel:#141b27; --panel-2:#101722;
-    --line:#223044; --ink:#eef4fb; --ink-dim:#8ea0b6; --ink-faint:#5b6b80;
+    --bg-0:#000000; --bg-1:#000000; --panel:#0a0e15; --panel-2:#070a10;
+    --line:#1b2636; --ink:#eef4fb; --ink-dim:#8ea0b6; --ink-faint:#5b6b80;
     --acc:#57b6ff; --acc-soft:rgba(87,182,255,.14);
     --good:#57d99a; --warn:#ffcf5c; --cold:#6fa8ff; --hot:#ff8a6b; --sun:#ffd166;
     --sans:"IBM Plex Sans",system-ui,sans-serif;
@@ -22,11 +22,7 @@
   html,body { height:100%; margin:0; }
   body {
     font-family:var(--sans); color:var(--ink);
-    background:
-      radial-gradient(1200px 700px at 78% -10%, #16223a 0, transparent 55%),
-      radial-gradient(1000px 600px at 8% 110%, #1a1424 0, transparent 55%),
-      linear-gradient(160deg,var(--bg-1),var(--bg-0));
-    background-attachment:fixed;
+    background:#000;
   }
   .stage {
     height:100%; max-width:1920px; margin:0 auto;
@@ -134,6 +130,29 @@
   }
   #fsBtn:hover, #fsBtn:focus-visible { color:var(--ink); border-color:var(--acc); outline:none; }
   #fsBtn svg { width:1.15em; height:1.15em; }
+
+  #radio {
+    position:fixed; left:clamp(12px,2vw,34px); bottom:clamp(12px,2vw,34px);
+    z-index:10; display:flex; align-items:center; gap:.5em;
+    background:rgba(10,14,21,.9); border:1px solid var(--line); border-radius:999px;
+    padding:.35em .5em .35em .35em; font-family:var(--mono);
+  }
+  #radioBtn {
+    width:2.2em; height:2.2em; flex:0 0 auto; border-radius:50%;
+    border:1px solid var(--line); background:var(--panel); color:var(--acc);
+    font-size:clamp(.85rem,1.3vw,1rem); cursor:pointer; line-height:1;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  #radioBtn:hover, #radioBtn:focus-visible { border-color:var(--acc); outline:none; }
+  #radioBtn.on { color:var(--good); border-color:var(--good); }
+  #station {
+    background:transparent; color:var(--ink-dim); border:0; outline:none;
+    font-family:var(--mono); font-size:clamp(.7rem,1.1vw,.9rem); letter-spacing:.08em;
+    padding:.2em .4em; cursor:pointer; max-width:42vw;
+  }
+  #station:focus-visible { color:var(--ink); }
+  #station option { background:#0a0e15; color:var(--ink); }
+
   :fullscreen #fsBtn { display:none; }
 </style>
 </head>
@@ -173,6 +192,18 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
   Pełny ekran
 </button>
+
+<div id="radio">
+  <button id="radioBtn" aria-label="Włącz radio">▶</button>
+  <select id="station" aria-label="Wybierz stację">
+    <option value="https://stream.radioparadise.com/mellow-128">♪ RP Mellow — spokojne</option>
+    <option value="https://stream.radioparadise.com/aac-128">♪ RP Main — mix</option>
+    <option value="https://stream.radioparadise.com/rock-128">♪ RP Rock</option>
+    <option value="https://stream.radioparadise.com/global-128">♪ RP Global — świat</option>
+    <option value="https://stream.radioparadise.com/eclectic-128">♪ RP Eclectic</option>
+  </select>
+</div>
+<audio id="player" preload="none"></audio>
 
 <script>
   const $ = id => document.getElementById(id);
@@ -276,6 +307,22 @@
         catch(e){}
       });
     }
+  })();
+
+  // radio internetowe
+  (function(){
+    const player = $("player"), rbtn = $("radioBtn"), sel = $("station");
+    let playing = false;
+    function start(){
+      player.src = sel.value;
+      player.play().then(() => { playing = true; rbtn.textContent = "⏸"; rbtn.classList.add("on"); })
+        .catch(() => { rbtn.textContent = "▶"; });
+    }
+    rbtn.addEventListener("click", () => {
+      if (!playing) start();
+      else { player.pause(); playing = false; rbtn.textContent = "▶"; rbtn.classList.remove("on"); }
+    });
+    sel.addEventListener("change", () => { if (playing) start(); });
   })();
 </script>
 </body>
