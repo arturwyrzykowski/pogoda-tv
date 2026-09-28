@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Pogoda — Zambski Kościelne</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg-0:#090c12; --bg-1:#0f141d; --panel:#141b27; --panel-2:#101722;
+    --line:#223044; --ink:#eef4fb; --ink-dim:#8ea0b6; --ink-faint:#5b6b80;
+    --acc:#57b6ff; --acc-soft:rgba(87,182,255,.14);
+    --good:#57d99a; --warn:#ffcf5c; --cold:#6fa8ff; --hot:#ff8a6b; --sun:#ffd166;
+    --sans:"IBM Plex Sans",system-ui,sans-serif;
+    --num:"Sora","IBM Plex Sans",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  * { box-sizing:border-box; }
+  html,body { height:100%; margin:0; }
+  body {
+    font-family:var(--sans); color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 78% -10%, #16223a 0, transparent 55%),
+      radial-gradient(1000px 600px at 8% 110%, #1a1424 0, transparent 55%),
+      linear-gradient(160deg,var(--bg-1),var(--bg-0));
+    background-attachment:fixed;
+  }
+  .stage {
+    height:100%; max-width:1920px; margin:0 auto;
+    padding:clamp(12px,2vw,34px);
+    display:grid; grid-template-rows:auto 1fr auto auto; gap:clamp(10px,1.4vw,22px);
+  }
+  header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+  .clock {
+    font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
+    font-size:clamp(2.6rem,7vw,6.2rem); line-height:.9; letter-spacing:-.01em;
+  }
+  .clock .sec { color:var(--ink-faint); }
+  .head-right { text-align:right; }
+  .place {
+    font-family:var(--mono); text-transform:uppercase; letter-spacing:.22em;
+    font-size:clamp(.7rem,1.3vw,1rem); color:var(--acc);
+  }
+  .date { color:var(--ink-dim); font-size:clamp(.95rem,2vw,1.6rem); margin-top:.3em; text-transform:capitalize; }
+  .status {
+    display:inline-flex; align-items:center; gap:.5em; font-family:var(--mono);
+    font-size:clamp(.6rem,1.1vw,.8rem); letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ink-dim); margin-top:.5em;
+  }
+  .dot { width:.62em; height:.62em; border-radius:50%; background:var(--good);
+    box-shadow:0 0 0 0 rgba(87,217,154,.5); animation:pulse 2.4s infinite; }
+  .dot.err { background:var(--hot); animation:none; }
+  @keyframes pulse {
+    0%{box-shadow:0 0 0 0 rgba(87,217,154,.45);}
+    70%{box-shadow:0 0 0 .7em rgba(87,217,154,0);}
+    100%{box-shadow:0 0 0 0 rgba(87,217,154,0);}
+  }
+
+  .hero {
+    border:1px solid var(--line); border-radius:clamp(16px,1.6vw,28px);
+    padding:clamp(16px,2.2vw,40px);
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    position:relative; overflow:hidden;
+  }
+  .hero::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--acc); opacity:.85; }
+  .hero-main { display:flex; flex-direction:column; gap:.2em; min-width:0; }
+  .temp {
+    font-family:var(--num); font-weight:700; font-variant-numeric:tabular-nums;
+    font-size:clamp(4rem,12vw,10rem); line-height:.8; letter-spacing:-.03em;
+  }
+  .temp .unit { font-size:.3em; font-weight:600; color:var(--ink-dim); vertical-align:top; margin-left:.1em; }
+  .temp.cold{color:var(--cold);} .temp.mild{color:var(--ink);} .temp.hot{color:var(--hot);}
+  .cond { font-size:clamp(1.2rem,3.2vw,2.6rem); color:var(--ink); font-weight:500; }
+  .feels { font-family:var(--mono); color:var(--ink-dim); font-size:clamp(.8rem,1.6vw,1.2rem); letter-spacing:.06em; margin-top:.3em; }
+  .hero-icon { flex:0 0 auto; color:var(--acc); }
+  .hero-icon svg { width:clamp(80px,12vw,180px); height:auto; }
+
+  .strip { display:grid; grid-template-columns:repeat(6,1fr); gap:clamp(10px,1.2vw,18px); }
+  .chip {
+    border:1px solid var(--line); border-radius:clamp(12px,1.2vw,20px);
+    padding:clamp(10px,1.2vw,18px) clamp(12px,1.3vw,20px);
+    background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
+    display:flex; flex-direction:column; gap:.35em;
+  }
+  .chip .k { font-family:var(--mono); text-transform:uppercase; letter-spacing:.16em;
+    font-size:clamp(.58rem,.95vw,.76rem); color:var(--ink-faint); }
+  .chip .v { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
+    font-size:clamp(1.1rem,2.3vw,1.9rem); display:flex; align-items:baseline; gap:.3em; }
+  .chip .v small { font-size:.5em; color:var(--ink-dim); font-weight:500; }
+  .arrow { display:inline-block; color:var(--acc); }
+  .sunv { color:var(--sun); }
+
+  /* prognoza na kolejne dni */
+  .forecast { display:grid; grid-template-columns:repeat(5,1fr); gap:clamp(10px,1.2vw,20px); }
+  .day {
+    border:1px solid var(--line); border-radius:clamp(12px,1.2vw,20px);
+    padding:clamp(12px,1.4vw,22px) clamp(10px,1.2vw,18px);
+    background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
+    display:flex; flex-direction:column; align-items:center; gap:.5em; text-align:center;
+  }
+  .day .dname { font-family:var(--mono); text-transform:uppercase; letter-spacing:.14em;
+    font-size:clamp(.6rem,1vw,.82rem); color:var(--ink-dim); }
+  .day.today .dname { color:var(--acc); }
+  .day .dicon { color:var(--acc); }
+  .day .dicon svg { width:clamp(34px,4vw,56px); height:auto; }
+  .day .dtemp { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
+    font-size:clamp(1.1rem,2.4vw,1.9rem); }
+  .day .dtemp .lo { color:var(--ink-faint); font-weight:500; }
+
+  @media (max-width:900px){
+    .strip{ grid-template-columns:repeat(3,1fr); }
+    .forecast{ grid-template-columns:repeat(5,1fr); }
+    .hero{ flex-direction:column; text-align:center; }
+    .stage{ grid-template-rows:auto auto auto auto; height:auto; min-height:100%; }
+  }
+  @media (max-width:560px){
+    .strip{ grid-template-columns:1fr 1fr; }
+    .forecast{ grid-template-columns:1fr 1fr 1fr; }
+    .day:nth-child(4),.day:nth-child(5){ display:none; }
+  }
+  @media (prefers-reduced-motion:reduce){ .dot{animation:none;} }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header>
+    <div class="clock" id="clock">--:--<span class="sec" id="sec">:--</span></div>
+    <div class="head-right">
+      <div class="place">Zambski Kościelne</div>
+      <div class="date" id="date">—</div>
+      <div class="status"><span class="dot" id="dot"></span><span id="statusTxt">pobieranie…</span><span id="upd"></span></div>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-main">
+      <div class="temp mild" id="temp">--<span class="unit">°C</span></div>
+      <div class="cond" id="cond">—</div>
+      <div class="feels" id="feels">odczuwalna --°</div>
+    </div>
+    <div class="hero-icon" id="icon"></div>
+  </div>
+
+  <div class="strip">
+    <div class="chip"><span class="k">Wilgotność</span><span class="v"><span id="hum">--</span><small>%</small></span></div>
+    <div class="chip"><span class="k">Wiatr</span><span class="v"><span class="arrow" id="windArr">↑</span><span id="wind">--</span><small>km/h</small></span></div>
+    <div class="chip"><span class="k">Ciśnienie</span><span class="v"><span id="press">----</span><small>hPa</small></span></div>
+    <div class="chip"><span class="k">Opady</span><span class="v"><span id="prec">0</span><small>mm</small></span></div>
+    <div class="chip"><span class="k">Min / Max dziś</span><span class="v" style="font-size:clamp(1rem,2vw,1.6rem)"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
+    <div class="chip"><span class="k">Wschód / Zachód</span><span class="v sunv" style="font-size:clamp(1rem,1.9vw,1.5rem)"><span id="sunrise">—</span> / <span id="sunset">—</span></span></div>
+  </div>
+
+  <div class="forecast" id="forecast"></div>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const LAT = 52.7559, LON = 21.2154;
+  const dni = ["niedziela","poniedziałek","wtorek","środa","czwartek","piątek","sobota"];
+  const mies = ["stycznia","lutego","marca","kwietnia","maja","czerwca","lipca","sierpnia","września","października","listopada","grudnia"];
+
+  function tickClock(){
+    const d=new Date(), p=n=>String(n).padStart(2,"0");
+    $("clock").firstChild.nodeValue = p(d.getHours())+":"+p(d.getMinutes());
+    $("sec").textContent=":"+p(d.getSeconds());
+    $("date").textContent = dni[d.getDay()]+", "+d.getDate()+" "+mies[d.getMonth()];
+  }
+  setInterval(tickClock,1000); tickClock();
+
+  // WMO weather codes -> [opis, typ ikony]
+  const WMO = {
+    0:["Bezchmurnie","sun"], 1:["Przeważnie słonecznie","sun"], 2:["Częściowe zachmurzenie","cloud-sun"],
+    3:["Pochmurno","cloud"], 45:["Mgła","fog"], 48:["Mgła (szadź)","fog"],
+    51:["Mżawka","rain"], 53:["Mżawka","rain"], 55:["Gęsta mżawka","rain"],
+    56:["Marznąca mżawka","rain"], 57:["Marznąca mżawka","rain"],
+    61:["Lekki deszcz","rain"], 63:["Deszcz","rain"], 65:["Ulewny deszcz","rain"],
+    66:["Marznący deszcz","rain"], 67:["Marznący deszcz","rain"],
+    71:["Lekki śnieg","snow"], 73:["Śnieg","snow"], 75:["Intensywny śnieg","snow"], 77:["Śnieg ziarnisty","snow"],
+    80:["Przelotny deszcz","rain"], 81:["Przelotny deszcz","rain"], 82:["Gwałtowne przelotne deszcze","rain"],
+    85:["Przelotny śnieg","snow"], 86:["Przelotny śnieg","snow"],
+    95:["Burza","storm"], 96:["Burza z gradem","storm"], 99:["Burza z gradem","storm"]
+  };
+  const ICONS = {
+    sun:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8"/></svg>`,
+    "cloud-sun":`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M4 4l1 1M12 12l1 1M12 4l-1 1"/><path d="M10 19a4 4 0 0 1 4-4 4.5 4.5 0 0 1 4.4 3.6A3 3 0 0 1 18 22H8a3 3 0 0 1-.3-6"/></svg>`,
+    cloud:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 0 1 .4-8A5.5 5.5 0 0 1 18 11.5 3.5 3.5 0 0 1 17.5 18H7z"/></svg>`,
+    rain:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15a4 4 0 0 1 .4-8A5.5 5.5 0 0 1 18 8.5 3.5 3.5 0 0 1 17.5 15H7z"/><path d="M8 19l-1 2M12 19l-1 2M16 19l-1 2"/></svg>`,
+    snow:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15a4 4 0 0 1 .4-8A5.5 5.5 0 0 1 18 8.5 3.5 3.5 0 0 1 17.5 15H7z"/><path d="M9 19v.01M13 19v.01M11 21v.01M15 21v.01"/></svg>`,
+    fog:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 9h16M4 13h16M6 17h12M6 5h12"/></svg>`,
+    storm:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a4 4 0 0 1 .4-8A5.5 5.5 0 0 1 18 7.5 3.5 3.5 0 0 1 17.5 14"/><path d="M12 12l-2 4h3l-2 4"/></svg>`
+  };
+  function tempClass(t){ return t<=10?"cold":t>=24?"hot":"mild"; }
+  const hhmm = iso => iso ? iso.slice(11,16) : "—";
+
+  async function load(){
+    const url = "https://api.open-meteo.com/v1/forecast?latitude="+LAT+"&longitude="+LON
+      +"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure"
+      +"&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=Europe%2FWarsaw&forecast_days=5";
+    try {
+      const r = await fetch(url, { cache:"no-store" });
+      if(!r.ok) throw new Error();
+      const j = await r.json(), c = j.current, d = j.daily;
+      const t = c.temperature_2m;
+      $("temp").innerHTML = t.toFixed(1)+'<span class="unit">°C</span>';
+      $("temp").className = "temp "+tempClass(t);
+      const [desc, ic] = WMO[c.weather_code] || ["—","cloud"];
+      $("cond").textContent = desc;
+      $("icon").innerHTML = ICONS[ic] || ICONS.cloud;
+      $("feels").textContent = "odczuwalna "+c.apparent_temperature.toFixed(1)+"°";
+      $("hum").textContent = Math.round(c.relative_humidity_2m);
+      $("wind").textContent = c.wind_speed_10m.toFixed(0);
+      $("windArr").style.transform = "rotate("+(c.wind_direction_10m+180)+"deg)";
+      $("press").textContent = Math.round(c.surface_pressure);
+      $("prec").textContent = c.precipitation.toFixed(1);
+      $("tmin").textContent = Math.round(d.temperature_2m_min[0]);
+      $("tmax").textContent = Math.round(d.temperature_2m_max[0]);
+      $("sunrise").textContent = hhmm(d.sunrise[0]);
+      $("sunset").textContent = hhmm(d.sunset[0]);
+      $("upd").textContent = " · " + new Date().toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"});
+
+      // prognoza na kolejne dni
+      const nazwy = ["Ndz","Pon","Wt","Śr","Czw","Pt","Sob"];
+      let fh = "";
+      for(let i=0;i<d.time.length;i++){
+        const dt = new Date(d.time[i]+"T12:00");
+        const lbl = i===0 ? "Dziś" : (i===1 ? "Jutro" : nazwy[dt.getDay()]);
+        const [, dic] = WMO[d.weather_code[i]] || ["","cloud"];
+        fh += '<div class="day'+(i===0?" today":"")+'">'
+            + '<span class="dname">'+lbl+'</span>'
+            + '<span class="dicon">'+(ICONS[dic]||ICONS.cloud)+'</span>'
+            + '<span class="dtemp">'+Math.round(d.temperature_2m_max[i])+'° <span class="lo">'+Math.round(d.temperature_2m_min[i])+'°</span></span>'
+            + '</div>';
+      }
+      $("forecast").innerHTML = fh;
+
+      $("dot").className = "dot";
+      $("statusTxt").textContent = "Na żywo · Open-Meteo";
+    } catch(e){
+      $("dot").className = "dot err";
+      $("statusTxt").textContent = "Brak połączenia";
+    }
+  }
+  load();
+  setInterval(load, 10*60*1000); // co 10 minut
+</script>
+</body>
+</html>
