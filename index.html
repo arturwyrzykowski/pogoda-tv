@@ -37,14 +37,14 @@
   .clock .sec { color:var(--ink-faint); }
   .head-right { text-align:right; }
   .place {
-    font-family:var(--mono); text-transform:uppercase; letter-spacing:.22em;
-    font-size:clamp(.7rem,1.3vw,1rem); color:var(--acc);
+    font-family:var(--mono); text-transform:uppercase; letter-spacing:.2em;
+    font-size:clamp(.62rem,1vw,.82rem); color:var(--ink-faint);
   }
-  .date { color:var(--ink-dim); font-size:clamp(.95rem,2vw,1.6rem); margin-top:.3em; text-transform:capitalize; }
-  .nameday { color:var(--ink); font-size:clamp(.8rem,1.5vw,1.15rem); margin-top:.35em; }
+  .date { color:var(--ink); font-weight:500; font-size:clamp(1rem,1.9vw,1.65rem); margin-top:.45em; }
+  .nameday { color:var(--ink-dim); font-size:clamp(.8rem,1.3vw,1.05rem); margin-top:.55em; font-weight:400; }
   .nameday b { color:var(--acc); font-weight:600; }
-  .event { color:var(--sun); font-size:clamp(.72rem,1.3vw,1rem); margin-top:.25em; max-width:min(46ch,60vw);
-    margin-left:auto; line-height:1.35; }
+  .event { color:var(--ink-dim); font-size:clamp(.8rem,1.3vw,1.05rem); margin-top:.15em;
+    max-width:min(48ch,58vw); margin-left:auto; line-height:1.4; }
   .status {
     display:inline-flex; align-items:center; gap:.5em; font-family:var(--mono);
     font-size:clamp(.6rem,1.1vw,.8rem); letter-spacing:.18em; text-transform:uppercase;
@@ -222,7 +222,8 @@
     const d=new Date(), p=n=>String(n).padStart(2,"0");
     $("clock").firstChild.nodeValue = p(d.getHours())+":"+p(d.getMinutes());
     $("sec").textContent=":"+p(d.getSeconds());
-    $("date").textContent = dni[d.getDay()]+", "+d.getDate()+" "+mies[d.getMonth()];
+    const wd = dni[d.getDay()];
+    $("date").textContent = wd.charAt(0).toUpperCase()+wd.slice(1)+", "+d.getDate()+" "+mies[d.getMonth()];
     updateDayInfo(d);
   }
   function updateDayInfo(d){
