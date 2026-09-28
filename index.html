@@ -237,6 +237,13 @@
   #station:focus-visible { color:var(--ink); }
   #station option { background:#0a0e15; color:var(--ink); }
 
+  .head-mid { display:flex; flex-direction:column; align-items:center; gap:.55em; }
+  .reminder { font-family:var(--num); font-weight:600; font-size:clamp(1rem,2.1vw,1.6rem);
+    color:var(--sun); text-align:center; animation:blink 1.3s ease-in-out infinite; }
+  .reminder:empty { display:none; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+  @media (prefers-reduced-motion:reduce){ .reminder{ animation:none; } }
+
   :fullscreen #fsBtn { display:none; }
 </style>
 </head>
@@ -244,16 +251,19 @@
 <div class="stage">
   <header>
     <div class="clock" id="clock">--:--<span class="sec" id="sec">:--</span></div>
-    <div id="radio">
-      <button id="radioBtn" aria-label="Włącz radio">▶</button>
-      <select id="station" aria-label="Wybierz stację">
-        <option value="https://stream.srg-ssr.ch/m/rsp/mp3_128">♪ Swiss Pop — hity</option>
-        <option value="https://strm112.1.fm/top40_mobile_mp3">♪ 1.FM Top 40 — nowości</option>
-        <option value="https://stream.srg-ssr.ch/m/rsj/mp3_128">♪ Swiss Jazz</option>
-        <option value="https://stream.srg-ssr.ch/m/rsc_de/mp3_128">♪ Swiss Classic — klasyka</option>
-        <option value="https://strm112.1.fm/chilloutlounge_mobile_mp3">♪ 1.FM Chillout — spokojne</option>
-        <option value="https://strm112.1.fm/reggae_mobile_mp3">♪ 1.FM Reggae</option>
-      </select>
+    <div class="head-mid">
+      <div id="radio">
+        <button id="radioBtn" aria-label="Włącz radio">▶</button>
+        <select id="station" aria-label="Wybierz stację">
+          <option value="https://stream.srg-ssr.ch/m/rsp/mp3_128">♪ Swiss Pop — hity</option>
+          <option value="https://strm112.1.fm/top40_mobile_mp3">♪ 1.FM Top 40 — nowości</option>
+          <option value="https://stream.srg-ssr.ch/m/rsj/mp3_128">♪ Swiss Jazz</option>
+          <option value="https://stream.srg-ssr.ch/m/rsc_de/mp3_128">♪ Swiss Classic — klasyka</option>
+          <option value="https://strm112.1.fm/chilloutlounge_mobile_mp3">♪ 1.FM Chillout — spokojne</option>
+          <option value="https://strm112.1.fm/reggae_mobile_mp3">♪ 1.FM Reggae</option>
+        </select>
+      </div>
+      <div class="reminder" id="reminder"></div>
     </div>
     <div class="head-right">
       <div class="place">Zambski Kościelne</div>
@@ -327,6 +337,21 @@
     const wd = dni[d.getDay()];
     $("date").textContent = wd.charAt(0).toUpperCase()+wd.slice(1)+", "+d.getDate()+" "+mies[d.getMonth()];
     updateDayInfo(d);
+    updateReminder(d);
+  }
+
+  // migajace komunikaty w wybranych porach (edytuj liste ponizej)
+  const REMINDERS = [
+    { from:"20:00", to:"20:30", text:"🏋 Czas poćwiczyć" },
+    { from:"22:30", to:"05:00", text:"😴 Pora spać" }
+  ];
+  const toMin = hhmm => { const [h,m]=hhmm.split(":").map(Number); return h*60+m; };
+  const inWindow = (n,a,b) => a<=b ? (n>=a && n<=b) : (n>=a || n<=b); // b<a = przez pólnoc
+  function updateReminder(d){
+    const n = d.getHours()*60 + d.getMinutes();
+    let msg = "";
+    for (const r of REMINDERS){ if (inWindow(n, toMin(r.from), toMin(r.to))){ msg = r.text; break; } }
+    $("reminder").textContent = msg;
   }
   function updateDayInfo(d){
     const key = (d.getMonth()+1)+"-"+d.getDate();
