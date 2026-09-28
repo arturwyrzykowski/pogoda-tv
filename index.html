@@ -61,29 +61,48 @@
 
   .hero {
     border:1px solid var(--line); border-radius:clamp(16px,1.6vw,28px);
-    padding:clamp(16px,2.2vw,40px);
+    padding:clamp(18px,2.6vw,48px);
     background:linear-gradient(180deg,var(--panel),var(--panel-2));
-    display:flex; flex-direction:column; justify-content:space-between; gap:clamp(14px,2vw,30px);
+    display:grid; grid-template-columns:auto 1fr; align-items:center; gap:clamp(20px,4vw,72px);
     position:relative; overflow:hidden;
   }
   .hero::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--acc); opacity:.85; }
-  .hero-top { display:flex; align-items:center; justify-content:space-between; gap:24px; }
-  .hero-main { display:flex; flex-direction:column; gap:.2em; min-width:0; }
+  .hero-current { display:flex; flex-direction:column; gap:.1em; min-width:0; }
   .temp {
     font-family:var(--num); font-weight:700; font-variant-numeric:tabular-nums;
-    font-size:clamp(4rem,12vw,10rem); line-height:.8; letter-spacing:-.03em;
+    font-size:clamp(4rem,11vw,9.5rem); line-height:.82; letter-spacing:-.03em;
   }
   .temp .unit { font-size:.3em; font-weight:600; color:var(--ink-dim); vertical-align:top; margin-left:.1em; }
   .temp.cold{color:var(--cold);} .temp.mild{color:var(--ink);} .temp.hot{color:var(--hot);}
-  .cond { font-size:clamp(1.2rem,3.2vw,2.6rem); color:var(--ink); font-weight:500; }
-  .feels { font-family:var(--mono); color:var(--ink-dim); font-size:clamp(.8rem,1.6vw,1.2rem); letter-spacing:.06em; margin-top:.3em; }
-  .hero-icon { flex:0 0 auto; color:var(--acc); }
-  .hero-icon svg { width:clamp(80px,12vw,180px); height:auto; }
+  .cond-row { display:flex; align-items:center; gap:.5em; margin-top:.2em; }
+  .cond-icon { color:var(--acc); flex:0 0 auto; }
+  .cond-icon svg { width:clamp(34px,4vw,64px); height:auto; }
+  .cond { font-size:clamp(1.2rem,2.8vw,2.4rem); color:var(--ink); font-weight:500; }
+  .feels { font-family:var(--mono); color:var(--ink-dim); font-size:clamp(.8rem,1.5vw,1.15rem); letter-spacing:.06em; margin-top:.55em; }
 
-  .hourly {
-    flex:1; display:flex; align-items:center; justify-content:space-evenly;
-    gap:clamp(6px,1vw,16px); padding:0 clamp(10px,2.5vw,40px); align-self:stretch;
+  .hero-stats {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:clamp(14px,1.9vw,28px) clamp(18px,2.5vw,44px);
   }
+  .hero-stats .st { display:flex; flex-direction:column; gap:.3em;
+    padding-left:clamp(14px,1.8vw,30px); border-left:1px solid var(--line); }
+  .hero-stats .st:nth-child(3n+1) { padding-left:0; border-left:0; }
+  .hero-stats .k { font-family:var(--mono); text-transform:uppercase; letter-spacing:.14em;
+    font-size:clamp(.6rem,.95vw,.78rem); color:var(--ink-faint); }
+  .hero-stats .v { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
+    font-size:clamp(1.15rem,2.1vw,1.85rem); color:var(--ink); display:flex; align-items:baseline; gap:.28em; }
+  .hero-stats .v small { font-size:.5em; color:var(--ink-dim); font-weight:500; }
+
+  /* karta prognozy: godzinowa + dni */
+  .fc {
+    border:1px solid var(--line); border-radius:clamp(16px,1.6vw,28px);
+    padding:clamp(14px,1.9vw,30px);
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    display:flex; flex-direction:column; gap:clamp(12px,1.5vw,22px);
+  }
+  .fc-label { font-family:var(--mono); text-transform:uppercase; letter-spacing:.18em;
+    font-size:clamp(.6rem,.95vw,.78rem); color:var(--ink-faint); }
+  .hourly { display:flex; align-items:center; justify-content:space-between; gap:clamp(6px,1vw,16px); }
   .hr { display:flex; flex-direction:column; align-items:center; gap:.4em; }
   .hr .hh { font-family:var(--mono); font-size:clamp(.6rem,.95vw,.8rem);
     letter-spacing:.06em; color:var(--ink-faint); }
@@ -91,18 +110,6 @@
   .hr .hic svg { width:clamp(22px,2.3vw,34px); height:auto; }
   .hr .ht { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
     font-size:clamp(.95rem,1.6vw,1.4rem); color:var(--ink); }
-
-  .hero-stats {
-    display:flex; justify-content:space-between; flex-wrap:wrap;
-    gap:clamp(12px,2vw,28px);
-    border-top:1px solid var(--line); padding-top:clamp(12px,1.6vw,24px);
-  }
-  .hero-stats .st { display:flex; flex-direction:column; gap:.25em; }
-  .hero-stats .k { font-family:var(--mono); text-transform:uppercase; letter-spacing:.14em;
-    font-size:clamp(.58rem,.9vw,.74rem); color:var(--ink-faint); }
-  .hero-stats .v { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
-    font-size:clamp(1.1rem,2vw,1.7rem); color:var(--ink); display:flex; align-items:baseline; gap:.28em; }
-  .hero-stats .v small { font-size:.5em; color:var(--ink-dim); font-weight:500; }
 
   .strip { display:grid; grid-template-columns:repeat(6,1fr); gap:clamp(10px,1.2vw,18px); }
   .chip {
@@ -119,12 +126,10 @@
   .arrow { display:inline-block; color:var(--acc); }
   .sunv { color:var(--sun); }
 
-  /* prognoza na kolejne dni */
-  .forecast { display:grid; grid-template-columns:repeat(5,1fr); gap:clamp(10px,1.2vw,20px); }
+  /* prognoza na kolejne dni (wewnatrz karty .fc) */
+  .forecast { display:grid; grid-template-columns:repeat(5,1fr); gap:clamp(10px,1.2vw,20px);
+    border-top:1px solid var(--line); padding-top:clamp(12px,1.5vw,22px); }
   .day {
-    border:1px solid var(--line); border-radius:clamp(12px,1.2vw,20px);
-    padding:clamp(12px,1.4vw,22px) clamp(10px,1.2vw,18px);
-    background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);
     display:flex; flex-direction:column; align-items:center; gap:.5em; text-align:center;
   }
   .day .dname { font-family:var(--mono); text-transform:uppercase; letter-spacing:.14em;
@@ -137,14 +142,17 @@
   .day .dtemp .lo { color:var(--ink-faint); font-weight:500; }
 
   @media (max-width:900px){
-    .forecast{ grid-template-columns:repeat(5,1fr); }
-    .hero-top{ flex-direction:column; text-align:center; }
-    .hero-stats{ justify-content:space-around; }
+    .hero{ grid-template-columns:1fr; gap:clamp(18px,4vw,30px); }
+    .hero-current{ align-items:center; text-align:center; }
+    .cond-row{ justify-content:center; }
+    .hero-stats{ grid-template-columns:repeat(3,1fr); }
     .hourly{ display:none; }
     .stage{ grid-template-rows:auto auto auto; height:auto; min-height:100%; }
   }
   @media (max-width:560px){
-    .strip{ grid-template-columns:1fr 1fr; }
+    .hero-stats{ grid-template-columns:1fr 1fr; }
+    .hero-stats .st:nth-child(3n+1){ padding-left:clamp(14px,4vw,26px); border-left:1px solid var(--line); }
+    .hero-stats .st:nth-child(2n+1){ padding-left:0; border-left:0; }
     .forecast{ grid-template-columns:1fr 1fr 1fr; }
     .day:nth-child(4),.day:nth-child(5){ display:none; }
   }
@@ -210,26 +218,26 @@
   </header>
 
   <div class="hero">
-    <div class="hero-top">
-      <div class="hero-main">
-        <div class="temp mild" id="temp">--<span class="unit">°C</span></div>
-        <div class="cond" id="cond">—</div>
-        <div class="feels" id="feels">odczuwalna --°</div>
-      </div>
-      <div class="hourly" id="hourly"></div>
-      <div class="hero-icon" id="icon"></div>
+    <div class="hero-current">
+      <div class="temp mild" id="temp">--<span class="unit">°C</span></div>
+      <div class="cond-row"><span class="cond-icon" id="icon"></span><span class="cond" id="cond">—</span></div>
+      <div class="feels" id="feels">odczuwalna --°</div>
     </div>
     <div class="hero-stats">
       <div class="st"><span class="k">Wilgotność</span><span class="v"><span id="hum">--</span><small>%</small></span></div>
       <div class="st"><span class="k">Wiatr</span><span class="v"><span class="arrow" id="windArr">↑</span><span id="wind">--</span><small>km/h</small></span></div>
       <div class="st"><span class="k">Ciśnienie</span><span class="v"><span id="press">----</span><small>hPa</small></span></div>
       <div class="st"><span class="k">Opady</span><span class="v"><span id="prec">0</span><small>mm</small></span></div>
-      <div class="st"><span class="k">Min / Max dziś</span><span class="v"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
+      <div class="st"><span class="k">Min / Max</span><span class="v"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
       <div class="st"><span class="k">Wschód / Zachód</span><span class="v"><span id="sunrise">—</span> / <span id="sunset">—</span></span></div>
     </div>
   </div>
 
-  <div class="forecast" id="forecast"></div>
+  <div class="fc">
+    <div class="fc-label">Prognoza godzinowa</div>
+    <div class="hourly" id="hourly"></div>
+    <div class="forecast" id="forecast"></div>
+  </div>
 </div>
 
 <button id="fsBtn" hidden>
