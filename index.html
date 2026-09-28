@@ -27,7 +27,7 @@
   .stage {
     height:100%; max-width:1920px; margin:0 auto;
     padding:clamp(12px,2vw,34px);
-    display:grid; grid-template-rows:auto 1fr auto auto; gap:clamp(10px,1.4vw,22px);
+    display:grid; grid-template-rows:auto 1fr auto; gap:clamp(10px,1.4vw,22px);
   }
   header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; }
   .clock {
@@ -63,10 +63,11 @@
     border:1px solid var(--line); border-radius:clamp(16px,1.6vw,28px);
     padding:clamp(16px,2.2vw,40px);
     background:linear-gradient(180deg,var(--panel),var(--panel-2));
-    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    display:flex; flex-direction:column; justify-content:space-between; gap:clamp(14px,2vw,30px);
     position:relative; overflow:hidden;
   }
   .hero::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--acc); opacity:.85; }
+  .hero-top { display:flex; align-items:center; justify-content:space-between; gap:24px; }
   .hero-main { display:flex; flex-direction:column; gap:.2em; min-width:0; }
   .temp {
     font-family:var(--num); font-weight:700; font-variant-numeric:tabular-nums;
@@ -90,6 +91,18 @@
   .hr .hic svg { width:clamp(22px,2.3vw,34px); height:auto; }
   .hr .ht { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
     font-size:clamp(.95rem,1.6vw,1.4rem); color:var(--ink); }
+
+  .hero-stats {
+    display:flex; justify-content:space-between; flex-wrap:wrap;
+    gap:clamp(12px,2vw,28px);
+    border-top:1px solid var(--line); padding-top:clamp(12px,1.6vw,24px);
+  }
+  .hero-stats .st { display:flex; flex-direction:column; gap:.25em; }
+  .hero-stats .k { font-family:var(--mono); text-transform:uppercase; letter-spacing:.14em;
+    font-size:clamp(.58rem,.9vw,.74rem); color:var(--ink-faint); }
+  .hero-stats .v { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
+    font-size:clamp(1.1rem,2vw,1.7rem); color:var(--ink); display:flex; align-items:baseline; gap:.28em; }
+  .hero-stats .v small { font-size:.5em; color:var(--ink-dim); font-weight:500; }
 
   .strip { display:grid; grid-template-columns:repeat(6,1fr); gap:clamp(10px,1.2vw,18px); }
   .chip {
@@ -124,11 +137,11 @@
   .day .dtemp .lo { color:var(--ink-faint); font-weight:500; }
 
   @media (max-width:900px){
-    .strip{ grid-template-columns:repeat(3,1fr); }
     .forecast{ grid-template-columns:repeat(5,1fr); }
-    .hero{ flex-direction:column; text-align:center; }
+    .hero-top{ flex-direction:column; text-align:center; }
+    .hero-stats{ justify-content:space-around; }
     .hourly{ display:none; }
-    .stage{ grid-template-rows:auto auto auto auto; height:auto; min-height:100%; }
+    .stage{ grid-template-rows:auto auto auto; height:auto; min-height:100%; }
   }
   @media (max-width:560px){
     .strip{ grid-template-columns:1fr 1fr; }
@@ -197,22 +210,23 @@
   </header>
 
   <div class="hero">
-    <div class="hero-main">
-      <div class="temp mild" id="temp">--<span class="unit">°C</span></div>
-      <div class="cond" id="cond">—</div>
-      <div class="feels" id="feels">odczuwalna --°</div>
+    <div class="hero-top">
+      <div class="hero-main">
+        <div class="temp mild" id="temp">--<span class="unit">°C</span></div>
+        <div class="cond" id="cond">—</div>
+        <div class="feels" id="feels">odczuwalna --°</div>
+      </div>
+      <div class="hourly" id="hourly"></div>
+      <div class="hero-icon" id="icon"></div>
     </div>
-    <div class="hourly" id="hourly"></div>
-    <div class="hero-icon" id="icon"></div>
-  </div>
-
-  <div class="strip">
-    <div class="chip"><span class="k">Wilgotność</span><span class="v"><span id="hum">--</span><small>%</small></span></div>
-    <div class="chip"><span class="k">Wiatr</span><span class="v"><span class="arrow" id="windArr">↑</span><span id="wind">--</span><small>km/h</small></span></div>
-    <div class="chip"><span class="k">Ciśnienie</span><span class="v"><span id="press">----</span><small>hPa</small></span></div>
-    <div class="chip"><span class="k">Opady</span><span class="v"><span id="prec">0</span><small>mm</small></span></div>
-    <div class="chip"><span class="k">Min / Max dziś</span><span class="v" style="font-size:clamp(1rem,2vw,1.6rem)"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
-    <div class="chip"><span class="k">Wschód / Zachód</span><span class="v sunv" style="font-size:clamp(1rem,1.9vw,1.5rem)"><span id="sunrise">—</span> / <span id="sunset">—</span></span></div>
+    <div class="hero-stats">
+      <div class="st"><span class="k">Wilgotność</span><span class="v"><span id="hum">--</span><small>%</small></span></div>
+      <div class="st"><span class="k">Wiatr</span><span class="v"><span class="arrow" id="windArr">↑</span><span id="wind">--</span><small>km/h</small></span></div>
+      <div class="st"><span class="k">Ciśnienie</span><span class="v"><span id="press">----</span><small>hPa</small></span></div>
+      <div class="st"><span class="k">Opady</span><span class="v"><span id="prec">0</span><small>mm</small></span></div>
+      <div class="st"><span class="k">Min / Max dziś</span><span class="v"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
+      <div class="st"><span class="k">Wschód / Zachód</span><span class="v"><span id="sunrise">—</span> / <span id="sunset">—</span></span></div>
+    </div>
   </div>
 
   <div class="forecast" id="forecast"></div>
