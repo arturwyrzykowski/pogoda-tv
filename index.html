@@ -123,6 +123,18 @@
     .day:nth-child(4),.day:nth-child(5){ display:none; }
   }
   @media (prefers-reduced-motion:reduce){ .dot{animation:none;} }
+
+  #fsBtn {
+    position:fixed; right:clamp(12px,2vw,34px); bottom:clamp(12px,2vw,34px);
+    z-index:10; display:inline-flex; align-items:center; gap:.5em;
+    font-family:var(--mono); font-size:clamp(.7rem,1.1vw,.9rem); letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-dim); cursor:pointer;
+    background:rgba(20,27,39,.85); border:1px solid var(--line);
+    border-radius:999px; padding:.6em 1em;
+  }
+  #fsBtn:hover, #fsBtn:focus-visible { color:var(--ink); border-color:var(--acc); outline:none; }
+  #fsBtn svg { width:1.15em; height:1.15em; }
+  :fullscreen #fsBtn { display:none; }
 </style>
 </head>
 <body>
@@ -156,6 +168,11 @@
 
   <div class="forecast" id="forecast"></div>
 </div>
+
+<button id="fsBtn" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+  Pełny ekran
+</button>
 
 <script>
   const $ = id => document.getElementById(id);
@@ -246,6 +263,20 @@
   }
   load();
   setInterval(load, 10*60*1000); // co 10 minut
+
+  // przycisk pełnego ekranu — pokaż tylko gdy przeglądarka to wspiera
+  (function(){
+    const b = $("fsBtn");
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+    if (req) {
+      b.hidden = false;
+      b.addEventListener("click", () => {
+        try { (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen).call(el); }
+        catch(e){}
+      });
+    }
+  })();
 </script>
 </body>
 </html>
