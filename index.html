@@ -79,6 +79,18 @@
   .hero-icon { flex:0 0 auto; color:var(--acc); }
   .hero-icon svg { width:clamp(80px,12vw,180px); height:auto; }
 
+  .hourly {
+    flex:1; display:flex; align-items:center; justify-content:space-evenly;
+    gap:clamp(6px,1vw,16px); padding:0 clamp(10px,2.5vw,40px); align-self:stretch;
+  }
+  .hr { display:flex; flex-direction:column; align-items:center; gap:.4em; }
+  .hr .hh { font-family:var(--mono); font-size:clamp(.6rem,.95vw,.8rem);
+    letter-spacing:.06em; color:var(--ink-faint); }
+  .hr .hic { color:var(--acc); opacity:.85; }
+  .hr .hic svg { width:clamp(22px,2.3vw,34px); height:auto; }
+  .hr .ht { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
+    font-size:clamp(.95rem,1.6vw,1.4rem); color:var(--ink); }
+
   .strip { display:grid; grid-template-columns:repeat(6,1fr); gap:clamp(10px,1.2vw,18px); }
   .chip {
     border:1px solid var(--line); border-radius:clamp(12px,1.2vw,20px);
@@ -115,6 +127,7 @@
     .strip{ grid-template-columns:repeat(3,1fr); }
     .forecast{ grid-template-columns:repeat(5,1fr); }
     .hero{ flex-direction:column; text-align:center; }
+    .hourly{ display:none; }
     .stage{ grid-template-rows:auto auto auto auto; height:auto; min-height:100%; }
   }
   @media (max-width:560px){
@@ -189,6 +202,7 @@
       <div class="cond" id="cond">—</div>
       <div class="feels" id="feels">odczuwalna --°</div>
     </div>
+    <div class="hourly" id="hourly"></div>
     <div class="hero-icon" id="icon"></div>
   </div>
 
@@ -265,6 +279,7 @@
   async function load(){
     const url = "https://api.open-meteo.com/v1/forecast?latitude="+LAT+"&longitude="+LON
       +"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure"
+      +"&hourly=temperature_2m,weather_code"
       +"&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=Europe%2FWarsaw&forecast_days=5";
     try {
       const r = await fetch(url, { cache:"no-store" });
@@ -287,6 +302,23 @@
       $("sunrise").textContent = hhmm(d.sunrise[0]);
       $("sunset").textContent = hhmm(d.sunset[0]);
       $("upd").textContent = " · " + new Date().toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"});
+
+      // prognoza godzinowa (srodek) - co 2h, 6 slupkow
+      const H = j.hourly;
+      if (H && H.time){
+        const now = new Date();
+        let s = H.time.findIndex(t => new Date(t) > now);
+        if (s < 0) s = 0;
+        let hh = "";
+        for (let k=0; k<12 && s+k<H.time.length; k+=2){
+          const i = s+k;
+          const [,hic] = WMO[H.weather_code[i]] || ["","cloud"];
+          hh += '<div class="hr"><span class="hh">'+H.time[i].slice(11,16)+'</span>'
+              + '<span class="hic">'+(ICONS[hic]||ICONS.cloud)+'</span>'
+              + '<span class="ht">'+Math.round(H.temperature_2m[i])+'°</span></div>';
+        }
+        $("hourly").innerHTML = hh;
+      }
 
       // prognoza na kolejne dni
       const nazwy = ["Ndz","Pon","Wt","Śr","Czw","Pt","Sob"];
