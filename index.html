@@ -179,6 +179,20 @@
 
   @media (prefers-reduced-motion:reduce){ .dot{animation:none;} .ticker-track{ animation:none; padding-left:0; } .ticker-label::before{ animation:none; } }
 
+  #startOverlay {
+    position:fixed; inset:0; z-index:100; border:0; margin:0; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    background:rgba(0,0,0,.9); color:var(--ink); font-family:var(--sans);
+  }
+  #startOverlay:focus-visible { outline:none; }
+  .ov-card { display:flex; flex-direction:column; align-items:center; gap:.4em; text-align:center; padding:2em; }
+  .ov-big { font-family:var(--num); font-weight:700; font-size:clamp(1.6rem,4.5vw,3.4rem); color:var(--acc); }
+  .ov-sub { color:var(--ink-dim); font-size:clamp(1rem,2.2vw,1.5rem); margin-top:.3em; }
+  .ov-sub b { color:var(--ink); }
+  .ov-ok { margin-top:1em; border:2px solid var(--acc); color:var(--acc);
+    border-radius:999px; padding:.45em 1.5em; font-family:var(--mono); letter-spacing:.15em;
+    font-size:clamp(1rem,2vw,1.4rem); }
+
   #fsBtn {
     position:fixed; right:clamp(12px,2vw,34px); bottom:clamp(12px,2vw,34px);
     z-index:10; display:inline-flex; align-items:center; gap:.5em;
@@ -189,6 +203,18 @@
   }
   #fsBtn:hover, #fsBtn:focus-visible { color:var(--ink); border-color:var(--acc); outline:none; }
   #fsBtn svg { width:1.15em; height:1.15em; }
+
+  #newsBtn {
+    position:fixed; left:clamp(12px,2vw,34px); bottom:clamp(12px,2vw,34px);
+    z-index:10; display:inline-flex; align-items:center; gap:.5em;
+    font-family:var(--mono); font-size:clamp(.7rem,1.1vw,.9rem); letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-dim); cursor:pointer;
+    background:rgba(20,27,39,.85); border:1px solid var(--line);
+    border-radius:999px; padding:.6em 1em;
+  }
+  #newsBtn:hover, #newsBtn:focus-visible { color:var(--ink); border-color:var(--acc); outline:none; }
+  #newsBtn.on { color:var(--acc); border-color:var(--acc); }
+  #newsBtn svg { width:1.15em; height:1.15em; }
 
   #radio {
     display:flex; align-items:center; gap:.5em; align-self:center;
@@ -260,7 +286,7 @@
     <div class="forecast" id="forecast"></div>
   </div>
 
-  <div class="ticker" id="ticker">
+  <div class="ticker" id="ticker" style="display:none">
     <span class="ticker-label">Wiadomości</span>
     <div class="ticker-view"><span class="ticker-track" id="tickerTrack">Ładowanie wiadomości…</span></div>
   </div>
@@ -271,7 +297,21 @@
   Pełny ekran
 </button>
 
+<button id="newsBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM8 9h8M8 13h8M8 17h5"/></svg>
+  Wiadomości
+</button>
+
 <audio id="player" preload="none"></audio>
+
+<button id="startOverlay" autofocus aria-label="Uruchom pełny ekran i radio">
+  <span class="ov-card">
+    <span class="ov-big">Pogoda · Zambski Kościelne</span>
+    <span class="ov-sub">Naciśnij <b>OK</b>, aby włączyć pełny ekran i radio</span>
+    <span class="ov-ok">▶ OK</span>
+  </span>
+</button>
+
 <script src="pogoda-data.js"></script>
 
 <script>
@@ -412,10 +452,15 @@
   function clean(list){
     return list.map(t => (t||"").replace(/\s+-\s+[^-]+$/,"").trim()).filter(Boolean).slice(0,15);
   }
+  function fetchT(url, ms){
+    const c = new AbortController();
+    const id = setTimeout(() => c.abort(), ms || 8000);
+    return fetch(url, { cache:"no-store", signal:c.signal }).finally(() => clearTimeout(id));
+  }
   async function fetchNews(){
     for (const s of NEWS_SRC){
       try {
-        const r = await fetch(s.url, { cache:"no-store" });
+        const r = await fetchT(s.url);
         if(!r.ok) continue;
         let titles = [];
         if (s.kind==="gdelt"){ const j = await r.json(); titles = (j.articles||[]).map(a=>a.title); }
@@ -433,14 +478,27 @@
     const one = titles.join('<span class="sep">•</span>');
     track.innerHTML = titles.length>1 ? (one + '<span class="sep">•</span>' + one) : one;
     const chars = titles.join("   ").length;
-    track.style.animationDuration = Math.max(40, Math.round(chars*0.12)) + "s";
+    track.style.animationDuration = Math.max(20, Math.round(chars*0.06)) + "s";
   }
   async function loadNews(){
     const titles = await fetchNews();
     showTicker(titles || ["Wiadomości chwilowo niedostępne"]);
   }
-  loadNews();
-  setInterval(loadNews, 15*60*1000); // co 15 minut
+  // wiadomosci: domyslnie WYLACZONE, wlaczane przyciskiem (wybor zapamietany)
+  let newsInterval = null, newsLoaded = false;
+  function setNews(on){
+    $("ticker").style.display = on ? "flex" : "none";
+    $("newsBtn").classList.toggle("on", on);
+    try { localStorage.setItem("newsOn", on ? "1" : "0"); } catch(e){}
+    if (on){
+      if (!newsLoaded){ loadNews(); newsLoaded = true; }
+      if (!newsInterval) newsInterval = setInterval(loadNews, 15*60*1000);
+    } else if (newsInterval){ clearInterval(newsInterval); newsInterval = null; }
+  }
+  let newsInit = false;
+  try { newsInit = localStorage.getItem("newsOn") === "1"; } catch(e){}
+  $("newsBtn").addEventListener("click", () => setNews($("ticker").style.display === "none"));
+  setNews(newsInit);
 
   // przycisk pełnego ekranu — pokaż tylko gdy przeglądarka to wspiera
   (function(){
@@ -470,6 +528,26 @@
       else { player.pause(); playing = false; rbtn.textContent = "▶"; rbtn.classList.remove("on"); }
     });
     sel.addEventListener("change", () => { if (playing) start(); });
+    window._radioStart = () => { if(!playing) start(); };
+  })();
+
+  // nakladka startowa: jedno OK -> pelny ekran + radio
+  (function(){
+    const ov = $("startOverlay");
+    if (!ov) return;
+    function startAll(){
+      try { const el = document.documentElement;
+        const rf = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+        if (rf) rf.call(el);
+      } catch(e){}
+      try { if (window._radioStart) window._radioStart(); } catch(e){}
+      document.removeEventListener("keydown", onKey, true);
+      ov.remove();
+    }
+    function onKey(){ startAll(); }
+    ov.addEventListener("click", startAll);
+    document.addEventListener("keydown", onKey, true);
+    try { ov.focus(); } catch(e){}
   })();
 </script>
 </body>
