@@ -27,7 +27,7 @@
   .stage {
     height:100%; max-width:1920px; margin:0 auto;
     padding:clamp(12px,2vw,34px);
-    display:grid; grid-template-rows:auto 1fr auto; gap:clamp(10px,1.4vw,22px);
+    display:grid; grid-template-rows:auto 1fr auto auto; gap:clamp(10px,1.4vw,22px);
   }
   header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; }
   .clock {
@@ -147,7 +147,7 @@
     .cond-row{ justify-content:center; }
     .hero-stats{ grid-template-columns:repeat(3,1fr); }
     .hourly{ display:none; }
-    .stage{ grid-template-rows:auto auto auto; height:auto; min-height:100%; }
+    .stage{ grid-template-rows:auto auto auto auto; height:auto; min-height:100%; }
   }
   @media (max-width:560px){
     .hero-stats{ grid-template-columns:1fr 1fr; }
@@ -156,7 +156,28 @@
     .forecast{ grid-template-columns:1fr 1fr 1fr; }
     .day:nth-child(4),.day:nth-child(5){ display:none; }
   }
-  @media (prefers-reduced-motion:reduce){ .dot{animation:none;} }
+  .ticker {
+    display:flex; align-items:center; gap:clamp(10px,1.4vw,22px);
+    border:1px solid var(--line); border-radius:999px;
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    padding:clamp(8px,1vw,14px) clamp(14px,1.6vw,24px); overflow:hidden;
+  }
+  .ticker-label {
+    flex:0 0 auto; display:inline-flex; align-items:center; gap:.5em;
+    font-family:var(--mono); text-transform:uppercase; letter-spacing:.16em;
+    font-size:clamp(.62rem,1vw,.82rem); color:var(--acc);
+    padding-right:clamp(12px,1.4vw,22px); border-right:1px solid var(--line);
+  }
+  .ticker-label::before { content:""; width:.55em; height:.55em; border-radius:50%;
+    background:var(--hot); box-shadow:0 0 0 0 rgba(255,138,107,.5); animation:pulse 2.2s infinite; }
+  .ticker-view { flex:1; overflow:hidden; }
+  .ticker-track { display:inline-block; white-space:nowrap; padding-left:100%;
+    font-size:clamp(.85rem,1.5vw,1.2rem); color:var(--ink);
+    animation:marquee 60s linear infinite; }
+  .ticker-track .sep { color:var(--acc); margin:0 .8em; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-100%)} }
+
+  @media (prefers-reduced-motion:reduce){ .dot{animation:none;} .ticker-track{ animation:none; padding-left:0; } .ticker-label::before{ animation:none; } }
 
   #fsBtn {
     position:fixed; right:clamp(12px,2vw,34px); bottom:clamp(12px,2vw,34px);
@@ -237,6 +258,11 @@
     <div class="fc-label">Prognoza godzinowa</div>
     <div class="hourly" id="hourly"></div>
     <div class="forecast" id="forecast"></div>
+  </div>
+
+  <div class="ticker" id="ticker" hidden>
+    <span class="ticker-label">Wiadomości</span>
+    <div class="ticker-view"><span class="ticker-track" id="tickerTrack"></span></div>
   </div>
 </div>
 
@@ -366,6 +392,30 @@
   }
   load();
   setInterval(load, 10*60*1000); // co 10 minut
+
+  // pasek wiadomosci (RSS -> JSON przez rss2json, CORS ok)
+  async function loadNews(){
+    const rss = "https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl";
+    const url = "https://api.rss2json.com/v1/api.json?count=15&rss_url=" + encodeURIComponent(rss);
+    try {
+      const r = await fetch(url, { cache:"no-store" });
+      if(!r.ok) throw new Error();
+      const j = await r.json();
+      if(j.status!=="ok" || !j.items || !j.items.length) throw new Error();
+      const titles = j.items.map(it => it.title.replace(/\s+-\s+[^-]+$/,"").trim()).filter(Boolean);
+      const html = titles.join('<span class="sep">•</span>');
+      const track = $("tickerTrack");
+      track.innerHTML = html;
+      // predkosc zalezna od dlugosci tekstu (czytelnie)
+      const chars = titles.join("   ").length;
+      track.style.animationDuration = Math.max(40, Math.round(chars*0.35)) + "s";
+      $("ticker").hidden = false;
+    } catch(e){
+      $("ticker").hidden = true;
+    }
+  }
+  loadNews();
+  setInterval(loadNews, 15*60*1000); // co 15 minut
 
   // przycisk pełnego ekranu — pokaż tylko gdy przeglądarka to wspiera
   (function(){
