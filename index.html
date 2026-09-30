@@ -169,7 +169,7 @@
     .day:nth-child(4),.day:nth-child(5){ display:none; }
   }
   /* Pac-Man - pasek animacji na dole (Pac-Man = punkt odniesienia, duszki za nim) */
-  .pac-lane { position:relative; height:clamp(78px,9vh,124px); overflow:hidden; --gsz:clamp(40px,4.6vw,64px); }
+  .pac-lane { position:relative; height:clamp(88px,10vh,144px); overflow:hidden; --gsz:clamp(40px,4.6vw,64px); }
   .dots {
     position:absolute; inset:0;
     background:radial-gradient(circle, var(--ink-faint) 2.4px, transparent 3px);
@@ -294,7 +294,8 @@
   /* mezczyzna tupiacy noga */
   .pol-man { animation:polMan 8.5s linear infinite; }
   @keyframes polMan { 0%{ opacity:0; } 8%{ opacity:1; } 94%{ opacity:1; } 100%{ opacity:0; } }
-  .pol-leg { transform-box:fill-box; transform-origin:14% 4%; animation:polStomp 8.5s linear infinite; }
+  .pol-grow { transform-box:fill-box; transform-origin:bottom center; transform:scale(1.34); }
+  .pol-leg { transform-box:fill-box; transform-origin:8% 2%; animation:polStomp 8.5s linear infinite; }
   @keyframes polStomp { 0%,48%{ transform:rotate(0);} 53%{ transform:rotate(-52deg);} 57%{ transform:rotate(12deg);} 61%,100%{ transform:rotate(0);} }
   .pol-impact { transform-box:fill-box; transform-origin:center; opacity:0; animation:polImpact 8.5s linear infinite; }
   @keyframes polImpact { 0%,54%{ opacity:0; transform:scale(.2);} 57%{ opacity:1; transform:scale(1);} 64%{ opacity:0; transform:scale(1.6);} 100%{ opacity:0; } }
@@ -539,16 +540,23 @@
             <line x1="0" y1="-6.5" x2="0" y2="6.5" stroke="#5b6579" stroke-width="1.2"/>
           </g></g>
         </g>
-        <g class="pol-man" transform="translate(84,0)">
-          <g class="grow">
-            <circle cx="10" cy="16" r="5" fill="none" stroke="#cdd6e4" stroke-width="2"/>
-            <line x1="10" y1="21" x2="10" y2="37" stroke="#cdd6e4" stroke-width="2"/>
-            <line x1="10" y1="26" x2="3" y2="33" stroke="#cdd6e4" stroke-width="2"/>
-            <line x1="10" y1="26" x2="17" y2="31" stroke="#cdd6e4" stroke-width="2"/>
-            <line x1="10" y1="37" x2="5" y2="50" stroke="#cdd6e4" stroke-width="2"/>
+        <g class="pol-man" transform="translate(70,0)">
+          <g class="pol-grow">
+            <line x1="9" y1="35" x2="6" y2="49" stroke="#2b3a55" stroke-width="3.4" stroke-linecap="round"/>
+            <rect x="3.4" y="48" width="5.4" height="2.8" rx="1" fill="#161d2b"/>
             <g class="pol-leg">
-              <line x1="10" y1="37" x2="15" y2="50" stroke="#cdd6e4" stroke-width="2"/>
+              <line x1="11" y1="35" x2="15" y2="49" stroke="#2b3a55" stroke-width="3.4" stroke-linecap="round"/>
+              <rect x="12.4" y="48" width="5.6" height="2.8" rx="1" fill="#161d2b"/>
             </g>
+            <path d="M5.6 22 Q5.2 33 7 35 L13 35 Q14.8 33 14.4 22 Z" fill="#ff8a3d" stroke="#d97a2f" stroke-width="0.7"/>
+            <rect x="6.3" y="27" width="7.4" height="1.5" fill="#eaf3ff" opacity="0.85"/>
+            <line x1="7" y1="24" x2="3" y2="30" stroke="#d97a2f" stroke-width="2.6" stroke-linecap="round"/>
+            <line x1="13" y1="24" x2="17.6" y2="28" stroke="#d97a2f" stroke-width="2.6" stroke-linecap="round"/>
+            <circle cx="3" cy="30.4" r="1.5" fill="#e6b389"/>
+            <circle cx="17.9" cy="28.2" r="1.5" fill="#e6b389"/>
+            <circle cx="10" cy="15" r="4" fill="#e6b389"/>
+            <path d="M5.7 13 A4.3 4.3 0 0 1 14.3 13 Z" fill="#f2c400" stroke="#c9a200" stroke-width="0.6"/>
+            <rect x="5" y="12.4" width="10" height="1.7" rx="0.8" fill="#f2c400" stroke="#c9a200" stroke-width="0.4"/>
             <g class="pol-impact" transform="translate(15,50)">
               <line x1="-7" y1="0" x2="-3" y2="0" stroke="#ffd54a" stroke-width="1.5"/>
               <line x1="7" y1="0" x2="3" y2="0" stroke="#ffd54a" stroke-width="1.5"/>
