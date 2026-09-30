@@ -274,6 +274,22 @@
     .det-boom{ opacity:0; }
   }
 
+  /* scena wiadomosci w pasie */
+  .scene-news { display:flex; align-items:center; gap:clamp(12px,1.6vw,26px); padding:0 clamp(14px,2vw,30px); }
+  .news-label { flex:0 0 auto; font-family:var(--mono); text-transform:uppercase; letter-spacing:.16em;
+    font-size:clamp(.7rem,1.2vw,1rem); color:var(--hot); display:inline-flex; align-items:center; gap:.5em;
+    padding-right:clamp(12px,1.4vw,22px); border-right:1px solid var(--line); }
+  .news-label::before { content:""; width:.6em; height:.6em; border-radius:50%; background:var(--hot); animation:pulse 2s infinite; }
+  .news-view { flex:1; overflow:hidden; }
+  .news-track { display:inline-block; white-space:nowrap; will-change:transform;
+    font-family:var(--num); font-weight:500; font-size:clamp(1rem,1.9vw,1.6rem); color:var(--ink);
+    animation:marquee 60s linear infinite; }
+  .news-track .sep { color:var(--acc); margin:0 1em; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .news-driver { position:absolute; width:0; height:0; opacity:0; animation:newsCycle 24s linear infinite; }
+  @keyframes newsCycle { 0%{opacity:0} 100%{opacity:0} }
+  @media (prefers-reduced-motion:reduce){ .news-track{ animation:none; } .news-driver{ animation:none; } }
+
   #startOverlay {
     position:fixed; inset:0; z-index:100; border:0; margin:0; width:100%; height:100%;
     display:flex; align-items:center; justify-content:center; cursor:pointer;
@@ -426,7 +442,7 @@
         <div class="pacman"></div>
       </div>
     </div>
-    <div class="scene scene-det">
+    <div class="scene scene-det" style="display:none">
       <svg class="det-svg" viewBox="0 0 320 60" preserveAspectRatio="xMidYMid meet">
         <line x1="0" y1="52" x2="320" y2="52" stroke="#26324a" stroke-width="1.5"/>
         <g class="det-bomb">
@@ -475,6 +491,11 @@
         </g></g></g>
       </svg>
       <span class="det-driver"></span>
+    </div>
+    <div class="scene scene-news" style="display:none">
+      <span class="news-label">Wiadomości</span>
+      <div class="news-view"><span class="news-track" id="newsTrack">Ładowanie wiadomości…</span></div>
+      <span class="news-driver"></span>
     </div>
   </div>
 </div>
@@ -756,24 +777,65 @@
     try { ov.focus(); } catch(e){}
   })();
 
-  // pas na dole: zmiana Pac-Man <-> wykrywacz PO PELNEJ animacji
+  // wiadomosci (pobieranie) - dla sceny wiadomosci
   (function(){
-    const pac = document.querySelector(".scene-pac");
-    const det = document.querySelector(".scene-det");
-    if (!pac || !det) return;
-    const pacDriver = pac.querySelector(".pac-runner");
-    const detDriver = det.querySelector(".det-driver");
-    function activate(which){
-      pac.style.display = which==="pac" ? "block" : "none";
-      det.style.display = which==="det" ? "block" : "none";
+    const KEY="s0ofmnprljkxnibmhei86mjbsoveupkfamb5iads";
+    const RSS="https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl", E=encodeURIComponent(RSS);
+    const SRC=[];
+    if(KEY) SRC.push({url:"https://api.rss2json.com/v1/api.json?count=15&api_key="+KEY+"&rss_url="+E, kind:"items"});
+    SRC.push(
+      {url:"https://api.gdeltproject.org/api/v2/doc/doc?query=sourcelang:polish&mode=artlist&format=json&maxrecords=20&sort=datedesc&timespan=1d", kind:"gdelt"},
+      {url:"https://api.allorigins.win/get?url="+E, kind:"contents"},
+      {url:"https://api.rss2json.com/v1/api.json?count=15&rss_url="+E, kind:"items"}
+    );
+    const fromXML=x=>{ const d=new DOMParser().parseFromString(x,"text/xml"); return [...d.querySelectorAll("item>title")].map(t=>t.textContent); };
+    const clean=l=>l.map(t=>(t||"").replace(/\s+-\s+[^-]+$/,"").trim()).filter(Boolean).slice(0,15);
+    const fetchT=(u,ms)=>{ const c=new AbortController(); const id=setTimeout(()=>c.abort(),ms||8000); return fetch(u,{cache:"no-store",signal:c.signal}).finally(()=>clearTimeout(id)); };
+    async function getNews(){
+      for(const s of SRC){ try{
+        const r=await fetchT(s.url); if(!r.ok) continue; let t=[];
+        if(s.kind==="items"){ const j=await r.json(); if(j.status==="ok") t=(j.items||[]).map(i=>i.title); }
+        else if(s.kind==="gdelt"){ const j=await r.json(); t=(j.articles||[]).map(a=>a.title); }
+        else { const j=await r.json(); t=fromXML(j.contents||""); }
+        t=clean(t); if(t.length>=3) return t;
+      }catch(e){} }
+      return null;
     }
-    activate("pac");
-    pacDriver.addEventListener("animationiteration", (e) => {
-      if (e.animationName === "pacRun" && pac.style.display !== "none") activate("det");
-    });
-    detDriver.addEventListener("animationiteration", () => {
-      if (det.style.display !== "none") activate("pac");
-    });
+    function showTicker(titles){
+      const tr=$("newsTrack"); const one=titles.join('<span class="sep">•</span>');
+      tr.innerHTML = titles.length>1 ? (one+'<span class="sep">•</span>'+one) : one;
+      tr.style.animationDuration = Math.max(20, Math.round(titles.join("   ").length*0.06))+"s";
+    }
+    let loaded=false, last=0;
+    window._loadNews = async function(){
+      if(loaded && Date.now()-last < 10*60*1000) return;
+      const t=await getNews();
+      if(t){ showTicker(t); loaded=true; last=Date.now(); }
+      else if(!loaded){ showTicker(["Wiadomości chwilowo niedostępne"]); }
+    };
+  })();
+
+  // pas na dole: rotacja scen (Pac-Man -> wykrywacz -> wiadomosci) po pelnym cyklu
+  (function(){
+    const S = {
+      pac:  { el:document.querySelector(".scene-pac"),  drv:null },
+      det:  { el:document.querySelector(".scene-det"),  drv:null },
+      news: { el:document.querySelector(".scene-news"), drv:null }
+    };
+    if(!S.pac.el || !S.det.el || !S.news.el) return;
+    S.pac.drv  = S.pac.el.querySelector(".pac-runner");
+    S.det.drv  = S.det.el.querySelector(".det-driver");
+    S.news.drv = S.news.el.querySelector(".news-driver");
+    const order=["pac","det","news"]; let idx=0;
+    function show(name){
+      for(const k in S) S[k].el.style.display = (k===name) ? "" : "none";
+      if(name==="news" && window._loadNews) window._loadNews();
+    }
+    show("pac");
+    function advance(from){ if(order[idx]!==from) return; idx=(idx+1)%order.length; show(order[idx]); }
+    S.pac.drv.addEventListener("animationiteration", (e)=>{ if(e.animationName==="pacRun") advance("pac"); });
+    S.det.drv.addEventListener("animationiteration", ()=> advance("det"));
+    S.news.drv.addEventListener("animationiteration", ()=> advance("news"));
   })();
 </script>
 </body>
