@@ -174,11 +174,14 @@
     position:absolute; inset:0;
     background:radial-gradient(circle, var(--ink-faint) 2.4px, transparent 3px);
     background-size:clamp(24px,2.4vw,34px) 100%; background-position:left center;
-    animation:pacEat 16s linear infinite;
   }
-  @keyframes pacEat { from{ clip-path:inset(0 0 0 0); } to{ clip-path:inset(0 0 0 108%); } }
-  .pac-runner { position:absolute; top:0; bottom:0; left:-4%; width:0; animation:pacRun 16s linear infinite; }
-  @keyframes pacRun { from{ left:-4%; } to{ left:104%; } }
+  /* zakrywacz zjedzonych kropek - jedzie transformem (GPU), bez clip-path */
+  .pac-cover { position:absolute; top:0; bottom:0; left:0; width:100vw; background:#000; z-index:1;
+    will-change:transform; animation:pacCover 16s linear infinite; }
+  @keyframes pacCover { from{ transform:translateX(-102vw); } to{ transform:translateX(5vw); } }
+  .pac-runner { position:absolute; top:0; bottom:0; left:0; width:0; z-index:2;
+    will-change:transform; animation:pacRun 16s linear infinite; }
+  @keyframes pacRun { from{ transform:translateX(-5vw); } to{ transform:translateX(102vw); } }
   .pac-runner > div { position:absolute; top:50%; transform:translateY(-50%);
     width:var(--gsz); height:var(--gsz); }
   .pacman { left:0;
@@ -202,7 +205,8 @@
 
   @media (max-width:560px){ .ghost.g3{ display:none; } }
   @media (prefers-reduced-motion:reduce){
-    .dot{animation:none;} .pacman{animation:none;} .pac-runner{animation:none; left:50%;} .dots{animation:none; clip-path:inset(0 0 0 50%);}
+    .dot{animation:none;} .pacman{animation:none;}
+    .pac-runner{animation:none; transform:translateX(45vw);} .pac-cover{animation:none; transform:translateX(-55vw);}
   }
 
   /* dwie sceny w pasie - zmiana po pelnej animacji */
@@ -281,7 +285,7 @@
     padding-right:clamp(12px,1.4vw,22px); border-right:1px solid var(--line); }
   .news-label::before { content:""; width:.6em; height:.6em; border-radius:50%; background:var(--hot); animation:pulse 2s infinite; }
   .news-view { flex:1; overflow:hidden; }
-  .news-track { display:inline-block; white-space:nowrap; will-change:transform;
+  .news-track { display:inline-block; white-space:nowrap; will-change:transform; transform:translateZ(0);
     font-family:var(--num); font-weight:500; font-size:clamp(1rem,1.9vw,1.6rem); color:var(--ink);
     animation:marquee 60s linear infinite; }
   .news-track .sep { color:var(--acc); margin:0 1em; }
@@ -435,6 +439,7 @@
   <div class="pac-lane" aria-hidden="true">
     <div class="scene scene-pac">
       <div class="dots"></div>
+      <div class="pac-cover"></div>
       <div class="pac-runner">
         <div class="ghost g1"></div>
         <div class="ghost g2"></div>
