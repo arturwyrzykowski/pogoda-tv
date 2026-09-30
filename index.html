@@ -90,12 +90,13 @@
   .feels { font-family:var(--mono); color:var(--ink-dim); font-size:clamp(.8rem,1.5vw,1.15rem); letter-spacing:.06em; margin-top:.55em; }
 
   .hero-stats {
-    display:grid; grid-template-columns:repeat(3,1fr);
-    gap:clamp(14px,1.9vw,28px) clamp(18px,2.5vw,44px);
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:clamp(14px,1.7vw,26px) clamp(14px,2vw,34px);
   }
   .hero-stats .st { display:flex; flex-direction:column; gap:.3em;
-    padding-left:clamp(14px,1.8vw,30px); border-left:1px solid var(--line); }
-  .hero-stats .st:nth-child(3n+1) { padding-left:0; border-left:0; }
+    padding-left:clamp(12px,1.5vw,26px); border-left:1px solid var(--line); }
+  .hero-stats .st:nth-child(4n+1) { padding-left:0; border-left:0; }
+  .hero-stats .v small { color:var(--ink-dim); }
   .hero-stats .k { font-family:var(--mono); text-transform:uppercase; letter-spacing:.14em;
     font-size:clamp(.6rem,.95vw,.78rem); color:var(--ink-faint); }
   .hero-stats .v { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
@@ -155,38 +156,56 @@
     .hero-current{ align-items:center; text-align:center; }
     .cond-row{ justify-content:center; }
     .hero-stats{ grid-template-columns:repeat(3,1fr); }
+    .hero-stats .st{ padding-left:clamp(12px,1.5vw,26px); border-left:1px solid var(--line); }
+    .hero-stats .st:nth-child(3n+1){ padding-left:0; border-left:0; }
     .hourly{ display:none; }
     .stage{ grid-template-rows:auto auto auto auto; height:auto; min-height:100%; }
   }
   @media (max-width:560px){
     .hero-stats{ grid-template-columns:1fr 1fr; }
-    .hero-stats .st:nth-child(3n+1){ padding-left:clamp(14px,4vw,26px); border-left:1px solid var(--line); }
+    .hero-stats .st{ padding-left:clamp(14px,4vw,26px); border-left:1px solid var(--line); }
     .hero-stats .st:nth-child(2n+1){ padding-left:0; border-left:0; }
     .forecast{ grid-template-columns:1fr 1fr 1fr; }
     .day:nth-child(4),.day:nth-child(5){ display:none; }
   }
-  .ticker {
-    display:flex; align-items:center; gap:clamp(10px,1.4vw,22px);
-    border:1px solid var(--line); border-radius:999px;
-    background:linear-gradient(180deg,var(--panel),var(--panel-2));
-    padding:clamp(8px,1vw,14px) clamp(14px,1.6vw,24px); overflow:hidden;
+  /* Pac-Man - pasek animacji na dole */
+  .pac-lane { position:relative; height:clamp(42px,5.2vh,66px); overflow:hidden; }
+  .dots {
+    position:absolute; inset:0;
+    background:radial-gradient(circle, var(--ink-faint) 2.4px, transparent 3px);
+    background-size:clamp(24px,2.4vw,34px) 100%; background-position:left center;
+    animation:pacEat 9s linear infinite;
   }
-  .ticker-label {
-    flex:0 0 auto; display:inline-flex; align-items:center; gap:.5em;
-    font-family:var(--mono); text-transform:uppercase; letter-spacing:.16em;
-    font-size:clamp(.62rem,1vw,.82rem); color:var(--acc);
-    padding-right:clamp(12px,1.4vw,22px); border-right:1px solid var(--line);
+  @keyframes pacEat { from{ clip-path:inset(0 0 0 0); } to{ clip-path:inset(0 0 0 100%); } }
+  .pac-runner {
+    position:absolute; top:50%; left:0; transform:translateY(-50%);
+    display:flex; align-items:center; gap:clamp(10px,1.4vw,20px);
+    animation:pacRun 9s linear infinite;
   }
-  .ticker-label::before { content:""; width:.55em; height:.55em; border-radius:50%;
-    background:var(--hot); box-shadow:0 0 0 0 rgba(255,138,107,.5); animation:pulse 2.2s infinite; }
-  .ticker-view { flex:1; overflow:hidden; }
-  .ticker-track { display:inline-block; white-space:nowrap; will-change:transform;
-    font-size:clamp(.85rem,1.5vw,1.2rem); color:var(--ink);
-    animation:marquee 80s linear infinite; }
-  .ticker-track .sep { color:var(--acc); margin:0 1em; }
-  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  @keyframes pacRun { from{ left:-9%; } to{ left:103%; } }
+  .pac-sz { width:clamp(26px,3.2vw,44px); height:clamp(26px,3.2vw,44px); }
+  .pacman {
+    background:radial-gradient(circle at 62% 38%, #ffe27a, #f5c518);
+    border-radius:50%; order:3; position:relative;
+    animation:pacChomp .28s linear infinite;
+  }
+  @keyframes pacChomp {
+    0%,100%{ clip-path:polygon(50% 50%, 100% 28%, 100% 0, 0 0, 0 100%, 100% 100%, 100% 72%); }
+    50%    { clip-path:polygon(50% 50%, 100% 47%, 100% 0, 0 0, 0 100%, 100% 100%, 100% 53%); }
+  }
+  .pacman::after { content:""; position:absolute; top:22%; left:52%; width:11%; height:11%;
+    border-radius:50%; background:#26324a; }
+  .ghost { border-radius:48% 48% 12% 12%; position:relative; opacity:.92; }
+  .ghost.g1{ background:#ff5b5b; order:2; } .ghost.g2{ background:#f7a3d6; order:1; } .ghost.g3{ background:#63d6ff; order:0; }
+  .ghost::before { content:""; position:absolute; top:30%; left:20%; width:24%; height:30%;
+    border-radius:50%; background:#fff; box-shadow: 130% 0 0 #fff; }
+  .ghost::after { content:""; position:absolute; top:40%; left:28%; width:11%; height:15%;
+    border-radius:50%; background:#26324a; box-shadow: 150% 0 0 #26324a; }
 
-  @media (prefers-reduced-motion:reduce){ .dot{animation:none;} .ticker-track{ animation:none; padding-left:0; } .ticker-label::before{ animation:none; } }
+  @media (max-width:560px){ .ghost.g3{ display:none; } }
+  @media (prefers-reduced-motion:reduce){
+    .dot{animation:none;} .pacman{animation:none;} .pac-runner{animation:none; left:6%;} .dots{animation:none;}
+  }
 
   #startOverlay {
     position:fixed; inset:0; z-index:100; border:0; margin:0; width:100%; height:100%;
@@ -213,17 +232,6 @@
   #fsBtn:hover, #fsBtn:focus-visible { color:var(--ink); border-color:var(--acc); outline:none; }
   #fsBtn svg { width:1.15em; height:1.15em; }
 
-  #newsBtn {
-    position:fixed; left:clamp(12px,2vw,34px); bottom:clamp(12px,2vw,34px);
-    z-index:10; display:inline-flex; align-items:center; gap:.5em;
-    font-family:var(--mono); font-size:clamp(.7rem,1.1vw,.9rem); letter-spacing:.1em;
-    text-transform:uppercase; color:var(--ink-dim); cursor:pointer;
-    background:rgba(20,27,39,.85); border:1px solid var(--line);
-    border-radius:999px; padding:.6em 1em;
-  }
-  #newsBtn:hover, #newsBtn:focus-visible { color:var(--ink); border-color:var(--acc); outline:none; }
-  #newsBtn.on { color:var(--acc); border-color:var(--acc); }
-  #newsBtn svg { width:1.15em; height:1.15em; }
 
   #radio {
     display:flex; align-items:center; gap:.5em; align-self:center;
@@ -293,6 +301,7 @@
       <div class="st"><span class="k">Wilgotność</span><span class="v"><span id="hum">--</span><small>%</small></span></div>
       <div class="st"><span class="k">Wiatr</span><span class="v"><span class="arrow" id="windArr">↑</span><span id="wind">--</span><small>km/h</small></span></div>
       <div class="st"><span class="k">Ciśnienie</span><span class="v"><span id="press">----</span><small>hPa</small></span></div>
+      <div class="st"><span class="k">Indeks UV</span><span class="v"><span id="uv">—</span> <small id="uvDesc"></small></span></div>
       <div class="st"><span class="k">Opady</span><span class="v"><span id="prec">0</span><small>mm</small></span></div>
       <div class="st"><span class="k">Min / Max</span><span class="v"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
       <div class="st"><span class="k">Wschód / Zachód</span><span class="v"><span id="sunrise">—</span> / <span id="sunset">—</span></span></div>
@@ -305,20 +314,20 @@
     <div class="forecast" id="forecast"></div>
   </div>
 
-  <div class="ticker" id="ticker" style="display:none">
-    <span class="ticker-label">Wiadomości</span>
-    <div class="ticker-view"><span class="ticker-track" id="tickerTrack">Ładowanie wiadomości…</span></div>
+  <div class="pac-lane" aria-hidden="true">
+    <div class="dots"></div>
+    <div class="pac-runner">
+      <div class="ghost g1 pac-sz"></div>
+      <div class="ghost g2 pac-sz"></div>
+      <div class="ghost g3 pac-sz"></div>
+      <div class="pacman pac-sz"></div>
+    </div>
   </div>
 </div>
 
 <button id="fsBtn" hidden>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
   Pełny ekran
-</button>
-
-<button id="newsBtn">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM8 9h8M8 13h8M8 17h5"/></svg>
-  Wiadomości
 </button>
 
 <audio id="player" preload="none"></audio>
@@ -400,7 +409,7 @@
 
   async function load(){
     const url = "https://api.open-meteo.com/v1/forecast?latitude="+LAT+"&longitude="+LON
-      +"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure"
+      +"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,uv_index"
       +"&hourly=temperature_2m,weather_code"
       +"&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=Europe%2FWarsaw&forecast_days=5";
     try {
@@ -418,6 +427,12 @@
       $("wind").textContent = c.wind_speed_10m.toFixed(0);
       $("windArr").style.transform = "rotate("+(c.wind_direction_10m+180)+"deg)";
       $("press").textContent = Math.round(c.surface_pressure);
+      const uv = Math.max(0, Math.round(c.uv_index ?? 0));
+      $("uv").textContent = uv;
+      const uvInfo = uv<=2 ? ["niski","var(--good)"] : uv<=5 ? ["umiarkowany","var(--sun)"]
+        : uv<=7 ? ["wysoki","#ff9f45"] : uv<=10 ? ["b. wysoki","var(--hot)"] : ["ekstremalny","#e879f9"];
+      $("uvDesc").textContent = uvInfo[0];
+      $("uv").style.color = uvInfo[1];
       $("prec").textContent = c.precipitation.toFixed(1);
       $("tmin").textContent = Math.round(d.temperature_2m_min[0]);
       $("tmax").textContent = Math.round(d.temperature_2m_max[0]);
@@ -467,72 +482,6 @@
   load();
   setInterval(load, 10*60*1000); // co 10 minut
 
-  // pasek wiadomosci - probuje kilku zrodel po kolei (odpornosc)
-  const RSS2JSON_KEY = "s0ofmnprljkxnibmhei86mjbsoveupkfamb5iads"; // darmowy klucz rss2json (polskie newsy)
-  const NEWS_RSS = "https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl";
-  const E = encodeURIComponent(NEWS_RSS);
-  const NEWS_SRC = [];
-  if (RSS2JSON_KEY) NEWS_SRC.push({ url:"https://api.rss2json.com/v1/api.json?count=15&api_key="+RSS2JSON_KEY+"&rss_url="+E, kind:"items" });
-  NEWS_SRC.push(
-    { url:"https://api.gdeltproject.org/api/v2/doc/doc?query=sourcelang:polish&mode=artlist&format=json&maxrecords=20&sort=datedesc&timespan=1d", kind:"gdelt" },
-    { url:"https://api.allorigins.win/get?url="+E, kind:"contents" },
-    { url:"https://api.codetabs.com/v1/proxy/?quest="+E, kind:"xml" },
-    { url:"https://api.rss2json.com/v1/api.json?count=15&rss_url="+E, kind:"items" }
-  );
-  function titlesFromXML(xml){
-    const doc = new DOMParser().parseFromString(xml, "text/xml");
-    return [...doc.querySelectorAll("item > title")].map(t => t.textContent);
-  }
-  function clean(list){
-    return list.map(t => (t||"").replace(/\s+-\s+[^-]+$/,"").trim()).filter(Boolean).slice(0,15);
-  }
-  function fetchT(url, ms){
-    const c = new AbortController();
-    const id = setTimeout(() => c.abort(), ms || 8000);
-    return fetch(url, { cache:"no-store", signal:c.signal }).finally(() => clearTimeout(id));
-  }
-  async function fetchNews(){
-    for (const s of NEWS_SRC){
-      try {
-        const r = await fetchT(s.url);
-        if(!r.ok) continue;
-        let titles = [];
-        if (s.kind==="gdelt"){ const j = await r.json(); titles = (j.articles||[]).map(a=>a.title); }
-        else if (s.kind==="items"){ const j = await r.json(); if(j.status==="ok") titles = (j.items||[]).map(i=>i.title); }
-        else if (s.kind==="contents"){ const j = await r.json(); titles = titlesFromXML(j.contents||""); }
-        else { titles = titlesFromXML(await r.text()); }
-        titles = clean(titles);
-        if (titles.length >= 3) return titles;
-      } catch(e){ /* nastepne zrodlo */ }
-    }
-    return null;
-  }
-  function showTicker(titles){
-    const track = $("tickerTrack");
-    const one = titles.join('<span class="sep">•</span>');
-    track.innerHTML = titles.length>1 ? (one + '<span class="sep">•</span>' + one) : one;
-    const chars = titles.join("   ").length;
-    track.style.animationDuration = Math.max(20, Math.round(chars*0.06)) + "s";
-  }
-  async function loadNews(){
-    const titles = await fetchNews();
-    showTicker(titles || ["Wiadomości chwilowo niedostępne"]);
-  }
-  // wiadomosci: domyslnie WYLACZONE, wlaczane przyciskiem (wybor zapamietany)
-  let newsInterval = null, newsLoaded = false;
-  function setNews(on){
-    $("ticker").style.display = on ? "flex" : "none";
-    $("newsBtn").classList.toggle("on", on);
-    try { localStorage.setItem("newsOn", on ? "1" : "0"); } catch(e){}
-    if (on){
-      if (!newsLoaded){ loadNews(); newsLoaded = true; }
-      if (!newsInterval) newsInterval = setInterval(loadNews, 15*60*1000);
-    } else if (newsInterval){ clearInterval(newsInterval); newsInterval = null; }
-  }
-  let newsInit = false;
-  try { newsInit = localStorage.getItem("newsOn") === "1"; } catch(e){}
-  $("newsBtn").addEventListener("click", () => setNews($("ticker").style.display === "none"));
-  setNews(newsInit);
 
   // przycisk pełnego ekranu — pokaż tylko gdy przeglądarka to wspiera
   (function(){
