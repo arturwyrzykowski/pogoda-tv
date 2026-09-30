@@ -278,6 +278,19 @@
     .det-boom{ opacity:0; }
   }
 
+  /* Polonez BUDOMUR - wjezdza, postoj, odjazd (transform = plynnie) */
+  .pol-svg { width:100%; height:100%; display:block; }
+  .pol-car { will-change:transform; animation:polDrive 8s linear infinite; }
+  @keyframes polDrive {
+    0%   { transform:translateX(-120px); }
+    38%  { transform:translateX(114px); }
+    62%  { transform:translateX(114px); }
+    100% { transform:translateX(360px); }
+  }
+  .wheel { transform-box:fill-box; transform-origin:center; will-change:transform; animation:wheelSpin 8s linear infinite; }
+  @keyframes wheelSpin { 0%{transform:rotate(0);} 38%{transform:rotate(900deg);} 62%{transform:rotate(900deg);} 100%{transform:rotate(1800deg);} }
+  @media (prefers-reduced-motion:reduce){ .pol-car{ animation:none; transform:translateX(114px);} .wheel{ animation:none; } }
+
   /* scena wiadomosci w pasie */
   .scene-news { display:flex; align-items:center; gap:clamp(12px,1.6vw,26px); padding:0 clamp(14px,2vw,30px); }
   .news-label { flex:0 0 auto; font-family:var(--mono); text-transform:uppercase; letter-spacing:.16em;
@@ -437,17 +450,7 @@
   </div>
 
   <div class="pac-lane" aria-hidden="true">
-    <div class="scene scene-pac">
-      <div class="dots"></div>
-      <div class="pac-cover"></div>
-      <div class="pac-runner">
-        <div class="ghost g1"></div>
-        <div class="ghost g2"></div>
-        <div class="ghost g3"></div>
-        <div class="pacman"></div>
-      </div>
-    </div>
-    <div class="scene scene-det" style="display:none">
+    <div class="scene scene-det">
       <svg class="det-svg" viewBox="0 0 320 60" preserveAspectRatio="xMidYMid meet">
         <line x1="0" y1="52" x2="320" y2="52" stroke="#26324a" stroke-width="1.5"/>
         <g class="det-bomb">
@@ -497,10 +500,35 @@
       </svg>
       <span class="det-driver"></span>
     </div>
-    <div class="scene scene-news" style="display:none">
-      <span class="news-label">Wiadomości</span>
-      <div class="news-view"><span class="news-track" id="newsTrack">Ładowanie wiadomości…</span></div>
-      <span class="news-driver"></span>
+    <div class="scene scene-polonez" style="display:none">
+      <svg class="pol-svg" viewBox="0 0 320 60" preserveAspectRatio="xMidYMid meet">
+        <line x1="0" y1="52" x2="320" y2="52" stroke="#26324a" stroke-width="1.5"/>
+        <g class="pol-car">
+          <ellipse cx="47" cy="52" rx="47" ry="3" fill="#000" opacity="0.32"/>
+          <path d="M2,46 L4,36 L14,34 L22,23 L60,23 L70,34 L90,36 L92,46 Z" fill="#e6e0cf" stroke="#b3ac96" stroke-width="1.2" stroke-linejoin="round"/>
+          <rect x="4" y="44" width="86" height="3.5" fill="#39415a"/>
+          <path d="M24,32 L30,25 L43,25 L43,32 Z" fill="#a7cbe6"/>
+          <rect x="46" y="25" width="12" height="7" fill="#a7cbe6"/>
+          <line x1="44.5" y1="24" x2="44.5" y2="44" stroke="#b3ac96" stroke-width="1"/>
+          <text x="47" y="41.5" text-anchor="middle" font-family="Sora, sans-serif" font-weight="700" font-size="9" fill="#c0392b" letter-spacing="0.5">BUDOMUR</text>
+          <rect x="88" y="37" width="4" height="4" rx="1" fill="#ffd54a"/>
+          <rect x="2" y="37" width="3" height="4" rx="1" fill="#c0392b"/>
+          <rect x="30" y="38" width="6" height="1.6" fill="#9a927a"/>
+          <rect x="53" y="38" width="6" height="1.6" fill="#9a927a"/>
+          <g transform="translate(22,48)"><g class="wheel">
+            <circle r="7.5" fill="#181c24" stroke="#3b4658" stroke-width="1.5"/>
+            <circle r="3" fill="#9aa3b4"/>
+            <line x1="-6.5" y1="0" x2="6.5" y2="0" stroke="#5b6579" stroke-width="1.2"/>
+            <line x1="0" y1="-6.5" x2="0" y2="6.5" stroke="#5b6579" stroke-width="1.2"/>
+          </g></g>
+          <g transform="translate(70,48)"><g class="wheel">
+            <circle r="7.5" fill="#181c24" stroke="#3b4658" stroke-width="1.5"/>
+            <circle r="3" fill="#9aa3b4"/>
+            <line x1="-6.5" y1="0" x2="6.5" y2="0" stroke="#5b6579" stroke-width="1.2"/>
+            <line x1="0" y1="-6.5" x2="0" y2="6.5" stroke="#5b6579" stroke-width="1.2"/>
+          </g></g>
+        </g>
+      </svg>
     </div>
   </div>
 </div>
@@ -782,65 +810,20 @@
     try { ov.focus(); } catch(e){}
   })();
 
-  // wiadomosci (pobieranie) - dla sceny wiadomosci
+  // pas na dole: zmiana wykrywacz <-> polonez po pelnym cyklu
   (function(){
-    const KEY="s0ofmnprljkxnibmhei86mjbsoveupkfamb5iads";
-    const RSS="https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl", E=encodeURIComponent(RSS);
-    const SRC=[];
-    if(KEY) SRC.push({url:"https://api.rss2json.com/v1/api.json?count=15&api_key="+KEY+"&rss_url="+E, kind:"items"});
-    SRC.push(
-      {url:"https://api.gdeltproject.org/api/v2/doc/doc?query=sourcelang:polish&mode=artlist&format=json&maxrecords=20&sort=datedesc&timespan=1d", kind:"gdelt"},
-      {url:"https://api.allorigins.win/get?url="+E, kind:"contents"},
-      {url:"https://api.rss2json.com/v1/api.json?count=15&rss_url="+E, kind:"items"}
-    );
-    const fromXML=x=>{ const d=new DOMParser().parseFromString(x,"text/xml"); return [...d.querySelectorAll("item>title")].map(t=>t.textContent); };
-    const clean=l=>l.map(t=>(t||"").replace(/\s+-\s+[^-]+$/,"").trim()).filter(Boolean).slice(0,15);
-    const fetchT=(u,ms)=>{ const c=new AbortController(); const id=setTimeout(()=>c.abort(),ms||8000); return fetch(u,{cache:"no-store",signal:c.signal}).finally(()=>clearTimeout(id)); };
-    async function getNews(){
-      for(const s of SRC){ try{
-        const r=await fetchT(s.url); if(!r.ok) continue; let t=[];
-        if(s.kind==="items"){ const j=await r.json(); if(j.status==="ok") t=(j.items||[]).map(i=>i.title); }
-        else if(s.kind==="gdelt"){ const j=await r.json(); t=(j.articles||[]).map(a=>a.title); }
-        else { const j=await r.json(); t=fromXML(j.contents||""); }
-        t=clean(t); if(t.length>=3) return t;
-      }catch(e){} }
-      return null;
-    }
-    function showTicker(titles){
-      const tr=$("newsTrack"); const one=titles.join('<span class="sep">•</span>');
-      tr.innerHTML = titles.length>1 ? (one+'<span class="sep">•</span>'+one) : one;
-      tr.style.animationDuration = Math.max(20, Math.round(titles.join("   ").length*0.06))+"s";
-    }
-    let loaded=false, last=0;
-    window._loadNews = async function(){
-      if(loaded && Date.now()-last < 10*60*1000) return;
-      const t=await getNews();
-      if(t){ showTicker(t); loaded=true; last=Date.now(); }
-      else if(!loaded){ showTicker(["Wiadomości chwilowo niedostępne"]); }
-    };
-  })();
-
-  // pas na dole: rotacja scen (Pac-Man -> wykrywacz -> wiadomosci) po pelnym cyklu
-  (function(){
-    const S = {
-      pac:  { el:document.querySelector(".scene-pac"),  drv:null },
-      det:  { el:document.querySelector(".scene-det"),  drv:null },
-      news: { el:document.querySelector(".scene-news"), drv:null }
-    };
-    if(!S.pac.el || !S.det.el || !S.news.el) return;
-    S.pac.drv  = S.pac.el.querySelector(".pac-runner");
-    S.det.drv  = S.det.el.querySelector(".det-driver");
-    S.news.drv = S.news.el.querySelector(".news-driver");
-    const order=["pac","det","news"]; let idx=0;
+    const det = document.querySelector(".scene-det");
+    const pol = document.querySelector(".scene-polonez");
+    if(!det || !pol) return;
+    const detDrv = det.querySelector(".det-driver");
+    const polDrv = pol.querySelector(".pol-car");
     function show(name){
-      for(const k in S) S[k].el.style.display = (k===name) ? "" : "none";
-      if(name==="news" && window._loadNews) window._loadNews();
+      det.style.display = name==="det" ? "" : "none";
+      pol.style.display = name==="pol" ? "" : "none";
     }
-    show("pac");
-    function advance(from){ if(order[idx]!==from) return; idx=(idx+1)%order.length; show(order[idx]); }
-    S.pac.drv.addEventListener("animationiteration", (e)=>{ if(e.animationName==="pacRun") advance("pac"); });
-    S.det.drv.addEventListener("animationiteration", ()=> advance("det"));
-    S.news.drv.addEventListener("animationiteration", ()=> advance("news"));
+    show("det");
+    detDrv.addEventListener("animationiteration", ()=>{ if(det.style.display!=="none") show("pol"); });
+    polDrv.addEventListener("animationiteration", (e)=>{ if(e.animationName==="polDrive" && pol.style.display!=="none") show("det"); });
   })();
 </script>
 </body>
