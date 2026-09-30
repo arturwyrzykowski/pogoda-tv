@@ -27,7 +27,7 @@
   .stage {
     height:100%; max-width:1920px; margin:0 auto;
     padding:clamp(12px,2vw,34px);
-    display:grid; grid-template-rows:auto 1fr auto auto; gap:clamp(10px,1.4vw,22px);
+    display:grid; grid-template-rows:auto 1fr auto; gap:clamp(10px,1.4vw,22px);
   }
   header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; }
   .clock {
@@ -169,7 +169,8 @@
     .day:nth-child(4),.day:nth-child(5){ display:none; }
   }
   /* Pac-Man - pasek animacji na dole (Pac-Man = punkt odniesienia, duszki za nim) */
-  .pac-lane { position:relative; height:clamp(88px,10vh,144px); overflow:hidden; --gsz:clamp(40px,4.6vw,64px); }
+  .pac-lane { position:fixed; left:0; right:0; bottom:0; z-index:60; pointer-events:none;
+    height:clamp(88px,10vh,144px); overflow:hidden; --gsz:clamp(40px,4.6vw,64px); }
   .dots {
     position:absolute; inset:0;
     background:radial-gradient(circle, var(--ink-faint) 2.4px, transparent 3px);
