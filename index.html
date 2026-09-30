@@ -975,26 +975,12 @@
       } catch(e){}
       return actx;
     };
-    function chirp(){
-      const a = actx;
-      if (!a || a.state !== "running") return;
-      try {
-        const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
-        o.type = "square";
-        o.frequency.setValueAtTime(900 + Math.random()*500, t);
-        g.gain.setValueAtTime(0.035, t);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
-        o.connect(g); g.connect(a.destination);
-        o.start(t); o.stop(t + 0.04);
-      } catch(e){}
-    }
     function typeInto(el, delayMs){
       const full = el.getAttribute("data-text") || "";
       let i = 0;
       timers.push(setTimeout(function step(){
         i++;
         el.textContent = full.slice(0, i);
-        if (full[i-1] && full[i-1] !== " ") chirp();
         if (i < full.length) timers.push(setTimeout(step, 45));
       }, delayMs));
     }
@@ -1020,7 +1006,7 @@
     setInterval(walk, 3 * 60 * 1000);
   })();
 
-  // pas na dole: rotacja scen (saperzy -> Polonez -> TIR) po pelnym cyklu
+  // pas na dole: saperzy <-> Polonez na zmiane, TIR tylko raz na TIR_EVERY (po pelnym cyklu sceny)
   (function(){
     const S = {
       det: { el:document.querySelector(".scene-det"),     drv:".det-driver", anim:"detCycle" },
@@ -1029,17 +1015,23 @@
     };
     const order = ["det","pol","tir"];
     if (order.some(k => !S[k].el)) return;
-    let idx = 0;
+    const TIR_EVERY = 15 * 60 * 1000;
+    let cur = "det", lastTir = Date.now(), lastBase = "det";
     function show(name){
       for (const k of order) S[k].el.style.display = (k===name) ? "" : "none";
       if (name === "tir") window._tirStart(); else window._tirStop();
     }
-    show(order[0]);
+    function next(){
+      if (cur !== "tir" && Date.now() - lastTir >= TIR_EVERY){ lastTir = Date.now(); return "tir"; }
+      lastBase = (lastBase === "det") ? "pol" : "det";
+      return lastBase;
+    }
+    show(cur);
     for (const k of order){
       S[k].el.querySelector(S[k].drv).addEventListener("animationiteration", (e)=>{
-        if (e.animationName !== S[k].anim || order[idx] !== k) return;
-        idx = (idx + 1) % order.length;
-        show(order[idx]);
+        if (e.animationName !== S[k].anim || cur !== k) return;
+        cur = next();
+        show(cur);
       });
     }
   })();
