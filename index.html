@@ -304,6 +304,33 @@
     .pol-car{ animation:none; transform:translateX(114px);} .wheel,.pol-leg,.pol-impact{ animation:none; } .pol-man{ animation:none; opacity:1; }
   }
 
+  /* Scena TIR - SKUP BYKOW */
+  .tir-svg { width:100%; height:100%; display:block; }
+  .tir-truck { will-change:transform; animation:tirDrive 15s linear infinite; }
+  @keyframes tirDrive {
+    0%   { transform:translateX(340px) translateY(0) rotate(0); }
+    20%  { transform:translateX(100px) translateY(0) rotate(0); }
+    64%  { transform:translateX(100px) translateY(0) rotate(0); }
+    67%  { transform:translateX(104px) translateY(3px) rotate(0); }
+    71%  { transform:translateX(122px) translateY(-16px) rotate(-8deg); }
+    100% { transform:translateX(320px) translateY(-220px) rotate(-38deg); }
+  }
+  .tir-wheel { transform-box:fill-box; transform-origin:center; will-change:transform; animation:tirWheel 15s linear infinite; }
+  @keyframes tirWheel { 0%{transform:rotate(0);} 20%{transform:rotate(-720deg);} 67%{transform:rotate(-720deg);} 100%{transform:rotate(-1800deg);} }
+  .tir-man { animation:tirMan 15s linear infinite; }
+  @keyframes tirMan { 0%{opacity:0;} 6%{opacity:1;} 96%{opacity:1;} 100%{opacity:0;} }
+  .tir-leg { transform-box:fill-box; transform-origin:8% 2%; animation:tirStomp 15s linear infinite; }
+  @keyframes tirStomp { 0%,62%{ transform:rotate(0);} 65.5%{ transform:rotate(-52deg);} 68%{ transform:rotate(12deg);} 71%,100%{ transform:rotate(0);} }
+  .tir-impact { transform-box:fill-box; transform-origin:center; opacity:0; animation:tirImpact 15s linear infinite; }
+  @keyframes tirImpact { 0%,65%{ opacity:0; transform:scale(.2);} 68%{ opacity:1; transform:scale(1);} 74%{ opacity:0; transform:scale(1.6);} 100%{ opacity:0; } }
+  .tir-bubbleA { opacity:0; animation:tirBubA 15s linear infinite; }
+  @keyframes tirBubA { 0%,23%{opacity:0;} 26%{opacity:1;} 44%{opacity:1;} 47%,100%{opacity:0;} }
+  .tir-bubbleB { opacity:0; animation:tirBubB 15s linear infinite; }
+  @keyframes tirBubB { 0%,46%{opacity:0;} 49%{opacity:1;} 63%{opacity:1;} 65%,100%{opacity:0;} }
+  @media (prefers-reduced-motion:reduce){
+    .tir-truck{ animation:none; transform:translateX(100px);} .tir-wheel,.tir-leg,.tir-impact,.tir-bubbleA,.tir-bubbleB{ animation:none; } .tir-man{ animation:none; opacity:1; }
+  }
+
   /* scena wiadomosci w pasie */
   .scene-news { display:flex; align-items:center; gap:clamp(12px,1.6vw,26px); padding:0 clamp(14px,2vw,30px); }
   .news-label { flex:0 0 auto; font-family:var(--mono); text-transform:uppercase; letter-spacing:.16em;
@@ -566,6 +593,74 @@
               <line x1="5" y1="-5" x2="2.5" y2="-2.5" stroke="#ffd54a" stroke-width="1.5"/>
             </g>
           </g>
+        </g>
+      </svg>
+    </div>
+    <div class="scene scene-tir" style="display:none">
+      <svg class="tir-svg" viewBox="0 0 320 60" preserveAspectRatio="xMidYMid meet">
+        <line x1="0" y1="52" x2="320" y2="52" stroke="#26324a" stroke-width="1.5"/>
+
+        <!-- TIR: SKUP BYKOW -->
+        <g class="tir-truck">
+          <ellipse cx="52" cy="52" rx="52" ry="3" fill="#000" opacity="0.3"/>
+          <rect x="24" y="44" width="70" height="3.5" fill="#2a2f3a"/>
+          <rect x="28" y="20" width="66" height="26" rx="1.5" fill="#ece9e0" stroke="#b7b09a" stroke-width="1.2"/>
+          <text x="61" y="35.5" text-anchor="middle" font-family="Sora, sans-serif" font-weight="700" font-size="8.5" fill="#c0392b" letter-spacing="0.3">SKUP BYKÓW</text>
+          <path d="M2,46 L2,31 L9,31 L13,24 L24,24 L26,31 L26,46 Z" fill="#c0392b" stroke="#8f2a20" stroke-width="1.1" stroke-linejoin="round"/>
+          <path d="M13,30 L16,25.5 L23,25.5 L23,30 Z" fill="#a7cbe6"/>
+          <circle cx="18.5" cy="28" r="2.4" fill="#e6b389"/>
+          <rect x="1.5" y="40" width="3" height="4" rx="1" fill="#ffd54a"/>
+          <g transform="translate(12,48)"><g class="tir-wheel">
+            <circle r="7" fill="#181c24" stroke="#3b4658" stroke-width="1.4"/><circle r="2.6" fill="#9aa3b4"/>
+            <line x1="-6" y1="0" x2="6" y2="0" stroke="#5b6579" stroke-width="1.1"/><line x1="0" y1="-6" x2="0" y2="6" stroke="#5b6579" stroke-width="1.1"/>
+          </g></g>
+          <g transform="translate(66,48)"><g class="tir-wheel">
+            <circle r="7" fill="#181c24" stroke="#3b4658" stroke-width="1.4"/><circle r="2.6" fill="#9aa3b4"/>
+            <line x1="-6" y1="0" x2="6" y2="0" stroke="#5b6579" stroke-width="1.1"/><line x1="0" y1="-6" x2="0" y2="6" stroke="#5b6579" stroke-width="1.1"/>
+          </g></g>
+          <g transform="translate(82,48)"><g class="tir-wheel">
+            <circle r="7" fill="#181c24" stroke="#3b4658" stroke-width="1.4"/><circle r="2.6" fill="#9aa3b4"/>
+            <line x1="-6" y1="0" x2="6" y2="0" stroke="#5b6579" stroke-width="1.1"/><line x1="0" y1="-6" x2="0" y2="6" stroke="#5b6579" stroke-width="1.1"/>
+          </g></g>
+        </g>
+
+        <!-- robotnik (tupiacy) -->
+        <g class="tir-man" transform="translate(14,0)"><g class="pol-grow">
+          <line x1="9" y1="35" x2="6" y2="49" stroke="#2b3a55" stroke-width="3.4" stroke-linecap="round"/>
+          <rect x="3.4" y="48" width="5.4" height="2.8" rx="1" fill="#161d2b"/>
+          <g class="tir-leg">
+            <line x1="11" y1="35" x2="15" y2="49" stroke="#2b3a55" stroke-width="3.4" stroke-linecap="round"/>
+            <rect x="12.4" y="48" width="5.6" height="2.8" rx="1" fill="#161d2b"/>
+          </g>
+          <path d="M5.6 22 Q5.2 33 7 35 L13 35 Q14.8 33 14.4 22 Z" fill="#ff8a3d" stroke="#d97a2f" stroke-width="0.7"/>
+          <rect x="6.3" y="27" width="7.4" height="1.5" fill="#eaf3ff" opacity="0.85"/>
+          <line x1="7" y1="24" x2="3" y2="30" stroke="#d97a2f" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="13" y1="24" x2="17.6" y2="28" stroke="#d97a2f" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="3" cy="30.4" r="1.5" fill="#e6b389"/>
+          <circle cx="17.9" cy="28.2" r="1.5" fill="#e6b389"/>
+          <circle cx="10" cy="15" r="4" fill="#e6b389"/>
+          <path d="M5.7 13 A4.3 4.3 0 0 1 14.3 13 Z" fill="#f2c400" stroke="#c9a200" stroke-width="0.6"/>
+          <rect x="5" y="12.4" width="10" height="1.7" rx="0.8" fill="#f2c400" stroke="#c9a200" stroke-width="0.4"/>
+          <g class="tir-impact" transform="translate(15,50)">
+            <line x1="-7" y1="0" x2="-3" y2="0" stroke="#ffd54a" stroke-width="1.5"/>
+            <line x1="7" y1="0" x2="3" y2="0" stroke="#ffd54a" stroke-width="1.5"/>
+            <line x1="0" y1="-7" x2="0" y2="-3" stroke="#ffd54a" stroke-width="1.5"/>
+            <line x1="-5" y1="-5" x2="-2.5" y2="-2.5" stroke="#ffd54a" stroke-width="1.5"/>
+            <line x1="5" y1="-5" x2="2.5" y2="-2.5" stroke="#ffd54a" stroke-width="1.5"/>
+          </g>
+        </g></g>
+
+        <!-- dymek robotnika -->
+        <g class="tir-bubbleA">
+          <rect x="4" y="1.5" width="96" height="13" rx="4" fill="#fff" stroke="#111" stroke-width="0.8"/>
+          <path d="M30,14 l4,5 l4,-5 Z" fill="#fff" stroke="#111" stroke-width="0.8"/>
+          <text x="52" y="10.4" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="6" fill="#111">Panie, dasz mi dobrą cenę?</text>
+        </g>
+        <!-- dymek kierowcy TIRa -->
+        <g class="tir-bubbleB">
+          <rect x="118" y="1.5" width="198" height="13" rx="4" fill="#fff" stroke="#111" stroke-width="0.8"/>
+          <path d="M138,14 l4,5 l4,-5 Z" fill="#fff" stroke="#111" stroke-width="0.8"/>
+          <text x="217" y="10.4" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="6" fill="#111">Dam ci dobrą cenę, ale jebnę Cię na kilogramach.</text>
         </g>
       </svg>
     </div>
@@ -855,20 +950,25 @@
     try { ov.focus(); } catch(e){}
   })();
 
-  // pas na dole: zmiana wykrywacz <-> polonez po pelnym cyklu
+  // pas na dole: rotacja scen (saperzy -> Polonez -> TIR) po pelnym cyklu
   (function(){
-    const det = document.querySelector(".scene-det");
-    const pol = document.querySelector(".scene-polonez");
-    if(!det || !pol) return;
-    const detDrv = det.querySelector(".det-driver");
-    const polDrv = pol.querySelector(".pol-car");
-    function show(name){
-      det.style.display = name==="det" ? "" : "none";
-      pol.style.display = name==="pol" ? "" : "none";
+    const S = {
+      det: { el:document.querySelector(".scene-det"),     drv:".det-driver", anim:"detCycle" },
+      pol: { el:document.querySelector(".scene-polonez"), drv:".pol-car",    anim:"polDrive" },
+      tir: { el:document.querySelector(".scene-tir"),     drv:".tir-truck",  anim:"tirDrive" }
+    };
+    const order = ["det","pol","tir"];
+    if (order.some(k => !S[k].el)) return;
+    let idx = 0;
+    function show(name){ for (const k of order) S[k].el.style.display = (k===name) ? "" : "none"; }
+    show(order[0]);
+    for (const k of order){
+      S[k].el.querySelector(S[k].drv).addEventListener("animationiteration", (e)=>{
+        if (e.animationName !== S[k].anim || order[idx] !== k) return;
+        idx = (idx + 1) % order.length;
+        show(order[idx]);
+      });
     }
-    show("det");
-    detDrv.addEventListener("animationiteration", ()=>{ if(det.style.display!=="none") show("pol"); });
-    polDrv.addEventListener("animationiteration", (e)=>{ if(e.animationName==="polDrive" && pol.style.display!=="none") show("det"); });
   })();
 </script>
 </body>
