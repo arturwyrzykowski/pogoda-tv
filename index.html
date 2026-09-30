@@ -76,6 +76,16 @@
     position:relative; overflow:hidden;
   }
   .hero::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--acc); opacity:.85; }
+  /* spacerujacy saperzy - nakladka na hero, nie zmienia ukladu */
+  .walkers { position:absolute; inset:0; z-index:5; pointer-events:none; overflow:hidden; }
+  .walk-train { position:absolute; left:0; bottom:0; width:100%; height:100%; display:none; will-change:transform; }
+  .walkers.go .walk-train { display:block; animation:walkAcross 22s linear 1 forwards; }
+  .walk-group { position:absolute; right:100%; bottom:0; height:92%; display:flex; align-items:flex-end; gap:6%; }
+  .walk-group img { height:100%; width:auto; display:block; }
+  .walkers.go .walk-group img { animation:walkBob .55s ease-in-out infinite alternate; }
+  .walkers.go .walk-group img + img { animation-delay:-.27s; }
+  @keyframes walkAcross { from{ transform:translateX(0); } to{ transform:translateX(135%); } }
+  @keyframes walkBob { from{ transform:translateY(0) rotate(-1.5deg); } to{ transform:translateY(-3%) rotate(1.5deg); } }
   .hero-current { display:flex; flex-direction:column; gap:.1em; min-width:0; }
   .temp {
     font-family:var(--num); font-weight:700; font-variant-numeric:tabular-nums;
@@ -481,6 +491,9 @@
       <div class="st"><span class="k">Opady</span><span class="v"><span id="prec">0</span><small>mm</small></span></div>
       <div class="st"><span class="k">Min / Max</span><span class="v"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
       <div class="st"><span class="k">Wschód / Zachód</span><span class="v"><span id="sunrise">—</span> / <span id="sunset">—</span></span></div>
+    </div>
+    <div class="walkers" id="walkers" aria-hidden="true">
+      <div class="walk-train"><div class="walk-group"><img src="saper1.png" alt=""><img src="saper2.png" alt=""></div></div>
     </div>
   </div>
 
@@ -994,6 +1007,17 @@
       typeInto($("tirTextA"), 5200);   // 26% z 20 s
       typeInto($("tirTextB"), 9400);   // 47% z 20 s
     };
+  })();
+
+  // saperzy spaceruja po hero co jakis czas (animacja tylko w trakcie przejscia - oszczedza TV)
+  (function(){
+    const w = document.getElementById("walkers");
+    if (!w) return;
+    const train = w.querySelector(".walk-train");
+    train.addEventListener("animationend", (e)=>{ if (e.animationName === "walkAcross") w.classList.remove("go"); });
+    function walk(){ if (!w.classList.contains("go")) w.classList.add("go"); }
+    setTimeout(walk, 8000);
+    setInterval(walk, 3 * 60 * 1000);
   })();
 
   // pas na dole: rotacja scen (saperzy -> Polonez -> TIR) po pelnym cyklu
