@@ -280,16 +280,27 @@
 
   /* Polonez BUDOMUR - wjezdza, postoj, odjazd (transform = plynnie) */
   .pol-svg { width:100%; height:100%; display:block; }
-  .pol-car { will-change:transform; animation:polDrive 8s linear infinite; }
+  .pol-car { will-change:transform; animation:polDrive 8.5s linear infinite; }
   @keyframes polDrive {
-    0%   { transform:translateX(-120px); }
-    38%  { transform:translateX(114px); }
-    62%  { transform:translateX(114px); }
-    100% { transform:translateX(360px); }
+    0%   { transform:translateX(-120px) translateY(0) rotate(0); }
+    36%  { transform:translateX(114px) translateY(0) rotate(0); }
+    54%  { transform:translateX(114px) translateY(0) rotate(0); }
+    57%  { transform:translateX(112px) translateY(3px) rotate(0); }
+    61%  { transform:translateX(126px) translateY(-12px) rotate(-6deg); }
+    100% { transform:translateX(255px) translateY(-200px) rotate(-44deg); }
   }
-  .wheel { transform-box:fill-box; transform-origin:center; will-change:transform; animation:wheelSpin 8s linear infinite; }
-  @keyframes wheelSpin { 0%{transform:rotate(0);} 38%{transform:rotate(900deg);} 62%{transform:rotate(900deg);} 100%{transform:rotate(1800deg);} }
-  @media (prefers-reduced-motion:reduce){ .pol-car{ animation:none; transform:translateX(114px);} .wheel{ animation:none; } }
+  .wheel { transform-box:fill-box; transform-origin:center; will-change:transform; animation:wheelSpin 8.5s linear infinite; }
+  @keyframes wheelSpin { 0%{transform:rotate(0);} 36%{transform:rotate(900deg);} 57%{transform:rotate(900deg);} 100%{transform:rotate(2340deg);} }
+  /* mezczyzna tupiacy noga */
+  .pol-man { animation:polMan 8.5s linear infinite; }
+  @keyframes polMan { 0%,33%{ opacity:0; } 36%{ opacity:1; } 92%{ opacity:1; } 100%{ opacity:0; } }
+  .pol-leg { transform-box:fill-box; transform-origin:14% 4%; animation:polStomp 8.5s linear infinite; }
+  @keyframes polStomp { 0%,48%{ transform:rotate(0);} 53%{ transform:rotate(-52deg);} 57%{ transform:rotate(12deg);} 61%,100%{ transform:rotate(0);} }
+  .pol-impact { transform-box:fill-box; transform-origin:center; opacity:0; animation:polImpact 8.5s linear infinite; }
+  @keyframes polImpact { 0%,54%{ opacity:0; transform:scale(.2);} 57%{ opacity:1; transform:scale(1);} 64%{ opacity:0; transform:scale(1.6);} 100%{ opacity:0; } }
+  @media (prefers-reduced-motion:reduce){
+    .pol-car{ animation:none; transform:translateX(114px);} .wheel,.pol-leg,.pol-impact{ animation:none; } .pol-man{ animation:none; opacity:1; }
+  }
 
   /* scena wiadomosci w pasie */
   .scene-news { display:flex; align-items:center; gap:clamp(12px,1.6vw,26px); padding:0 clamp(14px,2vw,30px); }
@@ -527,6 +538,25 @@
             <line x1="-6.5" y1="0" x2="6.5" y2="0" stroke="#5b6579" stroke-width="1.2"/>
             <line x1="0" y1="-6.5" x2="0" y2="6.5" stroke="#5b6579" stroke-width="1.2"/>
           </g></g>
+        </g>
+        <g class="pol-man" transform="translate(84,0)">
+          <g class="grow">
+            <circle cx="10" cy="16" r="5" fill="none" stroke="#cdd6e4" stroke-width="2"/>
+            <line x1="10" y1="21" x2="10" y2="37" stroke="#cdd6e4" stroke-width="2"/>
+            <line x1="10" y1="26" x2="3" y2="33" stroke="#cdd6e4" stroke-width="2"/>
+            <line x1="10" y1="26" x2="17" y2="31" stroke="#cdd6e4" stroke-width="2"/>
+            <line x1="10" y1="37" x2="5" y2="50" stroke="#cdd6e4" stroke-width="2"/>
+            <g class="pol-leg">
+              <line x1="10" y1="37" x2="15" y2="50" stroke="#cdd6e4" stroke-width="2"/>
+            </g>
+            <g class="pol-impact" transform="translate(15,50)">
+              <line x1="-7" y1="0" x2="-3" y2="0" stroke="#ffd54a" stroke-width="1.5"/>
+              <line x1="7" y1="0" x2="3" y2="0" stroke="#ffd54a" stroke-width="1.5"/>
+              <line x1="0" y1="-7" x2="0" y2="-3" stroke="#ffd54a" stroke-width="1.5"/>
+              <line x1="-5" y1="-5" x2="-2.5" y2="-2.5" stroke="#ffd54a" stroke-width="1.5"/>
+              <line x1="5" y1="-5" x2="2.5" y2="-2.5" stroke="#ffd54a" stroke-width="1.5"/>
+            </g>
+          </g>
         </g>
       </svg>
     </div>
