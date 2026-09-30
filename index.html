@@ -1002,11 +1002,10 @@
     const train = w.querySelector(".walk-train");
     train.addEventListener("animationend", (e)=>{ if (e.animationName === "walkAcross") w.classList.remove("go"); });
     function walk(){ if (!w.classList.contains("go")) w.classList.add("go"); }
-    setTimeout(walk, 8000);
-    setInterval(walk, 3 * 60 * 1000);
+    setTimeout(function(){ walk(); setInterval(walk, 60 * 1000); }, 30 * 1000);  // przesuniete o pol minuty wzgledem dolnego pasa
   })();
 
-  // pas na dole: saperzy <-> Polonez na zmiane, TIR tylko raz na TIR_EVERY (po pelnym cyklu sceny)
+  // pas na dole: raz na minute jedna scena (saperzy -> Polonez -> TIR), po jednym przejsciu pas pusty
   (function(){
     const S = {
       det: { el:document.querySelector(".scene-det"),     drv:".det-driver", anim:"detCycle" },
@@ -1015,23 +1014,24 @@
     };
     const order = ["det","pol","tir"];
     if (order.some(k => !S[k].el)) return;
-    const TIR_EVERY = 15 * 60 * 1000;
-    let cur = "det", lastTir = Date.now(), lastBase = "det";
+    const EVERY = 60 * 1000;
+    let idx = 0, cur = null, startedAt = 0;
     function show(name){
+      cur = name;
       for (const k of order) S[k].el.style.display = (k===name) ? "" : "none";
       if (name === "tir") window._tirStart(); else window._tirStop();
     }
-    function next(){
-      if (cur !== "tir" && Date.now() - lastTir >= TIR_EVERY){ lastTir = Date.now(); return "tir"; }
-      lastBase = (lastBase === "det") ? "pol" : "det";
-      return lastBase;
+    function play(){
+      startedAt = Date.now();
+      show(order[idx]);
+      idx = (idx + 1) % order.length;
     }
-    show(cur);
+    play();
     for (const k of order){
       S[k].el.querySelector(S[k].drv).addEventListener("animationiteration", (e)=>{
         if (e.animationName !== S[k].anim || cur !== k) return;
-        cur = next();
-        show(cur);
+        show(null);
+        setTimeout(play, Math.max(0, EVERY - (Date.now() - startedAt)));
       });
     }
   })();
