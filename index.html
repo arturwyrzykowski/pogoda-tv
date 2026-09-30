@@ -313,13 +313,55 @@
   }
   #radioBtn:hover, #radioBtn:focus-visible { border-color:var(--acc); outline:none; }
   #radioBtn.on { color:var(--good); border-color:var(--good); }
-  #station {
-    background:transparent; color:var(--ink-dim); border:0; outline:none;
+  #wheelBtn {
+    display:inline-flex; align-items:center; gap:.4em; background:transparent;
+    color:var(--ink-dim); border:0; outline:none; cursor:pointer;
     font-family:var(--mono); font-size:clamp(.7rem,1.1vw,.9rem); letter-spacing:.08em;
-    padding:.2em .4em; cursor:pointer; max-width:42vw;
+    padding:.2em .5em; max-width:44vw;
   }
-  #station:focus-visible { color:var(--ink); }
-  #station option { background:#0a0e15; color:var(--ink); }
+  #wheelBtn:hover, #wheelBtn:focus-visible { color:var(--ink); }
+  #wheelBtn .caret { color:var(--acc); font-size:.9em; }
+
+  /* koło wyboru stacji (GTA) */
+  #wheel[hidden]{ display:none; }
+  #wheel {
+    position:fixed; inset:0; z-index:130; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.66);
+  }
+  .wheel-inner {
+    position:relative; width:min(74vmin,540px); height:min(74vmin,540px);
+    --r:min(27vmin,196px);
+    animation:wheelIn .22s ease-out;
+  }
+  @keyframes wheelIn { from{ transform:scale(.82); opacity:0; } to{ transform:scale(1); opacity:1; } }
+  .wheel-hub {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:40%; height:40%; border-radius:50%;
+    background:radial-gradient(circle at 50% 40%, #16202f, #090d14);
+    border:1px solid var(--line); box-shadow:0 0 40px rgba(0,0,0,.6) inset;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:1em;
+  }
+  .wheel-hub .lbl { font-family:var(--mono); font-size:clamp(.55rem,1vw,.72rem); letter-spacing:.24em;
+    text-transform:uppercase; color:var(--ink-faint); }
+  .wheel-hub .now { font-family:var(--num); font-weight:700; font-size:clamp(1.1rem,2.8vw,2rem);
+    color:var(--acc); margin-top:.35em; line-height:1.05; }
+  .wheel-hub .gen { font-family:var(--mono); font-size:clamp(.55rem,1vw,.72rem); color:var(--ink-dim); margin-top:.4em; letter-spacing:.1em; }
+  .wheel-item {
+    position:absolute; left:50%; top:50%; width:30%;
+    transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1 * var(--r))) rotate(calc(-1 * var(--a)));
+    background:rgba(18,25,37,.92); border:1px solid var(--line); border-radius:14px;
+    padding:.55em .35em; color:var(--ink-dim); cursor:pointer;
+    font-family:var(--num); font-weight:600; font-size:clamp(.66rem,1.4vw,.95rem); text-align:center;
+    transition:background .12s, color .12s, border-color .12s, box-shadow .12s;
+  }
+  .wheel-item.sel {
+    background:var(--acc); color:#04121f; border-color:var(--acc);
+    box-shadow:0 0 22px rgba(87,182,255,.55);
+    transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1 * var(--r) - 6px)) rotate(calc(-1 * var(--a))) scale(1.14);
+  }
+  .wheel-hint { position:fixed; bottom:6vh; left:0; right:0; text-align:center;
+    font-family:var(--mono); font-size:clamp(.6rem,1.1vw,.85rem); letter-spacing:.12em;
+    color:var(--ink-dim); text-transform:uppercase; }
 
   .head-mid { display:flex; flex-direction:column; align-items:center; gap:.55em; }
   .reminder { font-family:var(--num); font-weight:600; font-size:clamp(1rem,2.1vw,1.6rem);
@@ -338,14 +380,7 @@
     <div class="head-mid">
       <div id="radio">
         <button id="radioBtn" aria-label="Włącz radio">▶</button>
-        <select id="station" aria-label="Wybierz stację">
-          <option value="https://stream.srg-ssr.ch/m/rsp/mp3_128">♪ Swiss Pop — hity</option>
-          <option value="https://strm112.1.fm/top40_mobile_mp3">♪ 1.FM Top 40 — nowości</option>
-          <option value="https://stream.srg-ssr.ch/m/rsj/mp3_128">♪ Swiss Jazz</option>
-          <option value="https://stream.srg-ssr.ch/m/rsc_de/mp3_128">♪ Swiss Classic — klasyka</option>
-          <option value="https://strm112.1.fm/chilloutlounge_mobile_mp3">♪ 1.FM Chillout — spokojne</option>
-          <option value="https://strm112.1.fm/reggae_mobile_mp3">♪ 1.FM Reggae</option>
-        </select>
+        <button id="wheelBtn" aria-label="Wybierz stację"><span id="wheelBtnName">—</span><span class="caret">▾</span></button>
       </div>
       <div class="reminder" id="reminder"></div>
     </div>
@@ -450,6 +485,13 @@
 </button>
 
 <audio id="player" preload="none"></audio>
+
+<div id="wheel" hidden>
+  <div class="wheel-inner" id="wheelInner">
+    <div class="wheel-hub"><span class="lbl">Stacja</span><span class="now" id="wheelNow">—</span><span class="gen" id="wheelGen"></span></div>
+  </div>
+  <div class="wheel-hint">◀ ▶ wybór &nbsp;·&nbsp; OK / Enter — włącz &nbsp;·&nbsp; Wróć — zamknij</div>
+</div>
 
 <button id="startOverlay" autofocus aria-label="Uruchom pełny ekran i radio">
   <span class="ov-card">
@@ -616,21 +658,83 @@
     }
   })();
 
-  // radio internetowe
+  // radio + kolo wyboru stacji (styl GTA)
   (function(){
-    const player = $("player"), rbtn = $("radioBtn"), sel = $("station");
-    let playing = false;
-    function start(){
-      player.src = sel.value;
-      player.play().then(() => { playing = true; rbtn.textContent = "⏸"; rbtn.classList.add("on"); })
-        .catch(() => { rbtn.textContent = "▶"; });
+    const STATIONS = [
+      { name:"RMF MAXXX", gen:"hity",        url:"https://rs9-krk2-cyfronet.rmfstream.pl/RMFMAXXX48" },
+      { name:"Radio ZET", gen:"pop",         url:"https://r.dcs.redcdn.pl/sc/o2/Eurozet/live/audio.livx?audio=5" },
+      { name:"Antyradio", gen:"rock",        url:"https://n-4-2.dcs.redcdn.pl/sc/o2/Eurozet/live/antyradio.livx?audio=5" },
+      { name:"Rock Radio", gen:"rock",       url:"https://radiostream.pl/tuba8-1.mp3" },
+      { name:"Radio 357", gen:"alternatywa", url:"https://n-11-21.dcs.redcdn.pl/sc/o2/radio357/live/radio357_pr.livx?preroll=0" },
+      { name:"Nowy Świat", gen:"muzyka",     url:"https://go-audio.toya.net.pl/63214" },
+      { name:"Chilli ZET", gen:"chill",      url:"https://ch.cdn.eurozet.pl/chi-net.mp3" },
+      { name:"TOK FM", gen:"rozmowy",        url:"https://radiostream.pl/tuba10-1.mp3" }
+    ];
+    const player=$("player"), rbtn=$("radioBtn"), wheel=$("wheel"), inner=$("wheelInner");
+    let playing=false, current=0, sel=0;
+
+    let actx;
+    function blip(f){
+      try{
+        if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+        if(actx.state==="suspended") actx.resume();
+        const o=actx.createOscillator(), g=actx.createGain();
+        o.type="triangle"; o.frequency.value=f; o.connect(g); g.connect(actx.destination);
+        g.gain.setValueAtTime(0.0001, actx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.06, actx.currentTime+0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+0.12);
+        o.start(); o.stop(actx.currentTime+0.13);
+      }catch(e){}
     }
-    rbtn.addEventListener("click", () => {
-      if (!playing) start();
-      else { player.pause(); playing = false; rbtn.textContent = "▶"; rbtn.classList.remove("on"); }
+
+    const items=[];
+    STATIONS.forEach((s,i)=>{
+      const el=document.createElement("button");
+      el.className="wheel-item";
+      el.style.setProperty("--a", (360/STATIONS.length)*i + "deg");
+      el.innerHTML="<div>"+s.name+"</div>";
+      el.addEventListener("mouseenter", ()=> setSel(i));
+      el.addEventListener("click", ()=>{ setSel(i); choose(); });
+      inner.appendChild(el); items.push(el);
     });
-    sel.addEventListener("change", () => { if (playing) start(); });
-    window._radioStart = () => { if(!playing) start(); };
+
+    function renderSel(){
+      items.forEach((el,i)=> el.classList.toggle("sel", i===sel));
+      $("wheelNow").textContent = STATIONS[sel].name;
+      $("wheelGen").textContent = STATIONS[sel].gen;
+    }
+    function setSel(i){
+      i=(i+STATIONS.length)%STATIONS.length;
+      if(i===sel) return;
+      sel=i; blip(520 + sel*26); renderSel();
+    }
+    function label(){ $("wheelBtnName").textContent = STATIONS[current].name; }
+    function play(i){
+      current=i; player.src=STATIONS[i].url;
+      player.play().then(()=>{ playing=true; rbtn.textContent="⏸"; rbtn.classList.add("on"); })
+        .catch(()=>{ rbtn.textContent="▶"; });
+      label();
+    }
+    function choose(){ blip(880); play(sel); closeWheel(); }
+    function openWheel(){ sel=current; renderSel(); wheel.hidden=false; blip(680); }
+    function closeWheel(){ wheel.hidden=true; }
+
+    rbtn.addEventListener("click", ()=>{
+      if(!playing) play(current);
+      else { player.pause(); playing=false; rbtn.textContent="▶"; rbtn.classList.remove("on"); }
+    });
+    $("wheelBtn").addEventListener("click", openWheel);
+    wheel.addEventListener("click", (e)=>{ if(e.target===wheel) closeWheel(); });
+    document.addEventListener("keydown", (e)=>{
+      if(wheel.hidden) return;
+      if(e.key==="ArrowRight"||e.key==="ArrowDown"){ setSel(sel+1); e.preventDefault(); }
+      else if(e.key==="ArrowLeft"||e.key==="ArrowUp"){ setSel(sel-1); e.preventDefault(); }
+      else if(e.key==="Enter"||e.key===" "){ choose(); e.preventDefault(); }
+      else if(e.key==="Escape"||e.key==="Backspace"){ closeWheel(); e.preventDefault(); }
+    }, true);
+
+    label();
+    window._radioStart = ()=>{ if(!playing) play(current); };
   })();
 
   // nakladka startowa: jedno OK -> pelny ekran + radio
