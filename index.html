@@ -170,7 +170,7 @@
   }
   /* Pac-Man - pasek animacji na dole (Pac-Man = punkt odniesienia, duszki za nim) */
   .pac-lane { position:fixed; left:0; right:0; bottom:0; z-index:60; pointer-events:none;
-    height:clamp(88px,10vh,144px); overflow:hidden; --gsz:clamp(40px,4.6vw,64px); }
+    height:clamp(106px,12vh,173px); overflow:hidden; --gsz:clamp(40px,4.6vw,64px); }
   .dots {
     position:absolute; inset:0;
     background:radial-gradient(circle, var(--ink-faint) 2.4px, transparent 3px);
@@ -492,7 +492,7 @@
 
   <div class="pac-lane" aria-hidden="true">
     <div class="scene scene-det">
-      <svg class="det-svg" viewBox="0 0 320 60" preserveAspectRatio="xMidYMid meet">
+      <svg class="det-svg" viewBox="0 -12 320 72" preserveAspectRatio="xMidYMid meet">
         <line x1="0" y1="52" x2="320" y2="52" stroke="#26324a" stroke-width="1.5"/>
         <g class="det-bomb">
           <path d="M142 52 q18 -8 36 0 Z" fill="#171f2e"/>
@@ -542,7 +542,7 @@
       <span class="det-driver"></span>
     </div>
     <div class="scene scene-polonez" style="display:none">
-      <svg class="pol-svg" viewBox="0 0 320 60" preserveAspectRatio="xMidYMid meet">
+      <svg class="pol-svg" viewBox="0 -12 320 72" preserveAspectRatio="xMidYMid meet">
         <line x1="0" y1="52" x2="320" y2="52" stroke="#26324a" stroke-width="1.5"/>
         <g class="pol-car">
           <ellipse cx="47" cy="52" rx="47" ry="3" fill="#000" opacity="0.32"/>
@@ -598,7 +598,7 @@
       </svg>
     </div>
     <div class="scene scene-tir" style="display:none">
-      <svg class="tir-svg" viewBox="0 0 320 60" preserveAspectRatio="xMidYMid meet">
+      <svg class="tir-svg" viewBox="0 -12 320 72" preserveAspectRatio="xMidYMid meet">
         <line x1="0" y1="52" x2="320" y2="52" stroke="#26324a" stroke-width="1.5"/>
 
         <!-- TIR: SKUP BYKOW -->
