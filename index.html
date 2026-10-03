@@ -182,8 +182,8 @@
   .peek { position:fixed; z-index:90; pointer-events:none; height:46vh; display:none; will-change:transform; }
   .peek .pk-in { position:relative; height:100%; }
   .peek .pk-dance { position:relative; height:100%; transform-origin:85% 100%; will-change:transform; }
-  .peek img { position:relative; height:100%; width:auto; display:block; }
-  .peek .pk-glow { position:absolute; left:50%; top:45%; width:120%; aspect-ratio:1; border-radius:50%;
+  .peek img { position:relative; height:46vh; width:auto; display:block; }
+  .peek .pk-glow { position:absolute; left:50%; top:45%; width:50vh; height:50vh; border-radius:50%;
     background:radial-gradient(circle, rgba(255,214,90,.55) 0%, rgba(255,214,90,.18) 38%, transparent 68%);
     transform:translate(-50%,-50%) scale(.2); opacity:0; }
   .peek .pk-notes { position:absolute; width:30%; height:60%; }
@@ -703,7 +703,9 @@
       corner = corner === "br" ? "tl" : "br";
     }
     function loop(){ pop(); setTimeout(loop, (3 + Math.random() * 4) * 60 * 1000); }
-    setTimeout(loop, (1.5 + Math.random() * 1.5) * 60 * 1000);
+    // test na TV: adres z #test -> pierwszy wyskok po 5 s
+    var first = (location.hash === "#test") ? 5000 : (1.5 + Math.random() * 1.5) * 60 * 1000;
+    setTimeout(loop, first);
     window._peek = pop;
   })();
 </script>
