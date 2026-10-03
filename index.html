@@ -178,6 +178,61 @@
     .forecast{ grid-template-columns:1fr 1fr 1fr; }
     .day:nth-child(4),.day:nth-child(5){ display:none; }
   }
+  /* ziomek wyglada zza rogu i tanczy: na zmiane prawy dolny / lewy gorny (tylko transform+opacity - lekkie dla TV) */
+  .peek { position:fixed; z-index:90; pointer-events:none; height:46vh; display:none; will-change:transform; }
+  .peek .pk-in { position:relative; height:100%; }
+  .peek .pk-dance { position:relative; height:100%; transform-origin:85% 100%; will-change:transform; }
+  .peek img { position:relative; height:100%; width:auto; display:block; }
+  .peek .pk-glow { position:absolute; left:50%; top:45%; width:120%; aspect-ratio:1; border-radius:50%;
+    background:radial-gradient(circle, rgba(255,214,90,.55) 0%, rgba(255,214,90,.18) 38%, transparent 68%);
+    transform:translate(-50%,-50%) scale(.2); opacity:0; }
+  .peek .pk-notes { position:absolute; width:30%; height:60%; }
+  .peek.br .pk-notes { left:-18%; top:0; }
+  .peek.tl .pk-notes { right:-18%; bottom:5%; }
+  .pk-notes span { position:absolute; bottom:0; font:700 clamp(28px,4.4vh,54px)/1 var(--sans,sans-serif); color:#ffd65a; opacity:0; }
+  .pk-notes span:nth-child(1){ left:10%; } .pk-notes span:nth-child(2){ left:55%; color:#7cc4ff; } .pk-notes span:nth-child(3){ left:30%; }
+  .peek.br { right:0; bottom:0; }
+  .peek.tl { left:0; top:0; }
+  .peek.tl .pk-in { transform:rotate(180deg); }
+  .peek.go { display:block; }
+  .peek.go.br { animation:peekBR 9s ease-out 1 forwards; }
+  .peek.go.tl { animation:peekTL 9s ease-out 1 forwards; }
+  .peek.go .pk-glow { animation:peekGlow 9s ease-out 1 forwards; }
+  .peek.go .pk-dance { animation:peekDance .42s ease-in-out 1.3s 15 alternate both; }
+  .peek.go .pk-notes span { animation:peekNote 1.6s ease-out 1.4s 4; }
+  .peek.go .pk-notes span:nth-child(2){ animation-delay:1.9s; } .peek.go .pk-notes span:nth-child(3){ animation-delay:2.4s; }
+  @keyframes peekBR {
+    0%   { transform:translate(85%,85%) rotate(-28deg); }
+    7%   { transform:translate(-3%,-3%) rotate(5deg); }
+    10%  { transform:translate(1%,1%) rotate(-2deg); }
+    13%,86% { transform:translate(0,0) rotate(0); }
+    100% { transform:translate(85%,85%) rotate(-28deg); }
+  }
+  @keyframes peekTL {
+    0%   { transform:translate(-85%,-85%) rotate(-28deg); }
+    7%   { transform:translate(3%,3%) rotate(5deg); }
+    10%  { transform:translate(-1%,-1%) rotate(-2deg); }
+    13%,86% { transform:translate(0,0) rotate(0); }
+    100% { transform:translate(-85%,-85%) rotate(-28deg); }
+  }
+  @keyframes peekDance {
+    0%   { transform:scale(1.08) rotate(-6deg) translateY(0); }
+    50%  { transform:scale(1.08,1.11) rotate(0deg) translateY(-4%); }
+    100% { transform:scale(1.08,1.05) rotate(6deg) translateY(0); }
+  }
+  @keyframes peekNote {
+    0%   { opacity:0; transform:translate(0,0) rotate(-10deg) scale(.6); }
+    20%  { opacity:1; }
+    100% { opacity:0; transform:translate(25%,-220%) rotate(15deg) scale(1.1); }
+  }
+  @keyframes peekGlow {
+    0%,3% { opacity:0; transform:translate(-50%,-50%) scale(.2); }
+    8%    { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
+    18%   { opacity:.35; transform:translate(-50%,-50%) scale(.95); }
+    86%   { opacity:.25; transform:translate(-50%,-50%) scale(.95); }
+    100%  { opacity:0; transform:translate(-50%,-50%) scale(.4); }
+  }
+  @media (prefers-reduced-motion:reduce){ .peek.go.br,.peek.go.tl,.peek.go .pk-glow,.peek.go .pk-dance,.peek.go .pk-notes span{ animation-duration:.01s; } }
   #startOverlay {
     position:fixed; inset:0; z-index:100; border:0; margin:0; width:100%; height:100%;
     display:flex; align-items:center; justify-content:center; cursor:pointer;
@@ -324,6 +379,8 @@
   </div>
 
 </div>
+
+<div class="peek br" id="peek" aria-hidden="true"><div class="pk-notes"><span>♪</span><span>♫</span><span>♪</span></div><div class="pk-in"><div class="pk-glow"></div><div class="pk-dance"><img src="ziomek.png" alt=""></div></div></div>
 
 <button id="fsBtn" hidden>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
@@ -631,6 +688,24 @@
     setTimeout(function(){ walk(); setInterval(walk, 60 * 1000); }, 30 * 1000);
   })();
 
+
+  // ziomek z nienacka: losowo co 3-7 min, na zmiane prawy dolny i lewy gorny rog
+  (function(){
+    const pk = document.getElementById("peek");
+    if (!pk) return;
+    let corner = "br";
+    pk.addEventListener("animationend", (e)=>{ if (e.animationName === "peekBR" || e.animationName === "peekTL") pk.classList.remove("go"); });
+    function pop(){
+      pk.classList.remove("go", "br", "tl");
+      pk.classList.add(corner);
+      void pk.offsetWidth;
+      pk.classList.add("go");
+      corner = corner === "br" ? "tl" : "br";
+    }
+    function loop(){ pop(); setTimeout(loop, (3 + Math.random() * 4) * 60 * 1000); }
+    setTimeout(loop, (1.5 + Math.random() * 1.5) * 60 * 1000);
+    window._peek = pop;
+  })();
 </script>
 </body>
 </html>
