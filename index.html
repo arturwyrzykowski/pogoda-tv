@@ -676,6 +676,28 @@
     };
   })();
 
+  // moneta pod "Opady": rowny odstep od wartosci opadow i od dolnej krawedzi panelu
+  (function(){
+    const coin = document.querySelector(".hero .find"), hero = document.querySelector(".hero"), val = $("prec").parentNode;
+    if (!coin || !hero) return;
+    function place(){
+      const st = coin.style;
+      if (window.innerWidth <= 900){ st.left = st.top = st.right = st.bottom = st.width = ""; return; }
+      const h = hero.getBoundingClientRect(), v = val.getBoundingClientRect();
+      const free = h.bottom - v.bottom;            // miejsce miedzy "mm" a krawedzia panelu
+      const size = Math.max(40, Math.min(150, free * 0.7));
+      const gap = (free - size) / 2;
+      st.right = st.bottom = "auto";
+      st.width = size + "px";
+      st.left = (v.left - h.left) + "px";
+      st.top = (v.bottom - h.top + gap) + "px";
+    }
+    window.addEventListener("resize", place);
+    window.addEventListener("load", place);
+    setTimeout(place, 1500);
+    place();
+  })();
+
   // saperzy spaceruja po hero co jakis czas (animacja tylko w trakcie przejscia - oszczedza TV)
   (function(){
     const w = document.getElementById("walkers");
