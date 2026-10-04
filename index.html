@@ -89,10 +89,10 @@
   /* kot chodzacy po gornej krawedzi hero jak po plocie - pozycje ustawia JS */
   #fenceCat { position:fixed; z-index:6; pointer-events:none; overflow:hidden; display:none; }
   #fenceCat.go { display:block; }
-  #fenceCat svg { position:absolute; bottom:0; left:-12%; height:100%; width:auto; display:block;
+  #fenceCat svg { position:absolute; bottom:0; left:-16%; height:100%; width:auto; display:block;
     filter:drop-shadow(0 0 1.5px rgba(205,218,238,.75)); }
   #fenceCat.go svg { animation:catWalk 30s linear 1 forwards; }
-  @keyframes catWalk { from{ left:-12%; } to{ left:100%; } }
+  @keyframes catWalk { from{ left:-16%; } to{ left:100%; } }
   .hero-current { display:flex; flex-direction:column; gap:.1em; min-width:0; }
   .temp {
     font-family:var(--num); font-weight:700; font-variant-numeric:tabular-nums;
@@ -712,7 +712,7 @@
     const cat = $("fenceCat"), hero = document.querySelector(".hero");
     if (!cat || !hero) return;
     function place(){
-      const h = hero.getBoundingClientRect(), size = Math.max(34, Math.min(64, window.innerHeight * 0.055));
+      const h = hero.getBoundingClientRect(), size = Math.max(60, Math.min(130, window.innerHeight * 0.115));
       cat.style.left = h.left + "px"; cat.style.width = h.width + "px";
       cat.style.height = size + "px"; cat.style.top = (h.top - size + size * 0.04) + "px";
     }
