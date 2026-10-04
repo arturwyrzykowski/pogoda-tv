@@ -86,6 +86,13 @@
   .walkers.go .walk-group img + img { animation-delay:-.27s; }
   @keyframes walkAcross { from{ transform:translateX(0); } to{ transform:translateX(135%); } }
   @keyframes walkBob { from{ transform:translateY(0) rotate(-1.5deg); } to{ transform:translateY(-3%) rotate(1.5deg); } }
+  /* kot chodzacy po gornej krawedzi hero jak po plocie - pozycje ustawia JS */
+  #fenceCat { position:fixed; z-index:6; pointer-events:none; overflow:hidden; display:none; }
+  #fenceCat.go { display:block; }
+  #fenceCat svg { position:absolute; bottom:0; left:-12%; height:100%; width:auto; display:block;
+    filter:drop-shadow(0 0 1.5px rgba(205,218,238,.75)); }
+  #fenceCat.go svg { animation:catWalk 30s linear 1 forwards; }
+  @keyframes catWalk { from{ left:-12%; } to{ left:100%; } }
   .hero-current { display:flex; flex-direction:column; gap:.1em; min-width:0; }
   .temp {
     font-family:var(--num); font-weight:700; font-variant-numeric:tabular-nums;
@@ -382,6 +389,8 @@
   </div>
 
 </div>
+
+<div id="fenceCat" aria-hidden="true"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><g><animateTransform attributeName="transform" type="rotate" values="-8 21 31;10 21 31;-8 21 31" dur="2.4s" repeatCount="indefinite"/><path d="M22 31 C9 29 5 19 9 7" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/><circle cx="9" cy="7" r="2.6" fill="#f4f4f4"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 30 37;24 30 37;-24 30 37" dur=".9s" begin="-.45s" repeatCount="indefinite"/><rect x="27" y="35" width="6" height="21" rx="3" fill="#0b0b0b"/><ellipse cx="31" cy="56" rx="4.2" ry="2.6" fill="#cfcfcf"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 66 37;24 66 37;-24 66 37" dur=".9s" begin="0s" repeatCount="indefinite"/><rect x="63" y="35" width="6" height="21" rx="3" fill="#0b0b0b"/><ellipse cx="67" cy="56" rx="4.2" ry="2.6" fill="#cfcfcf"/></g><ellipse cx="47" cy="32" rx="26" ry="11.5" fill="#111"/><ellipse cx="55" cy="40" rx="13" ry="3.6" fill="#f4f4f4"/><ellipse cx="68" cy="34" rx="6.5" ry="8" fill="#f4f4f4"/><g><animateTransform attributeName="transform" type="rotate" values="-24 28 37;24 28 37;-24 28 37" dur=".9s" begin="0s" repeatCount="indefinite"/><rect x="25" y="35" width="6" height="21" rx="3" fill="#111"/><ellipse cx="29" cy="56" rx="4.2" ry="2.6" fill="#f4f4f4"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 64 37;24 64 37;-24 64 37" dur=".9s" begin="-.45s" repeatCount="indefinite"/><rect x="61" y="35" width="6" height="21" rx="3" fill="#111"/><ellipse cx="65" cy="56" rx="4.2" ry="2.6" fill="#f4f4f4"/></g><polygon points="70,16 72,3 79,12" fill="#111"/><polygon points="80,12 87,3 88,16" fill="#111"/><polygon points="72,13 73,7 77,12" fill="#d48a9a"/><polygon points="82,12 86,7 86,14" fill="#d48a9a"/><circle cx="79" cy="22" r="11" fill="#111"/><path d="M79 13 L82 13 L84 24 L76 24 Z" fill="#f4f4f4"/><ellipse cx="84" cy="27" rx="6.5" ry="5" fill="#f4f4f4"/><ellipse cx="89.5" cy="24.5" rx="1.7" ry="1.2" fill="#d48a9a"/><ellipse cx="85" cy="19.5" rx="2.1" ry="2.4" fill="#d9e65a"/><ellipse cx="85.5" cy="19.5" rx=".8" ry="2" fill="#000"/><path d="M90 27 L98 25.5 M90 28.5 L98 29.5" stroke="#cfcfcf" stroke-width=".5"/></svg></div>
 
 <div class="peek br" id="peek" aria-hidden="true"><div class="pk-notes"><span>♪</span><span>♫</span><span>♪</span></div><div class="pk-in"><div class="pk-glow"></div><div class="pk-dance"><img src="ziomek.png" alt=""></div></div></div>
 
@@ -696,6 +705,22 @@
     window.addEventListener("load", place);
     setTimeout(place, 1500);
     place();
+  })();
+
+  // kot po plocie: co 4-9 min przechodzi po gornej krawedzi hero (#test -> pierwszy po 5 s)
+  (function(){
+    const cat = $("fenceCat"), hero = document.querySelector(".hero");
+    if (!cat || !hero) return;
+    function place(){
+      const h = hero.getBoundingClientRect(), size = Math.max(34, Math.min(64, window.innerHeight * 0.055));
+      cat.style.left = h.left + "px"; cat.style.width = h.width + "px";
+      cat.style.height = size + "px"; cat.style.top = (h.top - size + size * 0.04) + "px";
+    }
+    cat.querySelector("svg").addEventListener("animationend", function(){ cat.classList.remove("go"); });
+    function walk(){ if (cat.classList.contains("go")) return; place(); cat.classList.add("go"); }
+    function loop(){ walk(); setTimeout(loop, (4 + Math.random() * 5) * 60 * 1000); }
+    window.addEventListener("resize", function(){ if (cat.classList.contains("go")) place(); });
+    setTimeout(loop, location.hash === "#test" ? 5000 : 60 * 1000);
   })();
 
   // saperzy spaceruja po hero co jakis czas (animacja tylko w trakcie przejscia - oszczedza TV)
