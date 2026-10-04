@@ -112,6 +112,9 @@
   .hero-stats .v { font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
     font-size:clamp(1.15rem,2.1vw,1.85rem); color:var(--ink); display:flex; align-items:baseline; gap:.28em; }
   .hero-stats .v small { font-size:.5em; color:var(--ink-dim); font-weight:500; }
+  .hero-stats .find { align-items:flex-start; }
+  .hero-stats .find img { width:clamp(70px,6.5vw,128px); height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,.6)); }
+  .hero-stats .find-date { font-family:var(--mono); font-size:clamp(.8rem,1vw,1.05rem); color:var(--ink-dim); letter-spacing:.08em; }
 
   /* karta prognozy: godzinowa + dni */
   .fc {
@@ -366,6 +369,7 @@
       <div class="st"><span class="k">Opady</span><span class="v"><span id="prec">0</span><small>mm</small></span></div>
       <div class="st"><span class="k">Min / Max</span><span class="v"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
       <div class="st"><span class="k">Wschód / Zachód</span><span class="v"><span id="sunrise">—</span> / <span id="sunset">—</span></span></div>
+      <div class="st find"><span class="k">Zdobycz z wykrywacza</span><img src="moneta.png" alt="Moneta z wykrywacza"><span class="find-date">4.10.2026</span></div>
     </div>
     <div class="walkers" id="walkers" aria-hidden="true">
       <div class="walk-train"><div class="walk-group"><img src="saper1.png" alt=""><img src="saper2.png" alt=""></div></div>
