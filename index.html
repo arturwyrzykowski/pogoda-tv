@@ -311,69 +311,6 @@
   #fsBtn svg { width:1.15em; height:1.15em; }
 
 
-  #radio {
-    display:flex; align-items:center; gap:.5em; align-self:center;
-    background:rgba(10,14,21,.9); border:1px solid var(--line); border-radius:999px;
-    padding:.35em .5em .35em .35em; font-family:var(--mono);
-  }
-  #radioBtn {
-    width:2.2em; height:2.2em; flex:0 0 auto; border-radius:50%;
-    border:1px solid var(--line); background:var(--panel); color:var(--acc);
-    font-size:clamp(.85rem,1.3vw,1rem); cursor:pointer; line-height:1;
-    display:inline-flex; align-items:center; justify-content:center;
-  }
-  #radioBtn:hover, #radioBtn:focus-visible { border-color:var(--acc); outline:none; }
-  #radioBtn.on { color:var(--good); border-color:var(--good); }
-  #wheelBtn {
-    display:inline-flex; align-items:center; gap:.4em; background:transparent;
-    color:var(--ink-dim); border:0; outline:none; cursor:pointer;
-    font-family:var(--mono); font-size:clamp(.7rem,1.1vw,.9rem); letter-spacing:.08em;
-    padding:.2em .5em; max-width:44vw;
-  }
-  #wheelBtn:hover, #wheelBtn:focus-visible { color:var(--ink); }
-  #wheelBtn .caret { color:var(--acc); font-size:.9em; }
-
-  /* koło wyboru stacji (GTA) */
-  #wheel[hidden]{ display:none; }
-  #wheel {
-    position:fixed; inset:0; z-index:130; display:flex; align-items:center; justify-content:center;
-    background:rgba(0,0,0,.66);
-  }
-  .wheel-inner {
-    position:relative; width:min(74vmin,540px); height:min(74vmin,540px);
-    --r:min(27vmin,196px);
-    animation:wheelIn .22s ease-out;
-  }
-  @keyframes wheelIn { from{ transform:scale(.82); opacity:0; } to{ transform:scale(1); opacity:1; } }
-  .wheel-hub {
-    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-    width:40%; height:40%; border-radius:50%;
-    background:radial-gradient(circle at 50% 40%, #16202f, #090d14);
-    border:1px solid var(--line); box-shadow:0 0 40px rgba(0,0,0,.6) inset;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:1em;
-  }
-  .wheel-hub .lbl { font-family:var(--mono); font-size:clamp(.55rem,1vw,.72rem); letter-spacing:.24em;
-    text-transform:uppercase; color:var(--ink-faint); }
-  .wheel-hub .now { font-family:var(--num); font-weight:700; font-size:clamp(1.1rem,2.8vw,2rem);
-    color:var(--acc); margin-top:.35em; line-height:1.05; }
-  .wheel-hub .gen { font-family:var(--mono); font-size:clamp(.55rem,1vw,.72rem); color:var(--ink-dim); margin-top:.4em; letter-spacing:.1em; }
-  .wheel-item {
-    position:absolute; left:50%; top:50%; width:30%;
-    transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1 * var(--r))) rotate(calc(-1 * var(--a)));
-    background:rgba(18,25,37,.92); border:1px solid var(--line); border-radius:14px;
-    padding:.55em .35em; color:var(--ink-dim); cursor:pointer;
-    font-family:var(--num); font-weight:600; font-size:clamp(.66rem,1.4vw,.95rem); text-align:center;
-    transition:background .12s, color .12s, border-color .12s, box-shadow .12s;
-  }
-  .wheel-item.sel {
-    background:var(--acc); color:#04121f; border-color:var(--acc);
-    box-shadow:0 0 22px rgba(87,182,255,.55);
-    transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1 * var(--r) - 6px)) rotate(calc(-1 * var(--a))) scale(1.14);
-  }
-  .wheel-hint { position:fixed; bottom:6vh; left:0; right:0; text-align:center;
-    font-family:var(--mono); font-size:clamp(.6rem,1.1vw,.85rem); letter-spacing:.12em;
-    color:var(--ink-dim); text-transform:uppercase; }
-
   .head-mid { display:flex; flex-direction:column; align-items:center; gap:.55em; }
   .reminder { font-family:var(--num); font-weight:600; font-size:clamp(1rem,2.1vw,1.6rem);
     color:var(--sun); text-align:center; animation:blink 1.3s ease-in-out infinite; }
@@ -389,12 +326,8 @@
   <header>
     <div class="clock" id="clock">--:--<span class="sec" id="sec">:--</span></div>
     <div class="head-mid">
-      <div id="radio">
-        <button id="radioBtn" aria-label="Włącz radio">▶</button>
-        <button id="wheelBtn" aria-label="Wybierz stację"><span id="wheelBtnName">—</span><span class="caret">▾</span></button>
-      </div>
       <div class="reminder" id="reminder"></div>
-      <div class="bd-banner bd-only">🎂 <b>STO LAT!</b> Wszystkiego najlepszego <i>🎉</i></div>
+      <div class="bd-banner bd-only">🎂 <b>STO LAT!</b> Wszystkiego najlepszego, chuju piękny! <i>🎉</i></div>
     </div>
     <div class="head-right">
       <div class="place">Zambski Kościelne</div>
@@ -470,19 +403,10 @@
   Pełny ekran
 </button>
 
-<audio id="player" preload="none"></audio>
-
-<div id="wheel" hidden>
-  <div class="wheel-inner" id="wheelInner">
-    <div class="wheel-hub"><span class="lbl">Stacja</span><span class="now" id="wheelNow">—</span><span class="gen" id="wheelGen"></span></div>
-  </div>
-  <div class="wheel-hint">◀ ▶ wybór &nbsp;·&nbsp; OK / Enter — włącz &nbsp;·&nbsp; Wróć — zamknij</div>
-</div>
-
-<button id="startOverlay" autofocus aria-label="Uruchom pełny ekran i radio">
+<button id="startOverlay" autofocus aria-label="Uruchom pełny ekran">
   <span class="ov-card">
     <span class="ov-big">Pogoda · Zambski Kościelne</span>
-    <span class="ov-sub">Naciśnij <b>OK</b>, aby włączyć pełny ekran i radio</span>
+    <span class="ov-sub">Naciśnij <b>OK</b>, aby włączyć pełny ekran</span>
     <span class="ov-ok">▶ OK</span>
   </span>
 </button>
@@ -644,87 +568,7 @@
     }
   })();
 
-  // radio + kolo wyboru stacji (styl GTA)
-  (function(){
-    const STATIONS = [
-      { name:"Nightride FM", gen:"synthwave · bez reklam",  url:"https://stream.nightride.fm/nightride.mp3" },
-      { name:"Chillsynth", gen:"synthwave chill · bez reklam", url:"https://stream.nightride.fm/chillsynth.mp3" },
-      { name:"80s80s", gen:"lata 80",                          url:"https://streams.80s80s.de/web/mp3-192/streams.80s80s.de/" },
-      { name:"Radio Paradise", gen:"mix · bez reklam", url:"https://stream.radioparadise.com/aac-128" },
-      { name:"RP Mellow", gen:"spokojne · bez reklam", url:"https://stream.radioparadise.com/mellow-128" },
-      { name:"RP Rock", gen:"rock · bez reklam",       url:"https://stream.radioparadise.com/rock-128" },
-      { name:"Swiss Pop", gen:"hity · bez reklam",     url:"https://stream.srg-ssr.ch/m/rsp/mp3_128" },
-      { name:"Swiss Jazz", gen:"jazz · bez reklam",    url:"https://stream.srg-ssr.ch/m/rsj/mp3_128" },
-      { name:"Swiss Classic", gen:"klasyka · bez reklam", url:"https://stream.srg-ssr.ch/m/rsc_de/mp3_128" }
-    ];
-    const player=$("player"), rbtn=$("radioBtn"), wheel=$("wheel"), inner=$("wheelInner");
-    let playing=false, current=0, sel=0;
-
-    let actx;
-    function blip(f){
-      try{
-        if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
-        if(actx.state==="suspended") actx.resume();
-        const o=actx.createOscillator(), g=actx.createGain();
-        o.type="triangle"; o.frequency.value=f; o.connect(g); g.connect(actx.destination);
-        g.gain.setValueAtTime(0.0001, actx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.06, actx.currentTime+0.012);
-        g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+0.12);
-        o.start(); o.stop(actx.currentTime+0.13);
-      }catch(e){}
-    }
-
-    const items=[];
-    STATIONS.forEach((s,i)=>{
-      const el=document.createElement("button");
-      el.className="wheel-item";
-      el.style.setProperty("--a", (360/STATIONS.length)*i + "deg");
-      el.innerHTML="<div>"+s.name+"</div>";
-      el.addEventListener("mouseenter", ()=> setSel(i));
-      el.addEventListener("click", ()=>{ setSel(i); choose(); });
-      inner.appendChild(el); items.push(el);
-    });
-
-    function renderSel(){
-      items.forEach((el,i)=> el.classList.toggle("sel", i===sel));
-      $("wheelNow").textContent = STATIONS[sel].name;
-      $("wheelGen").textContent = STATIONS[sel].gen;
-    }
-    function setSel(i){
-      i=(i+STATIONS.length)%STATIONS.length;
-      if(i===sel) return;
-      sel=i; blip(520 + sel*26); renderSel();
-    }
-    function label(){ $("wheelBtnName").textContent = STATIONS[current].name; }
-    function play(i){
-      current=i; player.src=STATIONS[i].url;
-      player.play().then(()=>{ playing=true; rbtn.textContent="⏸"; rbtn.classList.add("on"); })
-        .catch(()=>{ rbtn.textContent="▶"; });
-      label();
-    }
-    function choose(){ blip(880); play(sel); closeWheel(); }
-    function openWheel(){ sel=current; renderSel(); wheel.hidden=false; blip(680); }
-    function closeWheel(){ wheel.hidden=true; }
-
-    rbtn.addEventListener("click", ()=>{
-      if(!playing) play(current);
-      else { player.pause(); playing=false; rbtn.textContent="▶"; rbtn.classList.remove("on"); }
-    });
-    $("wheelBtn").addEventListener("click", openWheel);
-    wheel.addEventListener("click", (e)=>{ if(e.target===wheel) closeWheel(); });
-    document.addEventListener("keydown", (e)=>{
-      if(wheel.hidden) return;
-      if(e.key==="ArrowRight"||e.key==="ArrowDown"){ setSel(sel+1); e.preventDefault(); }
-      else if(e.key==="ArrowLeft"||e.key==="ArrowUp"){ setSel(sel-1); e.preventDefault(); }
-      else if(e.key==="Enter"||e.key===" "){ choose(); e.preventDefault(); }
-      else if(e.key==="Escape"||e.key==="Backspace"){ closeWheel(); e.preventDefault(); }
-    }, true);
-
-    label();
-    window._radioStart = ()=>{ if(!playing) play(current); };
-  })();
-
-  // nakladka startowa: jedno OK -> pelny ekran + radio
+  // nakladka startowa: jedno OK -> pelny ekran (+ dzwiek)
   (function(){
     const ov = $("startOverlay");
     if (!ov) return;
@@ -733,8 +577,7 @@
         const rf = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
         if (rf) rf.call(el);
       } catch(e){}
-      try { if (window._radioStart && !document.body.classList.contains("bday")) window._radioStart(); } catch(e){}  // w urodziny bez radia - leci "Sto lat"
-      try { if (window._getActx) window._getActx(); } catch(e){}
+        try { if (window._getActx) window._getActx(); } catch(e){}
       document.removeEventListener("keydown", onKey, true);
       ov.remove();
     }
@@ -744,7 +587,7 @@
     try { ov.focus(); } catch(e){}
   })();
 
-  // kontekst audio (blip w kole radia) - tworzony po pierwszym OK
+  // kontekst audio - tworzony po pierwszym OK
   (function(){
     let actx = null;
     window._getActx = function(){
@@ -869,7 +712,7 @@
       }
     }
 
-    // "Sto lat" na WebAudio (melodia ludowa) - przyciszamy radio na czas spiewu
+    // "Sto lat" na WebAudio (melodia ludowa) - gra w kolko przez caly dzien urodzin
     const N = { C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00, A4:440.00, B4:493.88, C5:523.25, G3:196.00, C3:130.81, F3:174.61 };
     const MEL = [
       ["G4",2],["E4",1], ["G4",2],["E4",1], ["G4",1],["A4",.5],["G4",.5],["F4",.5],["E4",.5], ["F4",3],
@@ -909,9 +752,7 @@
         tone(f * 2.52, m + beat, beat * .6, "triangle", 0.16); tone(f * 3, m + beat, beat * .6, "triangle", 0.16);
         tone(f * 2.52, m + 2 * beat, beat * .6, "triangle", 0.16); tone(f * 3, m + 2 * beat, beat * .6, "triangle", 0.16);
       });
-      const pl = $("player"), vol0 = pl ? pl.volume : 1;
-      if (pl) pl.volume = Math.min(vol0, 0.25);
-      setTimeout(() => { if (pl) pl.volume = vol0; singing = false; }, (t - t0 + 0.6) * 1000);
+      setTimeout(() => { singing = false; if (on()) window._stoLat(); }, (t - t0 + 1.5) * 1000);
     }
     // po OK na nakladce startowej - od razu "Sto lat"
     const ov = $("startOverlay");
