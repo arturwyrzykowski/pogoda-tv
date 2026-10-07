@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 223 262">
+<g stroke="#141414" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+  <!-- tulow w granatowym polo -->
+  <path d="M40 160 Q60 140 112 138 Q168 140 190 160 Q204 210 206 262 H26 Q28 210 40 160 Z" fill="#1f2a44"/>
+  <path d="M90 140 L112 170 L134 140" fill="#2c3b5e"/>
+  <path d="M112 170 V205" stroke-width="3"/>
+  <circle cx="112" cy="182" r="3" fill="#d8dce6" stroke-width="1.5"/>
+  <circle cx="112" cy="196" r="3" fill="#d8dce6" stroke-width="1.5"/>
+  <!-- prawa reka (od widza) oparta przed soba -->
+  <path d="M184 158 Q206 190 202 230" fill="none" stroke-width="34"/>
+  <path d="M184 158 Q206 190 202 230" fill="none" stroke="#1f2a44" stroke-width="26"/>
+  <path d="M200 228 Q212 246 222 254" fill="none" stroke-width="24"/>
+  <path d="M200 228 Q212 246 222 254" fill="none" stroke="#e8a777" stroke-width="16"/>
+  <!-- lewa reka zgieta, dlon z telefonem przy uchu -->
+  <path d="M50 160 Q24 200 30 236" fill="none" stroke-width="34"/>
+  <path d="M50 160 Q24 200 30 236" fill="none" stroke="#1f2a44" stroke-width="26"/>
+  <!-- glowa -->
+  <g class="zHead">
+    <ellipse cx="164" cy="98" rx="12" ry="18" fill="#e8a777"/>
+    <path d="M66 70 Q66 30 114 28 Q162 30 162 74 L162 112 Q160 150 116 156 Q72 152 68 116 Z" fill="#f0b386"/>
+    <!-- zarost -->
+    <path d="M70 112 Q76 150 116 156 Q156 150 160 112 Q150 132 136 134 Q116 146 96 134 Q80 130 70 112 Z" fill="#7d7468" opacity=".45" stroke="none"/>
+    <!-- czapka z daszkiem -->
+    <path d="M62 62 Q60 16 114 14 Q166 16 166 62 Z" fill="#26324d"/>
+    <path d="M150 56 Q186 50 204 62 Q186 72 150 68 Z" fill="#8f96a3"/>
+    <path d="M62 62 H166" stroke-width="5"/>
+    <circle cx="114" cy="16" r="5" fill="#26324d"/>
+    <!-- brwi krzaczaste -->
+    <path d="M84 78 Q96 70 108 78" fill="none" stroke="#4a3b2c" stroke-width="7"/>
+    <path d="M124 78 Q136 70 150 78" fill="none" stroke="#4a3b2c" stroke-width="7"/>
+    <!-- oczy zmruzone -->
+    <path d="M88 90 Q96 86 104 90" fill="none" stroke-width="4"/>
+    <path d="M128 90 Q136 86 144 90" fill="none" stroke-width="4"/>
+    <!-- nos kartofel -->
+    <path d="M110 92 Q98 116 108 122 Q118 128 128 120 Q132 108 120 92" fill="#e89a6e"/>
+    <!-- wasy -->
+    <path d="M90 130 Q104 120 116 126 Q128 120 142 130 Q130 138 116 132 Q102 138 90 130 Z" fill="#5a4a38"/>
+    <!-- usta -->
+    <path class="mC" d="M104 142 Q116 146 128 140" fill="none" stroke-width="4"/>
+    <g class="mO" style="display:none">
+      <path d="M102 138 Q116 136 130 136 Q126 154 116 154 Q104 154 102 138 Z" fill="#5a1717"/>
+      <path d="M108 148 Q116 144 124 148 Q120 153 116 153 Q110 153 108 148 Z" fill="#d9605e" stroke="none"/>
+    </g>
+    <!-- ucho lewe -->
+    <ellipse cx="66" cy="98" rx="11" ry="17" fill="#e8a777"/>
+  </g>
+  <!-- przedramie w gore, dlon z telefonem -->
+  <path d="M30 236 Q36 170 56 128" fill="none" stroke-width="24"/>
+  <path d="M30 236 Q36 170 56 128" fill="none" stroke="#e8a777" stroke-width="16"/>
+  <rect x="50" y="68" width="18" height="44" rx="5" fill="#f08a24" transform="rotate(-14 59 90)"/>
+  <rect x="54" y="74" width="10" height="16" rx="2" fill="#2a2f3a" stroke-width="2" transform="rotate(-14 59 90)"/>
+  <path d="M46 104 Q44 126 60 132 Q74 130 76 116 Q76 102 66 98 Q52 96 46 104 Z" fill="#e8a777"/>
+  <path d="M52 108 H70 M51 116 H71 M54 124 H68" stroke-width="2.5"/>
+</g>
+</svg>

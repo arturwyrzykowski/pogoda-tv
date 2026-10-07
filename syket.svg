@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 320"><g stroke="#141414" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+            
+            <ellipse cx="258" cy="200" rx="22" ry="34" fill="#f09a5e"/>
+            <path d="M262 186 Q272 200 260 216" fill="none" stroke-width="3"/>
+            
+            <path d="M40 170 Q30 40 160 22 Q270 18 270 150 Q272 240 220 284 Q170 316 110 300 Q48 276 40 170 Z" fill="#f4a466"/>
+            
+            <ellipse cx="196" cy="64" rx="34" ry="16" fill="#fbc79a" stroke="none" transform="rotate(20 196 64)"/>
+            
+            <path d="M44 150 L104 166" stroke="#6b3a1a" stroke-width="12"/>
+            <path d="M138 166 L196 148" stroke="#6b3a1a" stroke-width="12"/>
+            
+            <path d="M200 168 L250 176" stroke-width="7"/>
+            <rect x="24" y="168" width="84" height="50" rx="12" fill="#1b1b1f"/>
+            <rect x="128" y="166" width="84" height="50" rx="12" fill="#1b1b1f"/>
+            <path d="M108 188 Q118 182 128 186" fill="none" stroke-width="7"/>
+            <path d="M36 178 L58 178 M140 176 L164 176" stroke="#5d6470" stroke-width="5"/>
+            
+            <path d="M104 214 Q84 236 92 248 Q104 258 124 248" fill="#f09a5e"/>
+            
+            <path class="mC" d="M80 268 Q118 282 154 260" fill="none" stroke-width="5"/>
+            <g class="mO" style="display:none">
+              <path class="mOpen" d="M78 262 Q116 260 156 256 Q150 296 116 300 Q84 296 78 262 Z" fill="#5a1717"/>
+              <path d="M92 286 Q116 278 140 284 Q132 298 116 298 Q100 298 92 286 Z" fill="#d9605e" stroke="none"/>
+              <path d="M84 264 L150 260" stroke="#fff" stroke-width="6"/>
+            </g>
+            <path d="M156 256 Q164 262 162 270" fill="none" stroke-width="3" opacity=".6"/>
+          </g></svg>

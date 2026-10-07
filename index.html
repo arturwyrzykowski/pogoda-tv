@@ -242,6 +242,49 @@
     100%  { opacity:0; transform:translate(-50%,-50%) scale(.4); }
   }
   @media (prefers-reduced-motion:reduce){ .peek.go.br,.peek.go.tl,.peek.go .pk-glow,.peek.go .pk-dance,.peek.go .pk-notes span{ animation-duration:.01s; } }
+  /* ===== URODZINY (7 pazdziernika albo adres z #urodziny) ===== */
+  .bd-only { display:none !important; }
+  body.bday .bd-only { display:block !important; }
+  body.bday .stage { padding-top:calc(clamp(12px,2vw,34px) + 4.5vh); }
+  .peek .hat { position:absolute; width:34%; left:30%; top:-23%; transform:rotate(-12deg); overflow:visible; }
+  .bd-garland { position:fixed; left:0; right:0; top:0; height:6vh; z-index:80; pointer-events:none; }
+  .bd-garland svg { width:100%; height:100%; display:block; }
+  .bd-banner { font-family:var(--num); font-weight:700; font-size:clamp(1rem,2.3vw,1.9rem); text-align:center; white-space:nowrap;
+    color:#ffd65a; text-shadow:0 0 18px rgba(255,120,200,.55); animation:bdPulse 1.6s ease-in-out infinite; }
+  .bd-banner b { color:#ff7ad9; } .bd-banner i { font-style:normal; color:#7cc4ff; }
+  @keyframes bdPulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
+  .bd-balloons { position:fixed; inset:0; z-index:70; pointer-events:none; overflow:hidden; }
+  .bd-balloons svg { position:absolute; bottom:0; width:6vh; height:auto; transform:translateY(110vh); animation:bdRise linear infinite; will-change:transform; }
+  @keyframes bdRise { 0%{ transform:translate(0,110vh) rotate(-6deg); } 50%{ transform:translate(2vw,40vh) rotate(6deg); } 100%{ transform:translate(-1vw,-40vh) rotate(-6deg); } }
+  .bd-conf { position:fixed; inset:0; z-index:71; pointer-events:none; overflow:hidden; }
+  .bd-conf i { position:absolute; top:0; width:1vh; height:1.8vh; border-radius:2px; transform:translateY(-10vh); animation:bdFall linear infinite; will-change:transform; }
+  @keyframes bdFall { 0%{ transform:translate(0,-10vh) rotate(0); } 100%{ transform:translate(4vw,110vh) rotate(720deg); } }
+  /* postacie z bajki wyskakujace w czapkach */
+  .bd-pop { position:fixed; z-index:88; width:26vh; height:26vh; pointer-events:none; display:none; will-change:transform; }
+  .bd-pop.go { display:block; }
+  .bd-pop .bp-rot { position:absolute; inset:0; }
+  .bd-pop .bp-wig { position:absolute; inset:0; transform-origin:50% 100%; }
+  .bd-pop.go .bp-wig { animation:bpWig .5s ease-in-out .9s 9 alternate both; }
+  .bd-pop .bp-fig { position:absolute; left:50%; bottom:0; height:100%; transform:translateX(-50%); }
+  .bd-pop .bp-fig img { height:100%; width:auto; display:block; }
+  .bd-pop .hat { position:absolute; width:46%; overflow:visible; }
+  .bd-pop.b { bottom:0; } .bd-pop.l { left:0; } .bd-pop.r { right:0; }
+  .bd-pop.l .bp-rot { transform:rotate(90deg); } .bd-pop.r .bp-rot { transform:rotate(-90deg); }
+  .bd-pop.go.b { animation:bpB 6.5s ease-out 1 forwards; }
+  .bd-pop.go.l { animation:bpL 6.5s ease-out 1 forwards; }
+  .bd-pop.go.r { animation:bpR 6.5s ease-out 1 forwards; }
+  @keyframes bpB { 0%{ transform:translateY(105%); } 9%{ transform:translateY(-6%); } 13%,85%{ transform:translateY(0); } 100%{ transform:translateY(105%); } }
+  @keyframes bpL { 0%{ transform:translateX(-105%); } 9%{ transform:translateX(6%); } 13%,85%{ transform:translateX(0); } 100%{ transform:translateX(-105%); } }
+  @keyframes bpR { 0%{ transform:translateX(105%); } 9%{ transform:translateX(-6%); } 13%,85%{ transform:translateX(0); } 100%{ transform:translateX(105%); } }
+  @keyframes bpWig { 0%{ transform:rotate(-7deg); } 100%{ transform:rotate(7deg); } }
+  .bd-pop .bp-say { position:absolute; white-space:nowrap; font-family:var(--num); font-weight:700; font-size:clamp(16px,2.6vh,30px);
+    color:#141414; background:#fff; border:3px solid #141414; border-radius:18px; padding:.35em .7em; opacity:0; }
+  .bd-pop.b .bp-say { bottom:96%; left:50%; margin-left:-3em; }
+  .bd-pop.l .bp-say { left:92%; top:12%; }
+  .bd-pop.r .bp-say { right:92%; top:12%; }
+  .bd-pop.go .bp-say { animation:bpSay 6.5s ease-out 1 forwards; }
+  @keyframes bpSay { 0%,14%{ opacity:0; transform:scale(.4); } 19%{ opacity:1; transform:scale(1.1); } 22%,80%{ opacity:1; transform:scale(1); } 86%,100%{ opacity:0; transform:scale(.6); } }
+  @media (prefers-reduced-motion:reduce){ .bd-balloons svg,.bd-conf i,.bd-banner{ animation:none; } }
   #startOverlay {
     position:fixed; inset:0; z-index:100; border:0; margin:0; width:100%; height:100%;
     display:flex; align-items:center; justify-content:center; cursor:pointer;
@@ -351,6 +394,7 @@
         <button id="wheelBtn" aria-label="Wybierz stację"><span id="wheelBtnName">—</span><span class="caret">▾</span></button>
       </div>
       <div class="reminder" id="reminder"></div>
+      <div class="bd-banner bd-only">🎂 <b>STO LAT!</b> Wszystkiego najlepszego <i>🎉</i></div>
     </div>
     <div class="head-right">
       <div class="place">Zambski Kościelne</div>
@@ -392,7 +436,34 @@
 
 <div id="fenceCat" aria-hidden="true"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><g><animateTransform attributeName="transform" type="rotate" values="-8 21 31;10 21 31;-8 21 31" dur="2.4s" repeatCount="indefinite"/><path d="M22 31 C9 29 5 19 9 7" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/><circle cx="9" cy="7" r="2.6" fill="#f4f4f4"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 30 37;24 30 37;-24 30 37" dur=".9s" begin="-.45s" repeatCount="indefinite"/><rect x="27" y="35" width="6" height="21" rx="3" fill="#0b0b0b"/><ellipse cx="31" cy="56" rx="4.2" ry="2.6" fill="#cfcfcf"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 66 37;24 66 37;-24 66 37" dur=".9s" begin="0s" repeatCount="indefinite"/><rect x="63" y="35" width="6" height="21" rx="3" fill="#0b0b0b"/><ellipse cx="67" cy="56" rx="4.2" ry="2.6" fill="#cfcfcf"/></g><ellipse cx="47" cy="32" rx="26" ry="11.5" fill="#111"/><ellipse cx="55" cy="40" rx="13" ry="3.6" fill="#f4f4f4"/><ellipse cx="68" cy="34" rx="6.5" ry="8" fill="#f4f4f4"/><g><animateTransform attributeName="transform" type="rotate" values="-24 28 37;24 28 37;-24 28 37" dur=".9s" begin="0s" repeatCount="indefinite"/><rect x="25" y="35" width="6" height="21" rx="3" fill="#111"/><ellipse cx="29" cy="56" rx="4.2" ry="2.6" fill="#f4f4f4"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 64 37;24 64 37;-24 64 37" dur=".9s" begin="-.45s" repeatCount="indefinite"/><rect x="61" y="35" width="6" height="21" rx="3" fill="#111"/><ellipse cx="65" cy="56" rx="4.2" ry="2.6" fill="#f4f4f4"/></g><polygon points="70,16 72,3 79,12" fill="#111"/><polygon points="80,12 87,3 88,16" fill="#111"/><polygon points="72,13 73,7 77,12" fill="#d48a9a"/><polygon points="82,12 86,7 86,14" fill="#d48a9a"/><circle cx="79" cy="22" r="11" fill="#111"/><path d="M79 13 L82 13 L84 24 L76 24 Z" fill="#f4f4f4"/><ellipse cx="84" cy="27" rx="6.5" ry="5" fill="#f4f4f4"/><ellipse cx="89.5" cy="24.5" rx="1.7" ry="1.2" fill="#d48a9a"/><ellipse cx="85" cy="19.5" rx="2.1" ry="2.4" fill="#d9e65a"/><ellipse cx="85.5" cy="19.5" rx=".8" ry="2" fill="#000"/><path d="M90 27 L98 25.5 M90 28.5 L98 29.5" stroke="#cfcfcf" stroke-width=".5"/></svg></div>
 
-<div class="peek br" id="peek" aria-hidden="true"><div class="pk-notes"><span>♪</span><span>♫</span><span>♪</span></div><div class="pk-in"><div class="pk-glow"></div><div class="pk-dance"><img src="ziomek.png" alt=""></div></div></div>
+<div class="peek br" id="peek" aria-hidden="true"><div class="pk-notes"><span>♪</span><span>♫</span><span>♪</span></div><div class="pk-in"><div class="pk-glow"></div><div class="pk-dance"><img src="ziomek.png" alt=""><svg class="hat bd-only" viewBox="0 0 100 135"><use href="#bdHat"/></svg></div></div></div>
+
+<!-- URODZINY: czapka (symbol), girlanda, balony, konfetti, postacie z bajki -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <clipPath id="bdHatClip"><path d="M50 14 L90 120 Q50 132 10 120 Z"/></clipPath>
+  <symbol id="bdHat" viewBox="0 0 100 135">
+    <path d="M50 14 L90 120 Q50 132 10 120 Z" fill="#ff4fa8"/>
+    <g clip-path="url(#bdHatClip)" fill="#ffd65a"><path d="M0 40 L100 20 L100 34 L0 54 Z"/><path d="M0 76 L100 56 L100 70 L0 90 Z"/><path d="M0 112 L100 92 L100 106 L0 126 Z"/></g>
+    <g clip-path="url(#bdHatClip)" fill="#7cc4ff"><circle cx="40" cy="62" r="4"/><circle cx="62" cy="96" r="4.5"/><circle cx="33" cy="104" r="3.5"/><circle cx="58" cy="44" r="3"/></g>
+    <path d="M50 14 L90 120 Q50 132 10 120 Z" fill="none" stroke="#141414" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M6 121 Q50 136 94 121" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="1 8"/>
+    <circle cx="50" cy="12" r="11" fill="#fff" stroke="#141414" stroke-width="3.5"/>
+    <path d="M42 6 L58 18 M58 6 L42 18 M50 1 V23" stroke="#ffd65a" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="bdBalloon" viewBox="0 0 40 90">
+    <path d="M20 52 Q17 62 21 70 Q25 78 19 90" fill="none" stroke="#ddd" stroke-width="1.2"/>
+    <ellipse cx="20" cy="26" rx="18" ry="24" fill="currentColor"/>
+    <path d="M17 50 L23 50 L20 55 Z" fill="currentColor"/>
+    <ellipse cx="13" cy="16" rx="4" ry="7" fill="#fff" opacity=".45" transform="rotate(25 13 16)"/>
+  </symbol>
+</defs></svg>
+<div class="bd-garland bd-only" aria-hidden="true"><svg viewBox="0 0 1000 60" preserveAspectRatio="none" id="bdGarland"></svg></div>
+<div class="bd-balloons bd-only" id="bdBalloons" aria-hidden="true"></div>
+<div class="bd-conf bd-only" id="bdConf" aria-hidden="true"></div>
+<div class="bd-pop" id="bdPop" aria-hidden="true">
+  <div class="bp-rot"><div class="bp-wig"><div class="bp-fig"><img alt="" id="bdPopImg"><svg class="hat" id="bdPopHat" viewBox="0 0 100 135"><use href="#bdHat"/></svg></div></div></div>
+  <div class="bp-say" id="bdPopSay">Sto lat!</div>
+</div>
 
 <button id="fsBtn" hidden>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
@@ -662,7 +733,7 @@
         const rf = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
         if (rf) rf.call(el);
       } catch(e){}
-      try { if (window._radioStart) window._radioStart(); } catch(e){}
+      try { if (window._radioStart && !document.body.classList.contains("bday")) window._radioStart(); } catch(e){}  // w urodziny bez radia - leci "Sto lat"
       try { if (window._getActx) window._getActx(); } catch(e){}
       document.removeEventListener("keydown", onKey, true);
       ov.remove();
@@ -752,6 +823,138 @@
     var first = (location.hash === "#test") ? 5000 : (1.5 + Math.random() * 1.5) * 60 * 1000;
     setTimeout(loop, first);
     window._peek = pop;
+  })();
+
+  // ===== URODZINY: 7 pazdziernika (lub adres z #urodziny) =====
+  (function(){
+    const isBday = d => (d.getMonth() === 9 && d.getDate() === 7) || /urodziny/.test(location.hash);
+    function check(){ document.body.classList.toggle("bday", isBday(new Date())); }
+    check(); setInterval(check, 60 * 1000);
+    const on = () => document.body.classList.contains("bday");
+    const COLORS = ["#ff4fa8","#ffd65a","#7cc4ff","#57d99a","#ff8a6b","#b48cff"];
+
+    // girlanda z choragiewek
+    const g = $("bdGarland");
+    if (g){
+      let s = '<path d="M0 6 Q250 26 500 6 Q750 26 1000 6" fill="none" stroke="#ddd" stroke-width="2" vector-effect="non-scaling-stroke"/>';
+      for (let i = 0; i < 24; i++){
+        const x = 10 + i * 41.5, t = (x % 500) / 500, y = 6 + 40 * t * (1 - t);
+        s += '<path d="M' + x + ' ' + y + ' L' + (x + 34) + ' ' + y + ' L' + (x + 17) + ' ' + (y + 40) + ' Z" fill="' + COLORS[i % COLORS.length] + '"/>';
+      }
+      g.innerHTML = s;
+    }
+    // balony z bokow ekranu (zeby nie zaslanialy pogody na dlugo)
+    const bb = $("bdBalloons");
+    if (bb){
+      const xs = [1, 5, 9, 88, 92, 96, 47];
+      xs.forEach((x, i) => {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        el.setAttribute("viewBox", "0 0 40 90");
+        el.innerHTML = '<use href="#bdBalloon"/>';
+        el.style.left = x + "vw"; el.style.color = COLORS[i % COLORS.length];
+        el.style.animationDuration = (16 + (i * 7) % 9) + "s";
+        el.style.animationDelay = (-i * 3.3) + "s";
+        if (i === 6) el.style.animationDelay = "4s";
+        bb.appendChild(el);
+      });
+    }
+    // konfetti
+    const cf = $("bdConf");
+    if (cf){
+      for (let i = 0; i < 18; i++){
+        const c = document.createElement("i");
+        c.style.left = (i * 5.6 + 1) + "vw"; c.style.background = COLORS[i % COLORS.length];
+        c.style.animationDuration = (7 + (i * 3) % 6) + "s"; c.style.animationDelay = (-(i * 1.7) % 9) + "s";
+        cf.appendChild(c);
+      }
+    }
+
+    // "Sto lat" na WebAudio (melodia ludowa) - przyciszamy radio na czas spiewu
+    const N = { C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00, A4:440.00, B4:493.88, C5:523.25, G3:196.00, C3:130.81, F3:174.61 };
+    const MEL = [
+      ["G4",2],["E4",1], ["G4",2],["E4",1], ["G4",1],["A4",.5],["G4",.5],["F4",.5],["E4",.5], ["F4",3],
+      ["F4",2],["D4",1], ["F4",2],["D4",1], ["F4",1],["G4",.5],["F4",.5],["E4",.5],["D4",.5], ["E4",3],
+      ["G4",.5],["G4",.5],["C5",2], ["A4",.5],["A4",.5],["F4",2], ["G4",1],["A4",.5],["G4",.5],["F4",.5],["E4",.5], ["F4",2],["D4",1],
+      ["G4",1],["E4",1],["D4",1], ["C4",3]
+    ];
+    const BASS = ["C3","C3","C3","G3", "G3","G3","G3","C3", "C3","F3","C3","G3", "G3","C3"];
+    let singing = false;
+    window._stoLat = function(){
+      if (singing || !on()) return;
+      const ctx = window._getActx && window._getActx();
+      if (!ctx || ctx.state !== "running") return;
+      singing = true;
+      const beat = 0.42, t0 = ctx.currentTime + 0.1;
+      const out = ctx.createGain(); out.gain.value = 0.22; out.connect(ctx.destination);
+      function tone(f, t, dur, type, vol){
+        const o = ctx.createOscillator(), a = ctx.createGain();
+        o.type = type; o.frequency.value = f;
+        a.gain.setValueAtTime(0, t); a.gain.linearRampToValueAtTime(vol, t + 0.02);
+        a.gain.exponentialRampToValueAtTime(0.001, t + Math.max(0.15, dur * 0.95));
+        o.connect(a); a.connect(out); o.start(t); o.stop(t + dur + 0.05);
+      }
+      let t = t0;
+      MEL.forEach(([n, b]) => { if (!b) return; tone(N[n], t, b * beat, "square", 0.32); tone(N[n] * 2, t, b * beat, "sine", 0.12); t += b * beat; });
+      BASS.forEach((n, i) => {              // walczyk: bas na raz, akord na dwa i trzy
+        const m = t0 + i * 3 * beat, f = N[n];
+        tone(f, m, beat, "triangle", 0.5);
+        tone(f * 2.52, m + beat, beat * .6, "triangle", 0.16); tone(f * 3, m + beat, beat * .6, "triangle", 0.16);
+        tone(f * 2.52, m + 2 * beat, beat * .6, "triangle", 0.16); tone(f * 3, m + 2 * beat, beat * .6, "triangle", 0.16);
+      });
+      const pl = $("player"), vol0 = pl ? pl.volume : 1;
+      if (pl) pl.volume = Math.min(vol0, 0.25);
+      setTimeout(() => { if (pl) pl.volume = vol0; singing = false; }, (t - t0 + 0.6) * 1000);
+    };
+    // po OK na nakladce startowej - od razu "Sto lat"
+    const ov = $("startOverlay");
+    if (ov){ const fire = () => setTimeout(window._stoLat, 1200); ov.addEventListener("click", fire); document.addEventListener("keydown", fire, { once:true, capture:true }); }
+
+    // ziomek: w urodziny czesciej (co 1-2 min) i ze "Sto lat"
+    const pk = $("peek");
+    if (pk){
+      new MutationObserver(() => { if (pk.classList.contains("go") && on()) window._stoLat(); }).observe(pk, { attributes:true, attributeFilter:["class"] });
+      (function bdPeek(){
+        setTimeout(() => { if (on() && !pk.classList.contains("go") && window._peek) window._peek(); bdPeek(); },
+          (location.hash === "#urodziny" ? 25 : 60 + Math.random() * 60) * 1000);
+      })();
+    }
+
+    // postacie z bajki w czapkach - wyskakuja caly czas z dolu i z bokow
+    const CAST = [
+      { src:"andrzej.svg", hx:50, hy:13, r:-8 },
+      { src:"triwet.svg",  hx:55, hy:15, r:10 },
+      { src:"syket.svg",   hx:52, hy:10, r:-12 },
+      { src:"zlomiarz.svg",hx:48, hy:9,  r:14 },
+      { src:"pijak.svg",   hx:51, hy:8,  r:-10 }
+    ];
+    const SAY = ["Sto lat!","Wszystkiego najlepszego!","Zdrowia, szczęścia!","Niech żyje nam!","Sto lat, ziomek!","Polej mu!","Tort jest?","Kiedy impreza?","Sto lat! Sto lat!"];
+    const pop = $("bdPop"), img = $("bdPopImg"), hat = $("bdPopHat"), say = $("bdPopSay");
+    if (pop){
+      let ci = 0, si = 0, side = 0;
+      pop.addEventListener("animationend", e => { if (/^bp[BLR]$/.test(e.animationName)) pop.classList.remove("go"); });
+      function show(){
+        if (!on() || pop.classList.contains("go") || pk && pk.classList.contains("go")) return;
+        const c = CAST[ci++ % CAST.length], sd = ["b","l","b","r"][side++ % 4];
+        img.src = c.src;
+        // czapka liczona wzgledem obrazka: szerokosc postaci po zaladowaniu
+        img.onload = () => {
+          const w = img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 0.94;
+          const fig = img.parentNode; fig.style.width = (pop.clientHeight * w) + "px";
+          hat.style.left = (c.hx - 23) + "%";
+          hat.style.top = "calc(" + c.hy + "% - " + (0.46 * pop.clientHeight * w * 1.35 * 0.89) + "px)";
+          hat.style.transform = "rotate(" + c.r + "deg)";
+        };
+        say.textContent = SAY[si++ % SAY.length];
+        pop.className = "bd-pop " + sd;
+        pop.style.left = pop.style.right = pop.style.top = pop.style.bottom = "";
+        if (sd === "b") pop.style.left = (8 + Math.random() * 70) + "vw";
+        else pop.style.top = (22 + Math.random() * 45) + "vh";
+        void pop.offsetWidth;
+        pop.classList.add("go");
+      }
+      (function loop(){ show(); setTimeout(loop, (location.hash === "#urodziny" ? 8 : 9 + Math.random() * 7) * 1000); })();
+      window._bdPop = show;
+    }
   })();
 </script>
 </body>

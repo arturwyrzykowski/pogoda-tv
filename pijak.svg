@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 550 584">
+<g stroke="#141414" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+  <!-- kaptur niebieskiej bluzy i czarny golf -->
+  <path d="M20 584 Q30 470 120 430 L430 430 Q530 470 540 584 Z" fill="#2a4fa8"/>
+  <path d="M150 584 Q150 480 200 450 L360 450 Q410 480 410 584 Z" fill="#1a1a1e"/>
+  <!-- uszy -->
+  <ellipse cx="82" cy="300" rx="48" ry="70" fill="#e9a173"/>
+  <path d="M74 270 Q56 300 76 334" fill="none" stroke-width="6"/>
+  <ellipse cx="478" cy="300" rx="40" ry="62" fill="#e9a173"/>
+  <!-- gruba, lysa glowa z podwojnym podbrodkiem -->
+  <path d="M100 250 Q96 40 280 30 Q462 40 466 250 Q470 360 440 420 Q400 500 280 506 Q160 500 120 420 Q96 360 100 250 Z" fill="#f2ae80"/>
+  <path d="M170 452 Q280 520 392 452" fill="none" stroke-width="6"/>
+  <!-- odblask na lysinie -->
+  <ellipse cx="330" cy="90" rx="70" ry="26" fill="#f9c9a3" stroke="none" transform="rotate(14 330 90)"/>
+  <!-- siwy wianek wlosow po bokach -->
+  <path d="M104 230 Q100 170 128 132 Q118 190 130 250 Z" fill="#b9b4ac" stroke-width="6"/>
+  <path d="M462 230 Q466 170 440 132 Q448 190 436 250 Z" fill="#b9b4ac" stroke-width="6"/>
+  <!-- zarost -->
+  <path d="M126 380 Q150 480 280 500 Q410 480 438 380 Q400 420 360 410 Q280 450 200 410 Q160 420 126 380 Z" fill="#8b7f72" opacity=".4" stroke="none"/>
+  <!-- rumience -->
+  <ellipse cx="170" cy="340" rx="40" ry="24" fill="#e8705a" opacity=".55" stroke="none"/>
+  <ellipse cx="392" cy="340" rx="40" ry="24" fill="#e8705a" opacity=".55" stroke="none"/>
+  <!-- brwi uniesione -->
+  <path d="M170 200 Q206 176 244 196" fill="none" stroke="#7a6a58" stroke-width="14"/>
+  <path d="M316 196 Q354 176 390 200" fill="none" stroke="#7a6a58" stroke-width="14"/>
+  <!-- oczy pijackie, przymkniete powiekami -->
+  <ellipse cx="208" cy="250" rx="34" ry="26" fill="#fff"/>
+  <ellipse cx="352" cy="250" rx="34" ry="26" fill="#fff"/>
+  <circle cx="214" cy="258" r="11" fill="#141414" stroke="none"/>
+  <circle cx="346" cy="258" r="11" fill="#141414" stroke="none"/>
+  <path d="M172 250 Q208 222 244 250 L244 236 Q208 214 172 236 Z" fill="#e39a6c"/>
+  <path d="M316 250 Q352 222 388 250 L388 236 Q352 214 316 236 Z" fill="#e39a6c"/>
+  <path d="M180 286 Q208 298 236 286 M324 286 Q352 298 380 286" fill="none" stroke-width="5"/>
+  <!-- czerwony, bulwiasty nos -->
+  <path d="M280 262 Q236 318 250 350 Q270 374 300 362 Q330 350 318 310 Q306 280 280 262 Z" fill="#d9574a"/>
+  <ellipse cx="292" cy="326" rx="10" ry="7" fill="#f08a7c" stroke="none"/>
+  <!-- usta -->
+  <path class="mC" d="M226 410 Q280 400 334 414" fill="none" stroke-width="8"/>
+  <g class="mO" style="display:none">
+    <path d="M222 400 Q280 390 338 402 Q326 456 280 458 Q234 456 222 400 Z" fill="#5a1717"/>
+    <path d="M244 438 Q280 424 316 438 Q302 454 280 454 Q258 454 244 438 Z" fill="#d9605e" stroke="none"/>
+  </g>
+</g>
+</svg>
