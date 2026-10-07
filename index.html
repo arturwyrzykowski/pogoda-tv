@@ -882,8 +882,16 @@
     window._stoLat = function(){
       if (singing || !on()) return;
       const ctx = window._getActx && window._getActx();
-      if (!ctx || ctx.state !== "running") return;
+      if (!ctx) return;
       singing = true;
+      // TV/Safari: kontekst bywa jeszcze uspiony - budzimy go i gramy dopiero po przebudzeniu
+      if (ctx.state !== "running" && ctx.resume){
+        let done = false; const go = () => { if (!done){ done = true; sing(ctx); } };
+        try { const pr = ctx.resume(); if (pr && pr.then) pr.then(go, go); else go(); } catch(e){ go(); }
+        setTimeout(go, 600);
+      } else sing(ctx);
+    };
+    function sing(ctx){
       const beat = 0.42, t0 = ctx.currentTime + 0.1;
       const out = ctx.createGain(); out.gain.value = 0.22; out.connect(ctx.destination);
       function tone(f, t, dur, type, vol){
@@ -904,10 +912,11 @@
       const pl = $("player"), vol0 = pl ? pl.volume : 1;
       if (pl) pl.volume = Math.min(vol0, 0.25);
       setTimeout(() => { if (pl) pl.volume = vol0; singing = false; }, (t - t0 + 0.6) * 1000);
-    };
+    }
     // po OK na nakladce startowej - od razu "Sto lat"
     const ov = $("startOverlay");
-    if (ov){ const fire = () => setTimeout(window._stoLat, 1200); ov.addEventListener("click", fire); document.addEventListener("keydown", fire, { once:true, capture:true }); }
+    // od razu w momencie nacisniecia (przegladarki puszczaja dzwiek tylko w tym gescie)
+    if (ov){ const fire = () => window._stoLat(); ov.addEventListener("click", fire, { once:true }); document.addEventListener("keydown", fire, { once:true, capture:true }); }
 
     // ziomek: w urodziny czesciej (co 1-2 min) i ze "Sto lat"
     const pk = $("peek");
