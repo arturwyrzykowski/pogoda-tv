@@ -371,7 +371,7 @@
     var map = $("rmap"), inn = $("rmapIn"), big = !$("radarBig").hidden;
     var ow = map.clientWidth, oh = map.clientHeight;
     if (!ow || !oh) return;
-    var k = big ? 1.0 : 1.3;                       // maly widok: blizej Zambskich
+    var k = big ? 1.0 : document.body.classList.contains("storm") ? 1.75 : 1.3;   // maly widok: blizej Zambskich (w burzy jeszcze blizej)
     var w = Math.max(ow, oh * 1.5) * k, sc = w / 720;
     var x = ow / 2 - SITE_X * sc, y = oh / 2 - SITE_Y * sc;
     x = Math.min(0, Math.max(ow - 720 * sc, x)); y = Math.min(0, Math.max(oh - 480 * sc, y));
@@ -393,6 +393,8 @@
     setTimeout(placeRadar, 30);
   }
   $("rmap").addEventListener("click", function(){ radarBig(); });
+  // dla burza.js: pokaz radar w panelu
+  window._monRadar = function(){ if (cur !== "radar") show("radar", { rest:true }); setTimeout(placeRadar, 50); };
   setInterval(function(){ if (RV.active) loadRadar(); }, 2 * 60000);   // RainViewer daje nowy pomiar co ~10 min
   setInterval(radarLabel, 30000);
 
@@ -576,7 +578,7 @@
         if (hit && lvl >= 1 && to > now) list.push({ lvl:lvl, title:w.zdarzenie + " (Narew)", from:parseLocal(w.data_od), to:to, prob:w.prawdopodobienstwo, src:"IMGW-PIB hydro" });
       });
     }).catch(function(){});
-    return Promise.all([a, b]).then(function(){ official = list; renderAlerts(); });
+    return Promise.all([a, b]).then(function(){ official = list; window.ALERTS_OFFICIAL = list; renderAlerts(); });
   }
   function ownWarnings(j){
     var Hh = j.hourly, now = Date.now(), m = new Date().getMonth() + 1, out = [];

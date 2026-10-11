@@ -583,6 +583,23 @@
   @media (prefers-reduced-motion:reduce){ #nsStars i.tw, #nsClouds i { animation:none; } }
   @media (max-width:900px){ #nightSky { display:none; } }
 
+  /* ===== tryb burzowy (burza.js): granatowe tlo, wiekszy radar, licznik do opadow ===== */
+  body { transition:background-color 3s ease; }
+  body.storm { --panel:#0b1430; --panel-2:#070d22; --line:#1d2d52; --acc:#6ab8ff; background:#040a1c; }
+  @media (min-width:901px){ body.storm .fc { grid-template-columns:minmax(0,1fr) minmax(0,1.5fr); } }
+  .storm-box { position:absolute; right:.6em; top:.5em; z-index:2; max-width:min(42%, 28em); text-align:right;   /* prawy gorny rog: burze zwykle przychodza z zachodu */
+    background:rgba(4,10,28,.86); border:1px solid rgba(120,160,255,.35); border-radius:12px; padding:.5em .8em .55em; }
+  .storm-box[hidden] { display:none; }
+  .storm-box .sb-big { display:block; font-family:var(--num); font-weight:700; font-variant-numeric:tabular-nums;
+    font-size:clamp(2rem,4.2vw,4rem); line-height:1; color:#eef4fb; letter-spacing:.01em; }
+  .storm-box .sb-lbl { display:block; font-family:var(--num); font-weight:600; font-size:clamp(.75rem,1.1vw,1rem); color:#b9cdf0; margin-top:.3em; }
+  .storm-box .sb-sub { display:block; font-family:var(--mono); font-size:clamp(.5rem,.72vw,.64rem); letter-spacing:.08em; color:#7d8fb6; margin-top:.35em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .storm-box.soon { border-color:rgba(255,207,92,.7); }
+  .storm-box.soon .sb-big { color:var(--warn); }
+  .storm-box.rain { border-color:rgba(106,184,255,.7); }
+  .storm-box.rain .sb-big { color:var(--acc); }
+
   :fullscreen #fsBtn { display:none; }
 </style>
 </head>
@@ -668,6 +685,7 @@
               <div class="r-time" id="rTime">radar opadów…</div>
               <div class="r-leg"><div class="bar"></div><div class="lb"><span>słaby</span><span>umiark.</span><span>silny</span><span>b. silny</span></div></div>
               <div class="r-msg" id="rMsg" hidden></div>
+              <div class="storm-box" id="stormBox" hidden><span class="sb-big" id="sbBig">—</span><span class="sb-lbl" id="sbLbl"></span><span class="sb-sub" id="sbSub"></span></div>
             </div>
           </div>
           <div class="mv-foot">Radar: RainViewer (rainviewer.com) · mapa: Natural Earth · najnowszy pomiar, odświeża się sam · klawisz 5 = powiększ</div>
@@ -1250,5 +1268,6 @@
 <script src="drzewo.js"></script>
 <script src="zdarzenia.js"></script>
 <script src="noc.js"></script>
+<script src="burza.js"></script>
 </body>
 </html>
