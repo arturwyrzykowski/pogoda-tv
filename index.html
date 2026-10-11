@@ -382,6 +382,128 @@
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
   @media (prefers-reduced-motion:reduce){ .reminder{ animation:none; } }
 
+
+  /* ===== ostrzezenia (pasek pod naglowkiem, tylko gdy jest komunikat) ===== */
+  .alerts { flex:1 1 100%; order:9; display:flex; align-items:center; gap:.8em; min-width:0;
+    border:1px solid rgba(255,207,92,.45); background:rgba(255,207,92,.06); border-radius:12px;
+    padding:.45em .9em; font-size:clamp(.8rem,1.25vw,1.05rem); color:var(--ink); }
+  .alerts[hidden] { display:none; }
+  .alerts.l2 { border-color:rgba(255,159,69,.65); background:rgba(255,159,69,.08); }
+  .alerts.l3 { border-color:rgba(255,90,90,.75); background:rgba(255,90,90,.1); }
+  .alerts.own { border-color:rgba(142,160,182,.4); background:rgba(142,160,182,.05); }
+  .alerts .al-ic { color:var(--warn); font-size:1.15em; flex:0 0 auto; }
+  .alerts.l2 .al-ic { color:#ff9f45; } .alerts.l3 .al-ic { color:#ff5a5a; } .alerts.own .al-ic { color:var(--ink-dim); }
+  .alerts .al-body { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; animation:alIn .5s ease-out; }
+  .alerts .al-body b { font-weight:600; }
+  .alerts .al-body span { color:var(--ink-dim); }
+  .alerts .al-src { margin-left:auto; flex:0 0 auto; font-family:var(--mono); font-size:.7em; letter-spacing:.1em;
+    color:var(--ink-dim); text-transform:uppercase; white-space:nowrap; }
+  @keyframes alIn { from{ opacity:0; } to{ opacity:1; } }
+
+  /* ===== karta dolna: prognoza (lewo) + panel monitoringu (prawo) ===== */
+  .fc { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:clamp(14px,2vw,34px); }
+  .fc-main { display:flex; flex-direction:column; gap:clamp(12px,1.5vw,22px); min-width:0; }
+  .mon { position:relative; display:flex; flex-direction:column; min-width:0; min-height:0;
+    border-left:1px solid var(--line); padding-left:clamp(14px,2vw,34px); }
+  .mon-tabs { display:flex; align-items:center; gap:.25em; font-family:var(--mono);
+    font-size:clamp(.56rem,.88vw,.74rem); letter-spacing:.12em; text-transform:uppercase; }
+  .mon-tabs button { background:none; border:0; color:var(--ink-faint); font:inherit; letter-spacing:inherit;
+    text-transform:inherit; padding:.28em .55em; border-radius:6px; cursor:pointer; }
+  .mon-tabs button.on { color:var(--acc); background:var(--acc-soft); }
+  .mon.night .mon-tabs button[data-v="sky"] { color:#c9b8ff; }
+  .mon.night .mon-tabs button[data-v="sky"].on { background:rgba(170,150,255,.14); }
+  .mon-range { margin-left:auto; color:var(--ink-dim); cursor:pointer; border:1px solid var(--line);
+    border-radius:999px; padding:.18em .7em; white-space:nowrap; }
+  .mon-range[hidden] { display:none; }
+  .mon-prog { height:2px; background:var(--line); margin-top:.5em; overflow:hidden; border-radius:2px; }
+  .mon-prog i { display:block; height:100%; background:var(--acc); opacity:.55; transform-origin:0 50%; transform:scaleX(0); }
+  .mon-prog i.run { animation:monProg linear forwards; }
+  @keyframes monProg { to{ transform:scaleX(1); } }
+  .mon-body { position:relative; flex:1; min-height:0; margin-top:.7em; }
+  .mv { position:absolute; inset:0; display:flex; flex-direction:column; opacity:0; visibility:hidden;
+    transition:opacity .6s ease, visibility 0s linear .6s; }
+  .mv.on { opacity:1; visibility:visible; transition:opacity .6s ease; }
+  .mv-top { display:flex; align-items:baseline; gap:.55em; flex-wrap:wrap; }
+  .mv-big { font-family:var(--num); font-weight:700; font-size:clamp(1.35rem,2.5vw,2.2rem);
+    font-variant-numeric:tabular-nums; line-height:1; }
+  .mv-big small { font-size:.45em; color:var(--ink-dim); font-weight:500; margin-left:.15em; }
+  .mv-tr { font-family:var(--num); font-weight:600; font-size:clamp(.82rem,1.25vw,1.05rem); }
+  .mv-state { font-family:var(--mono); font-size:clamp(.58rem,.9vw,.76rem); letter-spacing:.12em; text-transform:uppercase; }
+  .mv-meta { display:flex; gap:.4em 1.1em; flex-wrap:wrap; font-family:var(--mono); font-size:clamp(.58rem,.9vw,.78rem);
+    color:var(--ink-faint); margin-top:.45em; }
+  .mv-meta b { color:var(--ink); font-weight:500; }
+  .mv-chart { flex:1; min-height:0; margin-top:.35em; position:relative; }
+  .mv-chart svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .mv-foot { font-family:var(--mono); font-size:clamp(.5rem,.78vw,.66rem); letter-spacing:.06em; color:var(--ink-faint);
+    margin-top:.3em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mv-foot.note { color:#b49a5a; }
+  .ch-grid { stroke:var(--line); stroke-width:1; }
+  .ch-ref { stroke-width:1; stroke-dasharray:4 4; }
+  .ch-lbl { fill:var(--ink-faint); font-family:var(--mono); font-size:11px; }
+  .ch-val { fill:var(--ink); font-family:var(--num); font-weight:600; font-size:12px; }
+  .ch-line { fill:none; stroke-width:2.2; stroke-linejoin:round; stroke-linecap:round; }
+  .ch-anim .ch-line { animation:chDraw 1.3s ease-out both; }
+  .ch-anim .ch-area, .ch-anim .ch-dots { animation:chFade .9s ease-out .5s both; }
+  @keyframes chDraw { from{ stroke-dashoffset:var(--len); } to{ stroke-dashoffset:0; } }
+  @keyframes chFade { from{ opacity:0; } to{ opacity:1; } }
+
+  /* radar */
+  .rslot { position:relative; flex:1; min-height:0; border-radius:12px; overflow:hidden; border:1px solid var(--line); background:#05080d; }
+  .rmap { position:absolute; inset:0; overflow:hidden; cursor:zoom-in; }
+  .rmap-in { position:absolute; left:0; top:0; width:720px; height:480px; transform-origin:0 0; }
+  .rmap-in img, .rmap-in canvas { position:absolute; left:0; top:0; width:100%; height:100%; display:block; }
+  .rmap-in canvas { opacity:.88; }
+  .r-site { position:absolute; left:50%; top:50%; width:0; height:0; }
+  .r-site i { position:absolute; left:-5px; top:-5px; width:10px; height:10px; border-radius:50%;
+    background:#ffd166; box-shadow:0 0 0 2px #000, 0 0 0 5px rgba(255,209,102,.35); }
+  .r-site span { position:absolute; left:8px; top:-24px; font-family:var(--num); font-weight:600; font-size:12px; color:#ffd166;
+    background:rgba(0,0,0,.7); border-radius:4px; padding:0 .3em; white-space:nowrap; }
+  .r-time { position:absolute; left:.6em; top:.5em; font-family:var(--mono); font-size:clamp(.56rem,.85vw,.74rem);
+    color:var(--ink); background:rgba(0,0,0,.72); border-radius:6px; padding:.2em .5em; letter-spacing:.06em; }
+  .r-time b { color:var(--acc); font-weight:500; }
+  .r-frames { display:inline-flex; gap:3px; margin-left:.5em; vertical-align:middle; }
+  .r-frames i { width:6px; height:6px; border-radius:50%; background:var(--line); }
+  .r-frames i.on { background:var(--acc); }
+  .r-leg { position:absolute; right:.6em; bottom:.5em; background:rgba(0,0,0,.72); border-radius:6px; padding:.3em .5em;
+    font-family:var(--mono); font-size:clamp(.5rem,.75vw,.66rem); color:var(--ink-dim); }
+  .r-leg .bar { height:7px; width:clamp(120px,13vw,220px); border-radius:4px; margin-bottom:.25em;
+    background:linear-gradient(90deg,#88ddee 0%,#00a3e0 14%,#0077aa 26%,#005588 36%,#ffee00 48%,#ffaa00 58%,#ff4400 70%,#c10000 80%,#ffaaff 90%,#ff77ff 100%); }
+  .r-leg .lb { display:flex; justify-content:space-between; gap:.6em; }
+  .r-msg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--mono);
+    font-size:.8rem; color:var(--ink-faint); text-align:center; padding:1em; }
+  .r-msg[hidden] { display:none; }
+  #radarBig[hidden] { display:none; }
+  #radarBig { position:fixed; inset:5vh 6vw; z-index:125; display:flex; flex-direction:column; gap:.6em;
+    border:1px solid var(--line); border-radius:22px; background:#05080d; padding:clamp(12px,1.4vw,22px);
+    box-shadow:0 20px 60px rgba(0,0,0,.8); }
+  #radarBig .rb-head { display:flex; align-items:baseline; gap:1em; font-family:var(--mono); text-transform:uppercase;
+    letter-spacing:.16em; font-size:clamp(.6rem,1vw,.82rem); color:var(--ink-dim); }
+  #radarBig .rb-head b { color:var(--ink); font-family:var(--num); letter-spacing:.02em; text-transform:none; font-size:1.5em; font-weight:600; }
+  #radarBig .rb-head span { margin-left:auto; color:var(--ink-faint); }
+  #radarBig .rslot { cursor:zoom-out; }
+  #radarBig .rmap { cursor:zoom-out; }
+
+  /* ksiezyc i nocne niebo */
+  .sky { display:grid; grid-template-columns:auto 1fr; gap:.4em clamp(14px,1.6vw,26px); align-items:start; height:100%; }
+  .mon:not(.night) .sky { opacity:.78; }
+  .moon-box { display:flex; flex-direction:column; align-items:center; gap:.35em; text-align:center; }
+  .moon-box svg { width:clamp(56px,6.2vw,104px); height:auto; display:block; }
+  .mon.night .moon-box svg { filter:drop-shadow(0 0 10px rgba(230,236,255,.18)); }
+  .moon-name { font-family:var(--num); font-weight:600; font-size:clamp(.78rem,1.15vw,1rem); color:var(--ink); }
+  .moon-pct { font-family:var(--mono); font-size:clamp(.56rem,.85vw,.74rem); color:var(--ink-dim); letter-spacing:.06em; }
+  .sky-rows { display:flex; flex-direction:column; gap:.42em; min-width:0; font-size:clamp(.72rem,1.05vw,.92rem); color:var(--ink-dim); }
+  .sky-rows .k { font-family:var(--mono); text-transform:uppercase; letter-spacing:.12em; font-size:.74em; color:var(--ink-faint); display:block; }
+  .sky-rows b { color:var(--ink); font-weight:600; font-family:var(--num); }
+  .sky-clouds { display:flex; align-items:flex-end; gap:2px; height:clamp(18px,2.6vh,30px); margin-top:.2em; }
+  .sky-clouds i { flex:1; background:#2b3a52; border-radius:2px 2px 0 0; min-height:2px; position:relative; }
+  .sky-hours { display:flex; justify-content:space-between; font-family:var(--mono); font-size:.68em; color:var(--ink-faint); margin-top:.15em; }
+  .star-score { display:inline-block; border-radius:999px; padding:.05em .6em; font-family:var(--num); font-weight:600; font-size:.95em; }
+  .sky-note { grid-column:1 / -1; font-family:var(--mono); font-size:clamp(.5rem,.75vw,.64rem); color:var(--ink-faint); letter-spacing:.05em; margin-top:auto; }
+  @media (max-width:900px){
+    .fc{ grid-template-columns:1fr; }
+    .mon{ border-left:0; padding-left:0; border-top:1px solid var(--line); padding-top:14px; min-height:360px; }
+  }
+
   :fullscreen #fsBtn { display:none; }
 </style>
 </head>
@@ -404,6 +526,7 @@
       <div class="event" id="event"></div>
       <div class="status"><span class="dot" id="dot"></span><span id="statusTxt">pobieranie…</span><span id="upd"></span></div>
     </div>
+    <div class="alerts" id="alerts" hidden role="status" aria-live="polite"></div>
   </header>
 
   <div class="hero">
@@ -429,9 +552,62 @@
   </div>
 
   <div class="fc">
-    <div class="fc-label">Prognoza godzinowa</div>
-    <div class="hourly" id="hourly"></div>
-    <div class="forecast" id="forecast"></div>
+    <div class="fc-main">
+      <div class="fc-label">Prognoza godzinowa</div>
+      <div class="hourly" id="hourly"></div>
+      <div class="forecast" id="forecast"></div>
+    </div>
+
+    <!-- panel monitoringu: Narew / temperatura / radar / niebo - przelacza sie sam -->
+    <div class="mon" id="mon">
+      <div class="mon-tabs">
+        <button data-v="narew">Narew</button><button data-v="temp">Temperatura</button><button data-v="radar">Radar</button><button data-v="sky">Niebo</button>
+        <span class="mon-range" id="monRange" title="Zakres wykresu (klawisz 0)">24 h</span>
+      </div>
+      <div class="mon-prog"><i id="monProg"></i></div>
+      <div class="mon-body">
+        <div class="mv" id="vNarew">
+          <div class="mv-top"><span class="mv-big" id="nwNow">—<small>cm</small></span><span class="mv-tr" id="nwTrend"></span><span class="mv-state" id="nwState"></span></div>
+          <div class="mv-meta"><span>od poprz. pomiaru <b id="nwPrev">—</b></span><span>24 h <b id="nwDay">—</b></span><span id="nwTw"></span></div>
+          <div class="mv-chart"><svg id="nwChart"></svg></div>
+          <div class="mv-foot" id="nwFoot">IMGW-PIB · wodowskaz Zambski Kościelne</div>
+        </div>
+        <div class="mv" id="vTemp">
+          <div class="mv-top"><span class="mv-big" id="thNow">—<small>°C</small></span><span class="mv-tr" id="thTrend"></span></div>
+          <div class="mv-meta"><span>min <b id="thMin">—</b></span><span>max <b id="thMax">—</b></span><span id="thSpan"></span></div>
+          <div class="mv-chart"><svg id="thChart"></svg></div>
+          <div class="mv-foot" id="thFoot">Open-Meteo · dane godzinowe dla Zambskich Kościelnych</div>
+        </div>
+        <div class="mv" id="vRadar">
+          <div class="rslot" id="rSlotSmall">
+            <div class="rmap" id="rmap">
+              <div class="rmap-in" id="rmapIn">
+                <img src="mapa-radar.svg" alt="">
+                <canvas id="rCanvas" width="720" height="480"></canvas>
+              </div>
+              <div class="r-site" id="rSite"><i></i><span>Zambski Kośc.</span></div>
+              <div class="r-time" id="rTime">radar opadów…</div>
+              <div class="r-leg"><div class="bar"></div><div class="lb"><span>słaby</span><span>umiark.</span><span>silny</span><span>b. silny</span></div></div>
+              <div class="r-msg" id="rMsg" hidden></div>
+            </div>
+          </div>
+          <div class="mv-foot">Radar: RainViewer (rainviewer.com) · mapa: Natural Earth · ostatnie ~2 h · klawisz 5 = powiększ</div>
+        </div>
+        <div class="mv" id="vSky">
+          <div class="sky">
+            <div class="moon-box"><span id="moonSvg"></span><span class="moon-name" id="moonName">—</span><span class="moon-pct" id="moonPct"></span></div>
+            <div class="sky-rows">
+              <div><span class="k">Księżyc</span><span id="moonTimes">—</span></div>
+              <div><span class="k">Słońce i zmierzch</span><span id="sunInfo">—</span></div>
+              <div><span class="k" id="nightLbl">Zachmurzenie w nocy</span><span id="nightCloud">—</span>
+                <div class="sky-clouds" id="nightBars"></div><div class="sky-hours" id="nightHours"></div></div>
+              <div><span class="k">Obserwacja gwiazd</span><span id="starScore">—</span></div>
+            </div>
+            <div class="sky-note">Ocena orientacyjna: zachmurzenie i widzialność z Open-Meteo, Księżyc liczony lokalnie — to nie pomiar jakości nieba.</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -471,6 +647,11 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
   Pełny ekran
 </button>
+
+<div id="radarBig" hidden>
+  <div class="rb-head"><b>Radar opadów</b>okolice Zambskich Kościelnych · RainViewer<span>OK / Wróć — zamknij</span></div>
+  <div class="rslot" id="rSlotBig"></div>
+</div>
 
 <audio id="player" preload="none"></audio>
 
@@ -556,10 +737,12 @@
   function tempClass(t){ return t<=10?"cold":t>=24?"hot":"mild"; }
   const hhmm = iso => iso ? iso.slice(11,16) : "—";
 
+  const METEO_HOOKS = [];   // funkcje wolane po kazdym udanym pobraniu pogody (monitor.js)
+  window.METEO_HOOKS = METEO_HOOKS;
   async function load(){
     const url = "https://api.open-meteo.com/v1/forecast?latitude="+LAT+"&longitude="+LON
       +"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,uv_index"
-      +"&hourly=temperature_2m,weather_code"
+      +"&hourly=temperature_2m,weather_code,cloud_cover,precipitation,wind_gusts_10m,visibility&past_hours=168&forecast_hours=72"
       +"&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=Europe%2FWarsaw&forecast_days=5";
     try {
       const r = await fetch(url, { cache:"no-store" });
@@ -623,6 +806,9 @@
 
       $("dot").className = "dot";
       $("statusTxt").textContent = "Na żywo · Open-Meteo";
+      // nowe moduly (wykres temperatury, nocne niebo, ostrzezenia z prognozy) dostaja te same dane
+      window.LAST_METEO = j;
+      METEO_HOOKS.forEach(function(f){ try { f(j); } catch(err){ console.error(err); } });
     } catch(e){
       $("dot").className = "dot err";
       $("statusTxt").textContent = "Brak połączenia";
@@ -631,41 +817,7 @@
   load();
   setInterval(load, 10*60*1000); // co 10 minut
 
-  // ===== Narew: wodowskaz IMGW-PIB w Zambskich Kościelnych (stacja 152210060) =====
-  async function loadNarew(){
-    try {
-      const r = await fetch("https://danepubliczne.imgw.pl/api/data/hydro/id/152210060", {cache:"no-store"});
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      const d = (await r.json())[0];
-      const v = parseInt(d.stan_wody, 10);
-      if (isNaN(v)) throw new Error("brak stanu");
-      const ostrz = parseInt(d.stan_ostrzegawczy, 10), alarm = parseInt(d.stan_alarmowy, 10);
-      // trend: zapamiętane odczyty (tylko ta przeglądarka), porównanie z odczytem sprzed >= 3 h
-      const t = Date.parse(String(d.stan_wody_data_pomiaru).replace(" ", "T")) || Date.now();
-      let hist = [];
-      try { hist = JSON.parse(localStorage.getItem("narewHist") || "[]"); } catch(e){}
-      if (!hist.length || hist[hist.length-1].t !== t) hist.push({t:t, v:v});
-      hist = hist.filter(function(h){ return t - h.t < 36*3600*1000; });
-      try { localStorage.setItem("narewHist", JSON.stringify(hist)); } catch(e){}
-      let old = null;
-      for (let i = hist.length-1; i >= 0; i--) { if (t - hist[i].t >= 3*3600*1000) { old = hist[i]; break; } }
-      const diff = old ? v - old.v : 0;
-      const arrow = !old ? "" : diff >= 2 ? " ▲" + diff : diff <= -2 ? " ▼" + (-diff) : " ▬";
-      let txt = "w normie", col = "var(--good)";
-      if (!isNaN(alarm) && v >= alarm) { txt = "ALARM"; col = "var(--hot)"; }
-      else if (!isNaN(ostrz) && v >= ostrz) { txt = "ostrzegawczy"; col = "var(--warn)"; }
-      $("narew").textContent = v;
-      $("narew").style.color = col;
-      $("narewDesc").textContent = txt + arrow;
-      $("narewDesc").style.color = col;
-      const tw = d.temperatura_wody ? " · woda " + String(d.temperatura_wody).replace(".", ",") + "°C" : "";
-      $("narew").parentNode.title = "IMGW-PIB, pomiar " + d.stan_wody_data_pomiaru + " · ostrzegawczy " + ostrz + " cm, alarmowy " + alarm + " cm" + tw;
-    } catch(e) {
-      if ($("narew").textContent === "—") $("narewDesc").textContent = "brak danych";
-    }
-  }
-  loadNarew();
-  setInterval(loadNarew, 10*60*1000);
+  // Narew (wodowskaz IMGW-PIB) - obsluga w monitor.js (historia, wykres, pole w panelu)
 
 
   // przycisk pełnego ekranu — pokaż tylko gdy przeglądarka to wspiera
@@ -1010,5 +1162,6 @@
     }
   })();
 </script>
+<script src="monitor.js"></script>
 </body>
 </html>
