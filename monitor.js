@@ -330,10 +330,75 @@
   var TILES = [[35,20],[36,20],[35,21],[36,21]];   // z6, 512 px: obszar mapy-radar.svg (wycinek 34,228 720x480)
   var VX = 34, VY = 228, SITE_X = 394.2 - VX, SITE_Y = 471.0 - VY;
   var rctx = $("rCanvas").getContext("2d");
+  // Paleta RainViewer "Universal Blue" (dBZ, kolor, alfa) - do odczytania natezenia z pikseli
+  var UB = [[-10,0x636159,20],[-9,0x66635a,25],[-8,0x69665c,30],[-7,0x6c685d,36],[-6,0x6f6b5f,41],[-5,0x726e61,46],[-4,0x757062,52],[-3,0x787364,57],[-2,0x7c7565,62],[-1,0x7f7867,68],[0,0x827b69,73],[1,0x857d6a,78],[2,0x88806c,84],[3,0x8b826d,89],[4,0x8e856f,94],[5,0x928871,100],[6,0x9e9375,110],[7,0xaa9e79,120],[8,0xb6a97e,130],[9,0xc2b482,140],[10,0xcec087,150],[11,0xd2c48b,160],[12,0xd6c88f,170],[13,0xdacc93,180],[14,0xded097,190],[15,0x88ddee,255],[16,0x6cd1eb,255],[17,0x51c5e8,255],[18,0x36bae5,255],[19,0x1baee2,255],[20,0x00a3e0,255],[21,0x009ad5,255],[22,0x0091ca,255],[23,0x0088bf,255],[24,0x007fb4,255],[25,0x0077aa,255],[26,0x0070a3,255],[27,0x00699c,255],[28,0x006295,255],[29,0x005b8e,255],[30,0x005588,255],[31,0x005180,255],[32,0x004e78,255],[33,0x004a70,255],[34,0x004768,255],[35,0xffee00,255],[36,0xffe000,255],[37,0xffd200,255],[38,0xffc500,255],[39,0xffb700,255],[40,0xffaa00,255],[41,0xff9f00,255],[42,0xff9500,255],[43,0xff8b00,255],[44,0xff8100,255],[45,0xff4400,255],[46,0xf23600,255],[47,0xe62800,255],[48,0xd91b00,255],[49,0xcd0d00,255],[50,0xc10000,255],[51,0xa80000,255],[52,0x8f0000,255],[53,0x760000,255],[54,0x5d0000,255],[55,0xffaaff,255],[56,0xff9fff,255],[57,0xff95ff,255],[58,0xff8bff,255],[59,0xff81ff,255],[60,0xff77ff,255],[61,0xff6cff,255],[62,0xff62ff,255],[63,0xff58ff,255],[64,0xff4eff,255],[65,0xffffff,255],[66,0xffffff,255],[67,0xffffff,255],[68,0xffffff,255],[69,0xffffff,255],[70,0xffffff,255],[71,0xffffff,255],[72,0xffffff,255],[73,0xffffff,255],[74,0xffffff,255],[75,0x00ff00,255],[76,0x00ff00,255],[77,0x00ff00,255],[78,0x00ff00,255],[79,0x00ff00,255],[80,0x00ff00,255],[81,0x00ff00,255],[82,0x00ff00,255],[83,0x00ff00,255],[84,0x00ff00,255],[85,0x00ff00,255],[86,0x00ff00,255],[87,0x00ff00,255],[88,0x00ff00,255],[89,0x00ff00,255],[90,0x00ff00,255],[91,0x00ff00,255],[92,0x00ff00,255],[93,0x00ff00,255],[94,0x00ff00,255],[95,0x00ff00,255]];
+  var ubCache = {};
+  function ubDbz(r, g, b){
+    var k = (r << 16) | (g << 8) | b;
+    if (ubCache[k] !== undefined) return ubCache[k];
+    var best = -99, bd = 1e9;
+    for (var i = 0; i < UB.length; i++){
+      var c = UB[i][1], dr = r - (c >> 16), dg = g - (c >> 8 & 255), db = b - (c & 255), d = dr * dr + dg * dg + db * db;
+      if (d < bd){ bd = d; best = UB[i][0]; }
+    }
+    return (ubCache[k] = best);
+  }
+  function ubAlpha(dbz){ for (var i = 0; i < UB.length; i++) if (UB[i][0] === dbz) return UB[i][2]; return 255; }
+  // wlasna paleta: slaby deszcz wyraznie widoczny na ciemnej mapie
+  function myColor(d){
+    if (d < -4) return null;
+    if (d < 2) return [150, 220, 255, 110];             // slad opadu / bardzo slabe echo
+    if (d < 10) return [130, 215, 255, 160];
+    if (d < 20) return [80, 190, 255, 195];
+    if (d < 30) return [40, 135, 255, 220];
+    if (d < 38) return [35, 85, 235, 235];
+    if (d < 45) return [255, 214, 60, 240];
+    if (d < 50) return [255, 140, 40, 245];
+    if (d < 55) return [255, 60, 50, 250];
+    return [255, 90, 230, 255];
+  }
+  function intensity(d){
+    if (d < -4) return ["brak opadu", "var(--ink-dim)"];
+    if (d < 2) return ["ślad opadu", "#96dcff"];
+    if (d < 15) return ["mżawka / bardzo słaby", "#82d7ff"];
+    if (d < 25) return ["słaby deszcz", "#50beff"];
+    if (d < 35) return ["umiarkowany deszcz", "#4f9bff"];
+    if (d < 45) return ["silny deszcz", "#ffd63c"];
+    if (d < 55) return ["ulewa", "#ff8c28"];
+    return ["możliwy grad", "#ff5ae6"];
+  }
+  var tmpC = document.createElement("canvas"); tmpC.width = tmpC.height = 512;
+  var tmpX = tmpC.getContext("2d");
+  var siteDbz = null;
+  function recolor(im){
+    tmpX.clearRect(0, 0, 512, 512);
+    tmpX.drawImage(im, 0, 0, 512, 512);
+    var data;
+    try { data = tmpX.getImageData(0, 0, 512, 512); } catch(e){ return null; }   // bez CORS - zostaw oryginal
+    var p = data.data;
+    for (var i = 0; i < p.length; i += 4){
+      var a = p[i + 3]; if (!a) continue;
+      var d = ubDbz(p[i], p[i + 1], p[i + 2]), c = myColor(d);
+      if (!c){ p[i + 3] = 0; continue; }
+      var k = Math.min(1, a / ubAlpha(d));                 // miekkie krawedzie po wygladzeniu
+      p[i] = c[0]; p[i + 1] = c[1]; p[i + 2] = c[2]; p[i + 3] = Math.round(c[3] * k);
+    }
+    // natezenie nad Zambskimi (promien ~2 km) - z oryginalnych pikseli
+    var sx = Math.round(SITE_X + VX - (im._x + VX)), sy = Math.round(SITE_Y + VY - (im._y + VY));
+    if (sx >= 3 && sy >= 3 && sx < 509 && sy < 509){
+      var raw = tmpX.getImageData(sx - 3, sy - 3, 7, 7).data, mx = -99;
+      for (var j = 0; j < raw.length; j += 4) if (raw[j + 3] > 0) mx = Math.max(mx, ubDbz(raw[j], raw[j + 1], raw[j + 2]));
+      siteDbz = mx;
+    }
+    tmpX.putImageData(data, 0, 0);
+    return tmpC;
+  }
   function radarLabel(){
     var f = RV.shown; if (!f) return;
     var age = Math.round((Date.now() - f.time * 1000) / 60000);
-    $("rTime").innerHTML = "stan na <b>" + hm(f.time * 1000) + "</b>" + (age >= 0 ? " · " + age + " min temu" : "") + " · na żywo";
+    var it = intensity(siteDbz === null ? -99 : siteDbz);
+    $("rTime").innerHTML = "stan na <b>" + hm(f.time * 1000) + "</b>" + (age >= 0 ? " · " + age + " min temu" : "")
+      + ' · nad Zambskimi: <b style="color:' + it[1] + '">' + it[0] + "</b>";
   }
   function loadRadar(){
     return getJSON("https://api.rainviewer.com/public/weather-maps.json").then(function(j){
@@ -345,11 +410,17 @@
       var left = TILES.length, imgs = [];
       TILES.forEach(function(tl){
         var im = new Image();
+        im.crossOrigin = "anonymous";                     // RainViewer daje CORS - mozna przemalowac piksele
         im._x = (tl[0] - 35) * 512 - VX; im._y = (tl[1] - 20) * 512 - VY;
         im.onload = im.onerror = function(){
           if (--left > 0 || RV.pending !== f) return;
           rctx.clearRect(0, 0, 720, 480);
-          imgs.forEach(function(x){ if (x.complete && x.naturalWidth) rctx.drawImage(x, x._x, x._y); });
+          siteDbz = -99;
+          imgs.forEach(function(x){
+            if (!(x.complete && x.naturalWidth)) return;
+            var c = recolor(x);
+            rctx.drawImage(c || x, x._x, x._y);
+          });
           RV.shown = f; RV.pending = null;
           $("rMsg").hidden = true;
           radarLabel();

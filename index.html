@@ -454,8 +454,8 @@
   .rmap-in img, .rmap-in canvas { position:absolute; left:0; top:0; width:100%; height:100%; display:block; }
   .rmap-in canvas { opacity:.88; }
   .r-site { position:absolute; left:50%; top:50%; width:0; height:0; }
-  .r-site i { position:absolute; left:-5px; top:-5px; width:10px; height:10px; border-radius:50%;
-    background:#ffd166; box-shadow:0 0 0 2px #000, 0 0 0 5px rgba(255,209,102,.35); }
+  .r-site i { position:absolute; left:-7px; top:-7px; width:14px; height:14px; border-radius:50%;
+    border:2px solid #ffd166; box-shadow:0 0 0 1.5px #000, inset 0 0 0 1px #000; }   /* pusty pierscien - widac opad pod spodem */
   .r-site span { position:absolute; left:8px; top:-24px; font-family:var(--num); font-weight:600; font-size:12px; color:#ffd166;
     background:rgba(0,0,0,.7); border-radius:4px; padding:0 .3em; white-space:nowrap; }
   .r-time { position:absolute; left:.6em; top:.5em; font-family:var(--mono); font-size:clamp(.56rem,.85vw,.74rem);
@@ -467,7 +467,7 @@
   .r-leg { position:absolute; right:.6em; bottom:.5em; background:rgba(0,0,0,.72); border-radius:6px; padding:.3em .5em;
     font-family:var(--mono); font-size:clamp(.5rem,.75vw,.66rem); color:var(--ink-dim); }
   .r-leg .bar { height:7px; width:clamp(120px,13vw,220px); border-radius:4px; margin-bottom:.25em;
-    background:linear-gradient(90deg,#88ddee 0%,#00a3e0 14%,#0077aa 26%,#005588 36%,#ffee00 48%,#ffaa00 58%,#ff4400 70%,#c10000 80%,#ffaaff 90%,#ff77ff 100%); }
+    background:linear-gradient(90deg,#82d7ff 0%,#50beff 16%,#2887ff 32%,#2355eb 46%,#ffd63c 60%,#ff8c28 74%,#ff3c32 87%,#ff5ae6 100%); }
   .r-leg .lb { display:flex; justify-content:space-between; gap:.6em; }
   .r-msg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--mono);
     font-size:.8rem; color:var(--ink-faint); text-align:center; padding:1em; }
@@ -683,7 +683,7 @@
               </div>
               <div class="r-site" id="rSite"><i></i><span>Zambski Kośc.</span></div>
               <div class="r-time" id="rTime">radar opadów…</div>
-              <div class="r-leg"><div class="bar"></div><div class="lb"><span>słaby</span><span>umiark.</span><span>silny</span><span>b. silny</span></div></div>
+              <div class="r-leg"><div class="bar"></div><div class="lb"><span>mżawka</span><span>słaby</span><span>umiark.</span><span>silny</span><span>ulewa</span></div></div>
               <div class="r-msg" id="rMsg" hidden></div>
               <div class="storm-box" id="stormBox" hidden><span class="sb-big" id="sbBig">—</span><span class="sb-lbl" id="sbLbl"></span><span class="sb-sub" id="sbSub"></span></div>
             </div>
