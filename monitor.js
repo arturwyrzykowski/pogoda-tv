@@ -629,65 +629,112 @@
   }
   setInterval(nightCheck, 60000);
 
-  /* ================= OSTRZEŻENIA ================= */
-  var official = [], ownW = [], alIdx = 0, alT = null;
+  /* ================= OSTRZEŻENIA + KOMUNIKATY LOKALNE ================= */
+  // Pasek pod naglowkiem: oficjalne IMGW (meteo + hydro Narew), progi z prognozy Open-Meteo,
+  // komunikaty lokalne z data/komunikaty.json (PGE, gmina Obryte, powiat - zbiera GitHub Actions).
+  // Kazdy wpis znika sam po wygasnieciu; przy kazdym widac czas ostatniej aktualizacji zrodla.
+  var official = [], ownW = [], localW = [], alIdx = 0, alT = null;
+  var at = { imgw:0, own:0, local:0, localFile:0 };
   var parseLocal = function(s){ return new Date(String(s).replace(" ", "T")).getTime(); };
   function loadWarnings(){
-    var now = Date.now(), list = [];
+    var now = Date.now(), meteoL = null, hydroL = null;
     var a = getJSON("https://danepubliczne.imgw.pl/api/data/warningsmeteo").then(function(ws){
+      meteoL = [];
       (ws || []).forEach(function(w){
         var ter = (w.teryt || []).some(function(t){ return String(t).indexOf("1424") === 0; });
         var to = parseLocal(w.obowiazuje_do);
-        if (ter && to > now) list.push({ lvl:+w.stopien || 1, title:w.nazwa_zdarzenia, from:parseLocal(w.obowiazuje_od), to:to, prob:w.prawdopodobienstwo, src:"IMGW-PIB" });
+        if (ter && to > now) meteoL.push({ kind:"imgw", lvl:+w.stopien || 1, title:w.nazwa_zdarzenia, from:parseLocal(w.obowiazuje_od), to:to,
+          prob:w.prawdopodobienstwo, issued:parseLocal(w.opublikowano), src:"IMGW-PIB" });
       });
     }).catch(function(){});
     var b = getJSON("https://danepubliczne.imgw.pl/api/data/warningshydro").then(function(ws){
+      hydroL = [];
       (ws || []).forEach(function(w){
         var lvl = parseInt(w["stopień"] != null ? w["stopień"] : w.stopien, 10);
         var hit = (w.obszary || []).some(function(o){ return o.wojewodztwo === "mazowieckie" && /narew/i.test(o.opis || ""); });
         var to = parseLocal(w.data_do);
-        if (hit && lvl >= 1 && to > now) list.push({ lvl:lvl, title:w.zdarzenie + " (Narew)", from:parseLocal(w.data_od), to:to, prob:w.prawdopodobienstwo, src:"IMGW-PIB hydro" });
+        if (hit && lvl >= 1 && to > now) hydroL.push({ kind:"hydro", lvl:lvl, title:w.zdarzenie + " (Narew)", from:parseLocal(w.data_od), to:to,
+          prob:w.prawdopodobienstwo, issued:parseLocal(w.opublikowano), src:"IMGW-PIB hydro" });
       });
     }).catch(function(){});
-    return Promise.all([a, b]).then(function(){ official = list; window.ALERTS_OFFICIAL = list; renderAlerts(); });
+    return Promise.all([a, b]).then(function(){
+      // przy bledzie pobierania zostaja poprzednie (jeszcze wazne) ostrzezenia z tego zrodla
+      var keep = function(kind){ return official.filter(function(w){ return w.kind === kind; }); };
+      official = (meteoL || keep("imgw")).concat(hydroL || keep("hydro"));
+      if (meteoL) at.imgw = Date.now();
+      window.ALERTS_OFFICIAL = official;
+      renderAlerts();
+    });
   }
   function ownWarnings(j){
     var Hh = j.hourly, now = Date.now(), m = new Date().getMonth() + 1, out = [];
     var idx = [];
     for (var i = 0; i < Hh.time.length; i++){ var t = new Date(Hh.time[i]).getTime(); if (t >= now - H && t <= now + DAY) idx.push(i); }
+    at.own = now;
     if (!idx.length){ ownW = []; return; }
     var tt = function(i){ return new Date(Hh.time[i]).getTime(); };
     function span(test){ var f = null, l = null; idx.forEach(function(i){ if (test(i)){ if (f === null) f = i; l = i; } }); return f === null ? null : [tt(f), tt(l) + H]; }
     var s;
-    if ((s = span(function(i){ return Hh.weather_code[i] >= 95; }))) out.push({ lvl:1, title:"Możliwe burze", from:s[0], to:s[1] });
+    if ((s = span(function(i){ return Hh.weather_code[i] >= 95; }))) out.push({ lvl:Hh.weather_code.some(function(c, i){ return idx.indexOf(i) >= 0 && c >= 96; }) ? 2 : 1, title:"Możliwe burze", from:s[0], to:s[1] });
     var g = 0; idx.forEach(function(i){ g = Math.max(g, Hh.wind_gusts_10m[i] || 0); });
     if (g >= 70 && (s = span(function(i){ return Hh.wind_gusts_10m[i] >= 70; }))) out.push({ lvl:g >= 90 ? 2 : 1, title:"Silny wiatr — porywy do " + Math.round(g) + " km/h", from:s[0], to:s[1] });
     var sum = 0, mxh = 0; idx.forEach(function(i){ sum += Hh.precipitation[i] || 0; mxh = Math.max(mxh, Hh.precipitation[i] || 0); });
     if ((sum >= 30 || mxh >= 15) && (s = span(function(i){ return Hh.precipitation[i] >= 1; }))) out.push({ lvl:sum >= 50 ? 2 : 1, title:"Intensywne opady — do " + Math.round(sum) + " mm w 24 h", from:s[0], to:s[1] });
     var tmin = 99, tmax = -99; idx.forEach(function(i){ tmin = Math.min(tmin, Hh.temperature_2m[i]); tmax = Math.max(tmax, Hh.temperature_2m[i]); });
-    if (m >= 4 && m <= 10 && tmin <= 0 && (s = span(function(i){ return Hh.temperature_2m[i] <= 0; }))) out.push({ lvl:1, title:"Przymrozek — do " + fmt1(tmin) + "°C", from:s[0], to:s[1] });
+    // przymrozek: przy gruncie bywa o 2-3 st. zimniej niz na 2 m, wiec ostrzegamy juz od +1 st.
+    if (m >= 4 && m <= 10 && tmin <= 1 && (s = span(function(i){ return Hh.temperature_2m[i] <= 1; }))) out.push({ lvl:tmin <= -2 ? 2 : 1, title:(tmin <= 0 ? "Przymrozek — do " : "Możliwy przymrozek przy gruncie — na 2 m do ") + fmt1(tmin) + "°C", from:s[0], to:s[1] });
     if ((m <= 3 || m >= 11) && tmin <= -15 && (s = span(function(i){ return Hh.temperature_2m[i] <= -15; }))) out.push({ lvl:tmin <= -20 ? 2 : 1, title:"Silny mróz — do " + fmt1(tmin) + "°C", from:s[0], to:s[1] });
     if (tmax >= 30 && (s = span(function(i){ return Hh.temperature_2m[i] >= 30; }))) out.push({ lvl:tmax >= 34 ? 2 : 1, title:"Upał — do " + fmt1(tmax) + "°C", from:s[0], to:s[1] });
-    out.forEach(function(w){ w.own = true; w.src = "prognoza Open-Meteo · orientacyjnie"; });
+    out.forEach(function(w){ w.kind = "own"; w.own = true; w.src = "prognoza Open-Meteo · orientacyjnie"; });
     ownW = out;
     renderAlerts();
   }
+  function loadLocal(){
+    fetch("data/komunikaty.json?t=" + Date.now(), { cache:"no-store" }).then(function(r){ if (!r.ok) throw new Error(); return r.json(); }).then(function(d){
+      localW = (d.komunikaty || []).map(function(k){
+        return { kind:"local", typ:k.typ, wazne:k.wazne, title:k.tytul, text:k.tekst, from:Date.parse(k.od), to:Date.parse(k.do), src:k.zrodlo };
+      });
+      at.localFile = Date.now();
+      renderAlerts();
+    }).catch(function(){});
+    // kiedy automat ostatnio sprawdzil zrodla (publiczne API GitHuba, bez zapisu w repo)
+    fetch("https://api.github.com/repos/arturwyrzykowski/pogoda-tv/actions/workflows/komunikaty.yml/runs?status=success&per_page=1", { cache:"no-store" })
+      .then(function(r){ return r.json(); }).then(function(j){
+        var run = j.workflow_runs && j.workflow_runs[0];
+        if (run) { at.local = Date.parse(run.updated_at); renderAlerts(); }
+      }).catch(function(){});
+  }
+  function updLbl(t){ return t ? "akt. " + (Date.now() - t > 20 * H ? dayLbl(t) + " " : "") + hm(t) : "akt. —"; }
   function renderAlerts(){
     var el = $("alerts"), now = Date.now();
-    var all = official.filter(function(w){ return w.to > now; }).sort(function(a, b){ return b.lvl - a.lvl; })
-      .concat(ownW.filter(function(w){ return w.to > now; }));
-    if (/test-ostrzezenie/.test(location.hash)) all.unshift({ lvl:1, title:"TEST paska ostrzeżeń", from:now, to:now + 6 * H, src:"test (#test-ostrzezenie)" });
+    var live = function(w){ return w.to > now; };
+    var all = official.filter(live).sort(function(a, b){ return b.lvl - a.lvl; })
+      .concat(ownW.filter(live))
+      .concat(localW.filter(function(w){ return live(w) && w.wazne; }))
+      .concat(localW.filter(function(w){ return live(w) && !w.wazne; }));
+    if (/test-ostrzezenie/.test(location.hash)) all.unshift({ kind:"own", lvl:1, title:"TEST paska ostrzeżeń", from:now, to:now + 6 * H, src:"test (#test-ostrzezenie)" });
     clearTimeout(alT);
     var was = !el.hidden;
     if (!all.length){ el.hidden = true; el.innerHTML = ""; if (was) window.dispatchEvent(new Event("resize")); return; }
     if (alIdx >= all.length) alIdx = 0;
-    var w = all[alIdx];
-    el.className = "alerts " + (w.own ? "own" : "l" + Math.min(3, Math.max(1, w.lvl)));
-    el.innerHTML = '<span class="al-ic">⚠</span><span class="al-body"><b>' + esc(w.title) + "</b>"
-      + (w.own ? "" : " <span>· stopień " + w.lvl + "</span>")
-      + " <span>· " + when(w.from) + " – " + when(w.to) + "</span>"
-      + (w.prob ? " <span>· prawdop. " + esc(w.prob) + "%</span>" : "")
-      + '</span><span class="al-src">' + esc(w.src) + (all.length > 1 ? " · " + (alIdx + 1) + "/" + all.length : "") + "</span>";
+    var w = all[alIdx], cls, ic, body, upd;
+    if (w.kind === "local"){
+      cls = w.typ === "prad" ? (w.wazne ? "pw imp" : "pw") : (w.wazne ? "loc imp" : "loc");
+      ic = w.typ === "prad" ? "⚡" : "📢";
+      body = "<b>" + esc(w.title) + "</b>" + (w.text ? " <span>· " + esc(w.text) + "</span>" : "")
+        + (w.typ === "prad" ? " <span>· " + when(w.from) + " – " + hm(w.to) + "</span>" : " <span>· z " + dayLbl(w.from) + "</span>");
+      upd = updLbl(at.local || at.localFile);
+    } else {
+      cls = w.own ? "own" : "l" + Math.min(3, Math.max(1, w.lvl)); ic = "⚠";
+      body = "<b>" + esc(w.title) + "</b>" + (w.own ? "" : " <span>· stopień " + w.lvl + "</span>")
+        + " <span>· " + when(w.from) + " – " + when(w.to) + "</span>"
+        + (w.prob ? " <span>· prawdop. " + esc(w.prob) + "%</span>" : "")
+        + (w.issued ? " <span>· wydano " + when(w.issued) + "</span>" : "");
+      upd = updLbl(w.own ? at.own : at.imgw);
+    }
+    el.className = "alerts " + cls;
+    el.innerHTML = '<span class="al-ic">' + ic + '</span><span class="al-body">' + body + '</span><span class="al-src">'
+      + esc(w.src) + " · " + upd + (all.length > 1 ? " · " + (alIdx + 1) + "/" + all.length : "") + "</span>";
     el.hidden = false;
     if (!was) window.dispatchEvent(new Event("resize"));   // moneta/kot przeliczaja pozycje
     if (all.length > 1) alT = setTimeout(function(){ alIdx++; renderAlerts(); }, 9000);
@@ -717,6 +764,7 @@
   nightCheck();
   loadNarew(); setInterval(loadNarew, 10 * 60000);
   loadWarnings(); setInterval(loadWarnings, 10 * 60000);
+  loadLocal(); setInterval(loadLocal, 10 * 60000);
   setInterval(renderAlerts, 60000);   // wygasle znikaja same
 
   var m = /mon=(narew|temp|radar|sky)/.exec(location.hash);

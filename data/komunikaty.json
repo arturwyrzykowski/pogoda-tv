@@ -1,0 +1,86 @@
+{
+ "komunikaty": [
+  {
+   "id": "obryte-327267316",
+   "typ": "gmina",
+   "tytul": "Awaria sieci wodociągowej",
+   "tekst": "Informujemy, że w związku z awarią sieci wodociągowej w dniu 07.10.2026 r. występuje przerwa w dostawie wody w miejscowościach: Gródek ...",
+   "od": "2026-10-07T00:00+02:00",
+   "do": "2026-10-12T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/awaria-sieci-wodociagowej,p327267316",
+   "wazne": true
+  },
+  {
+   "id": "pge-607505+606944",
+   "typ": "prad",
+   "tytul": "Wyłączenie prądu — planowane",
+   "tekst": "Gródek Rządowy, Płusy, Sadykierz",
+   "od": "2026-10-13T08:00+02:00",
+   "do": "2026-10-13T18:00+02:00",
+   "zrodlo": "PGE Dystrybucja",
+   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
+   "wazne": false
+  },
+  {
+   "id": "pge-609551",
+   "typ": "prad",
+   "tytul": "Wyłączenie prądu — planowane",
+   "tekst": "Płusy, Sadykierz",
+   "od": "2026-10-16T08:00+02:00",
+   "do": "2026-10-16T14:00+02:00",
+   "zrodlo": "PGE Dystrybucja",
+   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
+   "wazne": false
+  },
+  {
+   "id": "obryte-1513284317",
+   "typ": "gmina",
+   "tytul": "Otrzymałeś alert RCB? Usłyszałeś syrenę alarmową? Sprawdź, jak powinieneś się zachować",
+   "tekst": "Ministerstwo Spraw Wewnętrznych i Administracji przygotowało plakaty informacyjne, które w przystępny sposób wyjaśniają, jakie działania należy podjąć, aby ...",
+   "od": "2026-10-07T00:00+02:00",
+   "do": "2026-10-12T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/otrzymales-alert-rcb-uslyszales-syrene-alarmowa-sprawdz-jak-powinienes-sie-zachowac,p1513284317",
+   "wazne": false
+  },
+  {
+   "id": "powiat-httpspowiatpultuskiplkomunikat2",
+   "typ": "powiat",
+   "tytul": "KOMUNIKAT",
+   "tekst": "",
+   "od": "2026-10-08T14:40+02:00",
+   "do": "2026-10-13T14:40+02:00",
+   "zrodlo": "Powiat pułtuski",
+   "link": "https://powiatpultuski.pl/komunikat-2/",
+   "wazne": false
+  },
+  {
+   "id": "powiat-zaniakryzysowegoiochronyludnoscisyrena26",
+   "typ": "powiat",
+   "tytul": "Mazowieckie ćwiczenia z zakresu zarządzania kryzysowego i ochrony ludności „Syrena-26”",
+   "tekst": "Wydział Zarzadzania Kryzysowego Starostwa Powiatowego w Pułtusku informuje, że od 12 do 16 października 2026 r. na terenie woj. mazowieckiego odbędzie się…",
+   "od": "2026-10-09T12:50+02:00",
+   "do": "2026-10-14T12:50+02:00",
+   "zrodlo": "Powiat pułtuski",
+   "link": "https://powiatpultuski.pl/mazowieckie-cwiczenia-z-zakresu-zarzadzania-kryzysowego-i-ochrony-ludnosci-syrena-26/",
+   "wazne": false
+  },
+  {
+   "id": "powiat-nieatakiemzpowietrzainstrukcjareagowania",
+   "typ": "powiat",
+   "tytul": "Zagrożenie Atakiem z Powietrza – instrukcja reagowania",
+   "tekst": "Ministerstwo Spraw Wewnętrznych i Administracji udostępniło nową Instrukcję Reagowania: Zagrożenie Atakiem z Powietrza, będącą uzupełnieniem treści z Poradnika…",
+   "od": "2026-10-09T15:06+02:00",
+   "do": "2026-10-14T15:06+02:00",
+   "zrodlo": "Powiat pułtuski",
+   "link": "https://powiatpultuski.pl/zagrozenie-atakiem-z-powietrza-instrukcja-reagowania/",
+   "wazne": false
+  }
+ ],
+ "zrodla_ok": {
+  "prad": true,
+  "gmina": true,
+  "powiat": true
+ }
+}
