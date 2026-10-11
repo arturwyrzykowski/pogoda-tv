@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Dziennik pogody — Zambski Kościelne</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --panel:#0a0e15; --panel-2:#070a10; --line:#1b2636; --ink:#eef4fb; --ink-dim:#8ea0b6; --ink-faint:#5b6b80;
+    --acc:#57b6ff; --good:#57d99a; --warn:#ffcf5c; --hot:#ff8a6b; --sun:#ffd166; --cold:#6fa8ff;
+    --sans:"IBM Plex Sans",system-ui,sans-serif; --num:"Sora","IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#000; color:var(--ink); font-family:var(--sans); }
+  .wrap { max-width:1500px; margin:0 auto; padding:clamp(16px,2.4vw,40px); display:flex; flex-direction:column; gap:clamp(14px,1.6vw,24px); }
+  header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  h1 { font-family:var(--num); font-weight:700; font-size:clamp(1.6rem,3.2vw,2.6rem); margin:0; letter-spacing:-.01em; }
+  .sub { font-family:var(--mono); text-transform:uppercase; letter-spacing:.18em; font-size:clamp(.6rem,1vw,.8rem); color:var(--ink-faint); margin-top:.5em; }
+  a { color:var(--acc); }
+  .back { font-family:var(--mono); font-size:.8rem; letter-spacing:.1em; text-transform:uppercase; text-decoration:none; }
+  .card { border:1px solid var(--line); border-radius:clamp(14px,1.4vw,24px); background:linear-gradient(180deg,var(--panel),var(--panel-2)); padding:clamp(14px,1.8vw,28px); position:relative; overflow:hidden; }
+  .card.top::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--acc); opacity:.85; }
+  .lbl { font-family:var(--mono); text-transform:uppercase; letter-spacing:.16em; font-size:clamp(.58rem,.9vw,.76rem); color:var(--ink-faint); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:clamp(12px,1.4vw,22px); }
+  .st { display:flex; flex-direction:column; gap:.3em; padding-left:14px; border-left:1px solid var(--line); }
+  .st .v { font-family:var(--num); font-weight:600; font-size:clamp(1.1rem,2vw,1.7rem); font-variant-numeric:tabular-nums; }
+  .st .v small { font-size:.5em; color:var(--ink-dim); font-weight:500; }
+  .st .w { font-family:var(--mono); font-size:.72rem; color:var(--ink-dim); }
+  .bar { display:flex; gap:.4em; flex-wrap:wrap; align-items:center; }
+  .bar button { background:none; border:1px solid var(--line); color:var(--ink-dim); border-radius:999px; padding:.35em .9em;
+    font-family:var(--mono); font-size:.8rem; letter-spacing:.06em; cursor:pointer; }
+  .bar button.on { color:var(--acc); border-color:var(--acc); background:rgba(87,182,255,.12); }
+  .bar .info { margin-left:auto; font-family:var(--mono); font-size:.75rem; color:var(--ink-faint); }
+  .charts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(14px,1.6vw,24px); }
+  .chart { height:clamp(200px,24vh,280px); position:relative; margin-top:.6em; }
+  .chart svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .ch-head { display:flex; align-items:baseline; gap:.8em; flex-wrap:wrap; }
+  .ch-head .now { font-family:var(--num); font-weight:600; font-size:1.2rem; }
+  .ch-head .mm { font-family:var(--mono); font-size:.75rem; color:var(--ink-dim); }
+  .g { stroke:var(--line); stroke-width:1; } .t { fill:var(--ink-faint); font-family:var(--mono); font-size:11px; }
+  table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; font-size:clamp(.78rem,1vw,.92rem); }
+  th { font-family:var(--mono); text-transform:uppercase; letter-spacing:.1em; font-size:.68rem; color:var(--ink-faint); font-weight:500; text-align:right; padding:.5em .6em; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--panel); }
+  th:first-child, td:first-child { text-align:left; }
+  td { padding:.45em .6em; text-align:right; border-bottom:1px solid rgba(27,38,54,.6); color:var(--ink-dim); }
+  td b { color:var(--ink); font-weight:600; }
+  .tbl { max-height:520px; overflow:auto; margin-top:.6em; }
+  .note { font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); line-height:1.6; }
+  .empty { padding:2em; text-align:center; color:var(--ink-dim); font-family:var(--mono); }
+  @media (max-width:900px){ .charts{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Dziennik pogody</h1>
+      <div class="sub">Zambski Kościelne · archiwum godzinowe</div>
+    </div>
+    <a class="back" href="./">← ekran pogody</a>
+  </header>
+
+  <div class="card top">
+    <div class="lbl">Rekordy w archiwum</div>
+    <div class="stats" id="recs" style="margin-top:.8em"><div class="empty">wczytywanie…</div></div>
+  </div>
+
+  <div class="bar" id="ranges">
+    <button data-d="7" class="on">7 dni</button><button data-d="30">30 dni</button><button data-d="365">rok</button><button data-d="0">całość</button>
+    <span class="info" id="info"></span>
+  </div>
+
+  <div class="charts">
+    <div class="card"><div class="ch-head"><span class="lbl">Temperatura</span><span class="now" id="n_t"></span><span class="mm" id="m_t"></span></div><div class="chart"><svg id="c_t"></svg></div></div>
+    <div class="card"><div class="ch-head"><span class="lbl">Ciśnienie</span><span class="now" id="n_p"></span><span class="mm" id="m_p"></span></div><div class="chart"><svg id="c_p"></svg></div></div>
+    <div class="card"><div class="ch-head"><span class="lbl">Wiatr i porywy</span><span class="now" id="n_w"></span><span class="mm" id="m_w"></span></div><div class="chart"><svg id="c_w"></svg></div></div>
+    <div class="card"><div class="ch-head"><span class="lbl">Narew · stan wody</span><span class="now" id="n_n"></span><span class="mm" id="m_n"></span></div><div class="chart"><svg id="c_n"></svg></div></div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Dzień po dniu</div>
+    <div class="tbl"><table>
+      <thead><tr><th>Dzień</th><th>Temp. min</th><th>Temp. max</th><th>Ciśnienie śr.</th><th>Wiatr śr.</th><th>Porywy max</th><th>Opad</th><th>Narew</th></tr></thead>
+      <tbody id="days"></tbody>
+    </table></div>
+  </div>
+
+  <div class="note" id="files"></div>
+  <div class="note">
+    Zapis automatyczny co 6 godzin (GitHub Actions), wiersz na każdą pełną godzinę.
+    Pogoda: Open-Meteo dla współrzędnych Zambskich Kościelnych (dane modelowe, nie stacja na podwórku).
+    Narew: wodowskaz IMGW-PIB Zambski Kościelne (152210060). Źródłem pochodzenia danych hydrologicznych jest Instytut Meteorologii i Gospodarki Wodnej – Państwowy Instytut Badawczy.
+    Archiwum zaczyna się od pierwszego uruchomienia zapisu (z 7 dniami wstecz) — wcześniejszych danych tu nie ma.
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var DAY = 864e5, rows = [], range = 7;
+  var p2 = function(n){ return (n < 10 ? "0" : "") + n; };
+  var DN = ["ndz","pon","wt","śr","czw","pt","sob"];
+  var fmt = function(v, d){ return v == null || isNaN(v) ? "—" : (d === 0 ? String(Math.round(v)) : v.toFixed(d == null ? 1 : d).replace(".", ",")); };
+  var dstr = function(t){ var d = new Date(t); return p2(d.getDate()) + "." + p2(d.getMonth() + 1) + "." + d.getFullYear(); };
+  var dtstr = function(t){ var d = new Date(t); return p2(d.getDate()) + "." + p2(d.getMonth() + 1) + " " + p2(d.getHours()) + ":00"; };
+
+  function parse(txt){
+    var lines = txt.trim().split(/\r?\n/), head = lines.shift().split(","), out = [];
+    lines.forEach(function(l){
+      var c = l.split(","), r = {};
+      head.forEach(function(h, i){ r[h] = c[i]; });
+      var num = function(k){ return r[k] === "" || r[k] == null ? null : parseFloat(r[k]); };
+      out.push({ t:Date.parse(r.czas), temp:num("temperatura_c"), hum:num("wilgotnosc_proc"), pres:num("cisnienie_hpa"),
+        wind:num("wiatr_kmh"), gust:num("porywy_kmh"), dir:num("kierunek_wiatru_st"), rain:num("opad_mm"), cloud:num("zachmurzenie_proc"), narew:num("narew_cm") });
+    });
+    return out;
+  }
+
+  function chart(svg, series, o){
+    var box = svg.parentNode, W = box.clientWidth, H = box.clientHeight, L = 42, R = 10, T = 10, B = 22, pw = W - L - R, ph = H - T - B;
+    var all = [];
+    series.forEach(function(s){ s.pts.forEach(function(p){ if (p.v != null) all.push(p); }); });
+    if (all.length < 2){ svg.innerHTML = '<text class="t" x="' + W / 2 + '" y="' + H / 2 + '" text-anchor="middle">za mało danych w tym zakresie</text>'; return; }
+    var t0 = Infinity, t1 = -Infinity, mn = Infinity, mx = -Infinity;
+    all.forEach(function(p){ t0 = Math.min(t0, p.t); t1 = Math.max(t1, p.t); mn = Math.min(mn, p.v); mx = Math.max(mx, p.v); });
+    if (o.zero) mn = Math.min(0, mn);
+    if (mx - mn < o.span){ var c = (mx + mn) / 2; mn = c - o.span / 2; mx = c + o.span / 2; if (o.zero && mn < 0 && all.every(function(p){ return p.v >= 0; })){ mx -= mn; mn = 0; } }
+    var pad = (mx - mn) * 0.08; mx += pad; if (!o.zero) mn -= pad;
+    var X = function(t){ return L + (t - t0) / Math.max(1, t1 - t0) * pw; }, Y = function(v){ return T + (1 - (v - mn) / (mx - mn)) * ph; };
+    var s = "";
+    for (var i = 0; i <= 3; i++){ var v = mn + (mx - mn) * i / 3, y = Y(v); s += '<line class="g" x1="' + L + '" x2="' + (W - R) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/><text class="t" x="' + (L - 6) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="end">' + fmt(v, o.dec) + "</text>"; }
+    var span = t1 - t0, step = span <= 2 * DAY ? 6 * 36e5 : span <= 10 * DAY ? DAY : span <= 62 * DAY ? 7 * DAY : 30 * DAY;
+    var d0 = new Date(t0); var tt = new Date(d0.getFullYear(), d0.getMonth(), d0.getDate() + 1).getTime();
+    if (step === 30 * DAY) tt = new Date(d0.getFullYear(), d0.getMonth() + 1, 1).getTime();
+    for (var k = 0; tt <= t1 && k < 40; k++){
+      var x = X(tt), d = new Date(tt);
+      var lab = step < DAY ? p2(d.getHours()) + ":00" : step === DAY ? DN[d.getDay()] + " " + d.getDate() : step === 7 * DAY ? d.getDate() + "." + p2(d.getMonth() + 1) : ["sty","lut","mar","kwi","maj","cze","lip","sie","wrz","paź","lis","gru"][d.getMonth()];
+      s += '<line class="g" stroke-dasharray="2 4" x1="' + x.toFixed(1) + '" x2="' + x.toFixed(1) + '" y1="' + T + '" y2="' + (T + ph) + '"/><text class="t" x="' + (x + 3).toFixed(1) + '" y="' + (H - 5) + '">' + lab + "</text>";
+      tt = step === 30 * DAY ? new Date(d.getFullYear(), d.getMonth() + 1, 1).getTime() : tt + step;
+    }
+    series.forEach(function(se){
+      var d = "", prev = null;
+      se.pts.forEach(function(p){
+        if (p.v == null){ prev = null; return; }
+        d += (prev && p.t - prev.t <= 3 * 36e5 ? "L" : "M") + X(p.t).toFixed(1) + " " + Y(p.v).toFixed(1);
+        prev = p;
+      });
+      if (se.area){
+        s += '<path d="' + d.replace(/M/g, "L").replace(/^L/, "M") + "L" + (W - R) + " " + (T + ph) + "L" + L + " " + (T + ph) + 'Z" fill="' + se.color + '" opacity=".1"/>';
+      }
+      s += '<path d="' + d + '" fill="none" stroke="' + se.color + '" stroke-width="' + (se.w || 1.8) + '" stroke-linejoin="round" opacity="' + (se.op || 1) + '"/>';
+    });
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.innerHTML = s;
+  }
+
+  function minmax(pts, k){
+    var mn = null, mx = null;
+    pts.forEach(function(r){ if (r[k] == null) return; if (!mn || r[k] < mn[k]) mn = r; if (!mx || r[k] > mx[k]) mx = r; });
+    return [mn, mx];
+  }
+
+  function render(){
+    if (!rows.length) return;
+    var last = rows[rows.length - 1].t, from = range ? last - range * DAY : 0;
+    var sel = rows.filter(function(r){ return r.t > from; });
+    $("info").textContent = sel.length + " godzin · " + dstr(sel[0].t) + " – " + dstr(last);
+    var pick = function(k){ return sel.map(function(r){ return { t:r.t, v:r[k] }; }); };
+    // agregacja dla dlugich zakresow (srednia dobowa) zeby wykres byl czytelny
+    function agg(k, fn){
+      if (!range || range > 60){
+        var by = {}, out = [];
+        sel.forEach(function(r){ if (r[k] == null) return; var d = new Date(r.t), key = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12).getTime(); (by[key] = by[key] || []).push(r[k]); });
+        Object.keys(by).sort().forEach(function(key){ out.push({ t:+key, v:fn(by[key]) }); });
+        return out;
+      }
+      return pick(k);
+    }
+    var avg = function(a){ return a.reduce(function(x, y){ return x + y; }, 0) / a.length; };
+    var mx = function(a){ return Math.max.apply(null, a); }, mi = function(a){ return Math.min.apply(null, a); };
+    var long = !range || range > 60;
+    chart($("c_t"), long ? [{ pts:agg("temp", mx), color:"#ff8a6b", w:1.4 }, { pts:agg("temp", mi), color:"#6fa8ff", w:1.4 }] : [{ pts:pick("temp"), color:"#ffd166", area:true }], { span:4, dec:0 });
+    chart($("c_p"), [{ pts:agg("pres", avg), color:"#57b6ff" }], { span:6, dec:0 });
+    chart($("c_w"), [{ pts:agg("gust", mx), color:"#ff8a6b", w:1.2, op:.7 }, { pts:agg("wind", long ? avg : mx), color:"#57d99a" }], { span:10, dec:0, zero:true });
+    chart($("c_n"), [{ pts:agg("narew", avg), color:"#57b6ff", area:true }], { span:10, dec:0 });
+    var lr = rows[rows.length - 1];
+    $("n_t").textContent = fmt(lr.temp) + "°C"; $("n_p").textContent = fmt(lr.pres, 0) + " hPa";
+    $("n_w").textContent = fmt(lr.wind, 0) + " km/h"; $("n_n").textContent = lr.narew != null ? fmt(lr.narew, 0) + " cm" : "—";
+    var t = minmax(sel, "temp"), p = minmax(sel, "pres"), g = minmax(sel, "gust"), n = minmax(sel, "narew");
+    $("m_t").textContent = t[0] ? "min " + fmt(t[0].temp) + "° · max " + fmt(t[1].temp) + "°" : "";
+    $("m_p").textContent = p[0] ? fmt(p[0].pres, 0) + "–" + fmt(p[1].pres, 0) + " hPa" : "";
+    $("m_w").textContent = g[1] ? "porywy max " + fmt(g[1].gust, 0) + " km/h" : "";
+    $("m_n").textContent = n[0] ? fmt(n[0].narew, 0) + "–" + fmt(n[1].narew, 0) + " cm" : "";
+  }
+
+  function records(){
+    var t = minmax(rows, "temp"), g = minmax(rows, "gust"), n = minmax(rows, "narew"), p = minmax(rows, "pres");
+    // najwiekszy dobowy opad
+    var byDay = {}; rows.forEach(function(r){ if (r.rain == null) return; var k = dstr(r.t); byDay[k] = (byDay[k] || 0) + r.rain; });
+    var wet = null; Object.keys(byDay).forEach(function(k){ if (!wet || byDay[k] > wet[1]) wet = [k, byDay[k]]; });
+    var it = function(lab, v, unit, w){ return '<div class="st"><span class="lbl">' + lab + '</span><span class="v">' + v + "<small> " + unit + '</small></span><span class="w">' + w + "</span></div>"; };
+    var h = "";
+    if (t[1]) h += it("Najcieplej", fmt(t[1].temp), "°C", dtstr(t[1].t));
+    if (t[0]) h += it("Najzimniej", fmt(t[0].temp), "°C", dtstr(t[0].t));
+    if (g[1]) h += it("Najsilniejszy poryw", fmt(g[1].gust, 0), "km/h", dtstr(g[1].t));
+    if (wet) h += it("Najwięcej deszczu", fmt(wet[1]), "mm / dobę", wet[0]);
+    if (p[0]) h += it("Ciśnienie", fmt(p[0].pres, 0) + "–" + fmt(p[1].pres, 0), "hPa", "najniższe " + dtstr(p[0].t));
+    if (n[1]) h += it("Narew najwyżej", fmt(n[1].narew, 0), "cm", dtstr(n[1].t));
+    if (n[0]) h += it("Narew najniżej", fmt(n[0].narew, 0), "cm", dtstr(n[0].t));
+    var days = Math.round((rows[rows.length - 1].t - rows[0].t) / DAY);
+    h += it("Archiwum", days, "dni", "od " + dstr(rows[0].t));
+    $("recs").innerHTML = h;
+  }
+
+  function dayTable(){
+    var by = {}, order = [];
+    rows.forEach(function(r){ var d = new Date(r.t), k = d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()); if (!by[k]){ by[k] = []; order.push(k); } by[k].push(r); });
+    var h = "";
+    order.reverse().forEach(function(k){
+      var a = by[k], f = function(key){ return a.map(function(r){ return r[key]; }).filter(function(v){ return v != null; }); };
+      var tt = f("temp"), pp = f("pres"), ww = f("wind"), gg = f("gust"), rr = f("rain"), nn = f("narew");
+      var av = function(x){ return x.length ? x.reduce(function(s, v){ return s + v; }, 0) / x.length : null; };
+      var d = new Date(k + "T12:00");
+      h += "<tr><td>" + DN[d.getDay()] + " " + p2(d.getDate()) + "." + p2(d.getMonth() + 1) + "." + d.getFullYear() + (a.length < 24 ? ' <span style="color:var(--ink-faint)">(' + a.length + " h)</span>" : "") + "</td>"
+        + "<td>" + (tt.length ? "<b style='color:#6fa8ff'>" + fmt(Math.min.apply(null, tt)) + "°</b>" : "—") + "</td>"
+        + "<td>" + (tt.length ? "<b style='color:#ff8a6b'>" + fmt(Math.max.apply(null, tt)) + "°</b>" : "—") + "</td>"
+        + "<td>" + fmt(av(pp), 0) + "</td><td>" + fmt(av(ww), 0) + "</td>"
+        + "<td>" + (gg.length ? fmt(Math.max.apply(null, gg), 0) : "—") + "</td>"
+        + "<td>" + (rr.length ? fmt(rr.reduce(function(s, v){ return s + v; }, 0)) + " mm" : "—") + "</td>"
+        + "<td>" + (nn.length ? "<b>" + fmt(av(nn), 0) + "</b> cm" : "—") + "</td></tr>";
+    });
+    $("days").innerHTML = h;
+  }
+
+  fetch("data/index.json", { cache:"no-store" }).then(function(r){ return r.json(); }).then(function(idx){
+    $("files").innerHTML = "Pliki CSV do pobrania: " + idx.pliki.map(function(f){ return '<a href="data/' + f + '" download>' + f + "</a>"; }).join(" · ") + " · ostatni zapis: " + idx.aktualizacja.replace("T", " ").slice(0, 16);
+    return Promise.all(idx.pliki.map(function(f){ return fetch("data/" + f, { cache:"no-store" }).then(function(r){ return r.text(); }); }));
+  }).then(function(texts){
+    texts.forEach(function(t){ rows = rows.concat(parse(t)); });
+    rows = rows.filter(function(r){ return isFinite(r.t); }).sort(function(a, b){ return a.t - b.t; });
+    if (!rows.length) throw new Error("pusto");
+    records(); dayTable(); render();
+  }).catch(function(){
+    $("recs").innerHTML = '<div class="empty">Archiwum jeszcze puste albo niedostępne.</div>';
+  });
+
+  var bs = document.querySelectorAll("#ranges button");
+  for (var i = 0; i < bs.length; i++) bs[i].addEventListener("click", function(){
+    for (var j = 0; j < bs.length; j++) bs[j].classList.toggle("on", bs[j] === this);
+    range = +this.getAttribute("data-d"); render();
+  });
+  var rt; window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(render, 200); });
+})();
+</script>
+</body>
+</html>
