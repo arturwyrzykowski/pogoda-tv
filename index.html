@@ -560,6 +560,29 @@
   @keyframes storkFlyR { from{ transform:translate(112vw,0); } to{ transform:translate(-20vw,4vh); } }
   @media (prefers-reduced-motion:reduce){ #events { display:none; } }
 
+  /* ===== nocny tryb astronomiczny (noc.js): gwiazdy, Ksiezyc, chmury nad panelem ===== */
+  #nightSky { position:fixed; left:0; right:0; top:0; height:220px; z-index:0; pointer-events:none; overflow:hidden;
+    opacity:0; visibility:hidden; transition:opacity 40s ease, visibility 0s linear 40s; }
+  body.astro #nightSky { opacity:1; visibility:visible; transition:opacity 40s ease; }
+  header, .stage { position:relative; z-index:1; }
+  #nsStars i { position:absolute; border-radius:50%; background:#dfe7f5; }
+  #nsStars i.tw { animation:nsTw 6s ease-in-out infinite alternate; }
+  @keyframes nsTw { from{ opacity:.18; } to{ opacity:.7; } }
+  #nsClouds i { position:absolute; border-radius:50%; will-change:transform;
+    background:radial-gradient(closest-side, rgba(118,132,156,.20), rgba(118,132,156,.08) 60%, rgba(118,132,156,0));
+    animation:nsDrift 300s linear infinite; }
+  @keyframes nsDrift { from{ transform:translateX(-12vw); } to{ transform:translateX(12vw); } }
+  #nsMoon { position:absolute; left:0; top:0; }
+  #nsMoon[hidden] { display:none; }
+  #nsMoon .ns-halo { position:absolute; inset:-45%; border-radius:50%;
+    background:radial-gradient(closest-side, rgba(220,228,245,.10), rgba(220,228,245,.04) 55%, rgba(220,228,245,0)); }
+  #nsMoon .ns-disc { position:relative; width:100%; height:100%; opacity:.86; }
+  #nsMoon .ns-disc svg { width:100%; height:100%; display:block; }
+  #nsCap { position:absolute; font-family:var(--mono); font-size:clamp(.5rem,.72vw,.64rem); letter-spacing:.14em;
+    text-transform:uppercase; color:#6f7fa0; white-space:nowrap; }
+  @media (prefers-reduced-motion:reduce){ #nsStars i.tw, #nsClouds i { animation:none; } }
+  @media (max-width:900px){ #nightSky { display:none; } }
+
   :fullscreen #fsBtn { display:none; }
 </style>
 </head>
@@ -670,6 +693,7 @@
 
 <div id="fenceCat" aria-hidden="true"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><g><animateTransform attributeName="transform" type="rotate" values="-8 21 31;10 21 31;-8 21 31" dur="2.4s" repeatCount="indefinite"/><path d="M22 31 C9 29 5 19 9 7" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/><circle cx="9" cy="7" r="2.6" fill="#f4f4f4"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 30 37;24 30 37;-24 30 37" dur=".9s" begin="-.45s" repeatCount="indefinite"/><rect x="27" y="35" width="6" height="21" rx="3" fill="#0b0b0b"/><ellipse cx="31" cy="56" rx="4.2" ry="2.6" fill="#cfcfcf"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 66 37;24 66 37;-24 66 37" dur=".9s" begin="0s" repeatCount="indefinite"/><rect x="63" y="35" width="6" height="21" rx="3" fill="#0b0b0b"/><ellipse cx="67" cy="56" rx="4.2" ry="2.6" fill="#cfcfcf"/></g><ellipse cx="47" cy="32" rx="26" ry="11.5" fill="#111"/><ellipse cx="55" cy="40" rx="13" ry="3.6" fill="#f4f4f4"/><ellipse cx="68" cy="34" rx="6.5" ry="8" fill="#f4f4f4"/><g><animateTransform attributeName="transform" type="rotate" values="-24 28 37;24 28 37;-24 28 37" dur=".9s" begin="0s" repeatCount="indefinite"/><rect x="25" y="35" width="6" height="21" rx="3" fill="#111"/><ellipse cx="29" cy="56" rx="4.2" ry="2.6" fill="#f4f4f4"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 64 37;24 64 37;-24 64 37" dur=".9s" begin="-.45s" repeatCount="indefinite"/><rect x="61" y="35" width="6" height="21" rx="3" fill="#111"/><ellipse cx="65" cy="56" rx="4.2" ry="2.6" fill="#f4f4f4"/></g><polygon points="70,16 72,3 79,12" fill="#111"/><polygon points="80,12 87,3 88,16" fill="#111"/><polygon points="72,13 73,7 77,12" fill="#d48a9a"/><polygon points="82,12 86,7 86,14" fill="#d48a9a"/><circle cx="79" cy="22" r="11" fill="#111"/><path d="M79 13 L82 13 L84 24 L76 24 Z" fill="#f4f4f4"/><ellipse cx="84" cy="27" rx="6.5" ry="5" fill="#f4f4f4"/><ellipse cx="89.5" cy="24.5" rx="1.7" ry="1.2" fill="#d48a9a"/><ellipse cx="85" cy="19.5" rx="2.1" ry="2.4" fill="#d9e65a"/><ellipse cx="85.5" cy="19.5" rx=".8" ry="2" fill="#000"/><path d="M90 27 L98 25.5 M90 28.5 L98 29.5" stroke="#cfcfcf" stroke-width=".5"/></svg></div>
 
+<div id="nightSky" aria-hidden="true"><div id="nsStars"></div><div id="nsMoon" hidden><div class="ns-halo"></div><div class="ns-disc"></div></div><div id="nsClouds"></div><div id="nsCap"></div></div>
 <div id="snowLayer" aria-hidden="true"></div>
 <div id="events" aria-hidden="true"></div>
 <div id="tree" aria-hidden="true"><div class="tr-sway"><svg id="treeSvg" viewBox="0 0 200 200"></svg></div><span class="tr-lbl" id="treeLbl"></span></div>
@@ -1225,5 +1249,6 @@
 <script src="monitor.js"></script>
 <script src="drzewo.js"></script>
 <script src="zdarzenia.js"></script>
+<script src="noc.js"></script>
 </body>
 </html>

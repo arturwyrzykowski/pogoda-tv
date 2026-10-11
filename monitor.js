@@ -484,6 +484,15 @@
   }
   function dur(ms){ var m = Math.round(ms / 60000), h = Math.floor(m / 60); return (h ? h + " h " : "") + p2(m % 60) + " min"; }
 
+  // polozenie Ksiezyca: alt (rad), az od poludnia, dodatnio na zachod (rad)
+  function moonPos(t){
+    var lw = rad * -LON, phi = rad * LAT, d = toDays(t), c = moonC(d), Hh = sidereal(d, lw) - c.ra;
+    var h = alt(Hh, phi, c.dec); h += refr(h);
+    return { alt:h, az:Math.atan2(Math.sin(Hh), Math.cos(Hh) * Math.sin(phi) - Math.tan(c.dec) * Math.cos(phi)) };
+  }
+  // dla noc.js (tryb astronomiczny)
+  window.ASTRO = { sunAlt:sunAlt, moonIllum:moonIllum, moonPos:moonPos, moonTimes:moonTimes, moonName:moonName, moonSvg:moonSvg };
+
   var meteo = null;
   function nightWindow(now){
     var today = sunTimes(now), tom = sunTimes(now + DAY);
