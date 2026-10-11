@@ -147,6 +147,7 @@
     // pasek postepu
     var pr = $("monProg"), d = opts.ms || dwell(v);
     pr.classList.remove("run"); void pr.offsetWidth;
+    if (opts.rest) return;   // na radarze domyslnym bez paska odliczania
     pr.style.animationDuration = d + "ms"; pr.classList.add("run");
   }
   function render(v, anim){
@@ -158,10 +159,7 @@
   function next(){
     clearTimeout(rotT);
     if (Date.now() < pauseUntil || !$("radarBig").hidden){ rotT = setTimeout(next, 5000); return; }
-    var n = (vi + 1) % VIEWS.length;
-    if (n === 0) range = range === "24" ? "7d" : "24";   // co drugi obieg wykresy w zakresie 7 dni
-    show(VIEWS[n]);
-    rotT = setTimeout(next, dwell(VIEWS[n]));
+    show("radar", { rest:true });   // domyslnie panel stoi na radarze (bez automatycznego przelaczania)
   }
   function manual(v){
     pauseUntil = Date.now() + 90000;   // reczny wybor: 90 s bez automatu
@@ -654,6 +652,6 @@
   var m = /mon=(narew|temp|radar|sky)/.exec(location.hash);
   if (/zakres=7/.test(location.hash)) range = "7d";
   if (m){ manual(m[1]); }
-  else { vi = isNight ? 2 : -1; next(); }           // po zmroku zaczynamy od nieba
+  else next();                                      // start: radar
   if (/radar-duzy/.test(location.hash)) setTimeout(function(){ radarBig(true); }, 300);
 })();
