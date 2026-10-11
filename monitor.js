@@ -325,60 +325,47 @@
   }
 
   /* ================= RADAR (RainViewer) ================= */
-  var RV = { host:"", frames:[], imgs:{}, idx:0, timer:null, active:false, loadedAt:0, err:false };
+  // tylko NAJNOWSZY stan radaru (bez animacji godzin); nowy pomiar podmienia sie sam, gdy wszystkie kafle sa gotowe
+  var RV = { host:"", shown:null, pending:null, active:false, err:false };
   var TILES = [[35,20],[36,20],[35,21],[36,21]];   // z6, 512 px: obszar mapy-radar.svg (wycinek 34,228 720x480)
   var VX = 34, VY = 228, SITE_X = 394.2 - VX, SITE_Y = 471.0 - VY;
   var rctx = $("rCanvas").getContext("2d");
+  function radarLabel(){
+    var f = RV.shown; if (!f) return;
+    var age = Math.round((Date.now() - f.time * 1000) / 60000);
+    $("rTime").innerHTML = "stan na <b>" + hm(f.time * 1000) + "</b>" + (age >= 0 ? " · " + age + " min temu" : "") + " · na żywo";
+  }
   function loadRadar(){
     return getJSON("https://api.rainviewer.com/public/weather-maps.json").then(function(j){
-      RV.host = j.host; var past = (j.radar && j.radar.past) || [], fr = [];
-      for (var i = past.length - 1; i >= 0 && fr.length < 7; i -= 2) fr.unshift(past[i]);   // 7 klatek co ~20 min
-      RV.frames = fr; RV.loadedAt = Date.now(); RV.err = false;
-      var keep = {}; fr.forEach(function(f){ keep[f.path] = 1; });
-      Object.keys(RV.imgs).forEach(function(k){ if (!keep[k]) delete RV.imgs[k]; });
-      RV.idx = fr.length - 1;
-      $("rMsg").hidden = true;
-      if (RV.active) { preloadAll(); drawFrame(); }
-    }).catch(function(){
-      RV.err = true;
-      if (!RV.frames.length){ $("rMsg").hidden = false; $("rMsg").textContent = "Radar chwilowo niedostępny (RainViewer). Spróbuję ponownie za kilka minut."; }
-    });
-  }
-  function frameImgs(f){
-    if (!RV.imgs[f.path]){
-      RV.imgs[f.path] = TILES.map(function(tl){
+      RV.host = j.host; RV.err = false;
+      var past = (j.radar && j.radar.past) || [], f = past[past.length - 1];
+      if (!f){ throw new Error("brak klatek"); }
+      if ((RV.shown && RV.shown.path === f.path) || (RV.pending && RV.pending.path === f.path)) return;
+      RV.pending = f;
+      var left = TILES.length, imgs = [];
+      TILES.forEach(function(tl){
         var im = new Image();
         im._x = (tl[0] - 35) * 512 - VX; im._y = (tl[1] - 20) * 512 - VY;
-        im.onload = function(){ if (RV.frames[RV.idx] === f) drawFrame(); };
+        im.onload = im.onerror = function(){
+          if (--left > 0 || RV.pending !== f) return;
+          rctx.clearRect(0, 0, 720, 480);
+          imgs.forEach(function(x){ if (x.complete && x.naturalWidth) rctx.drawImage(x, x._x, x._y); });
+          RV.shown = f; RV.pending = null;
+          $("rMsg").hidden = true;
+          radarLabel();
+        };
         im.src = RV.host + f.path + "/512/6/" + tl[0] + "/" + tl[1] + "/2/1_0.png";
-        return im;
+        imgs.push(im);
       });
-    }
-    return RV.imgs[f.path];
-  }
-  function preloadAll(){ RV.frames.forEach(frameImgs); }
-  function drawFrame(){
-    var f = RV.frames[RV.idx]; if (!f) return;
-    rctx.clearRect(0, 0, 720, 480);
-    frameImgs(f).forEach(function(im){ if (im.complete && im.naturalWidth) rctx.drawImage(im, im._x, im._y); });
-    var last = RV.frames[RV.frames.length - 1], dots = "";
-    RV.frames.forEach(function(x, k){ dots += '<i class="' + (k === RV.idx ? "on" : "") + '"></i>'; });
-    $("rTime").innerHTML = "klatka <b>" + hm(f.time * 1000) + "</b>" + (f === last ? " · najnowsza" : " · ostatnia " + hm(last.time * 1000)) + '<span class="r-frames">' + dots + "</span>";
-  }
-  function tick(){
-    if (!RV.active || !RV.frames.length) return;
-    RV.idx = (RV.idx + 1) % RV.frames.length;
-    drawFrame();
-    RV.timer = setTimeout(tick, RV.idx === RV.frames.length - 1 ? 2500 : 700);
+    }).catch(function(){
+      RV.err = true;
+      if (!RV.shown){ $("rMsg").hidden = false; $("rMsg").textContent = "Radar chwilowo niedostępny (RainViewer). Spróbuję ponownie za kilka minut."; }
+    });
   }
   function radarActive(on){
     if (on === RV.active) return;
-    RV.active = on; clearTimeout(RV.timer);
-    if (on){
-      if (!RV.frames.length || Date.now() - RV.loadedAt > 10 * 60000) loadRadar().then(function(){ if (RV.active){ RV.idx = 0; drawFrame(); RV.timer = setTimeout(tick, 700); } });
-      else { preloadAll(); RV.idx = 0; drawFrame(); RV.timer = setTimeout(tick, 700); }
-      placeRadar();
-    }
+    RV.active = on;
+    if (on){ loadRadar(); placeRadar(); }
   }
   function placeRadar(){
     var map = $("rmap"), inn = $("rmapIn"), big = !$("radarBig").hidden;
@@ -406,7 +393,8 @@
     setTimeout(placeRadar, 30);
   }
   $("rmap").addEventListener("click", function(){ radarBig(); });
-  setInterval(function(){ if (RV.active) loadRadar(); }, 5 * 60000);
+  setInterval(function(){ if (RV.active) loadRadar(); }, 2 * 60000);   // RainViewer daje nowy pomiar co ~10 min
+  setInterval(radarLabel, 30000);
 
   /* ================= SŁOŃCE I KSIĘŻYC (algorytmy SunCalc) ================= */
   var rad = Math.PI / 180, dayMs = 864e5, J1970 = 2440588, J2000 = 2451545, e = rad * 23.4397;
