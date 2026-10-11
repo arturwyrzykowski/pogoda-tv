@@ -420,6 +420,7 @@
       <div class="st"><span class="k">Opady</span><span class="v"><span id="prec">0</span><small>mm</small></span></div>
       <div class="st"><span class="k">Min / Max</span><span class="v"><span id="tmin">--</span>° / <span id="tmax">--</span>°</span></div>
       <div class="st"><span class="k">Wschód / Zachód</span><span class="v"><span id="sunrise">—</span> / <span id="sunset">—</span></span></div>
+      <div class="st"><span class="k">Narew · stan wody</span><span class="v"><span id="narew">—</span><small>cm</small> <small id="narewDesc"></small></span></div>
     </div>
     <img class="find" src="moneta.png" alt="Moneta z wykrywacza">
     <div class="walkers" id="walkers" aria-hidden="true">
@@ -629,6 +630,42 @@
   }
   load();
   setInterval(load, 10*60*1000); // co 10 minut
+
+  // ===== Narew: wodowskaz IMGW-PIB w Zambskich Kościelnych (stacja 152210060) =====
+  async function loadNarew(){
+    try {
+      const r = await fetch("https://danepubliczne.imgw.pl/api/data/hydro/id/152210060", {cache:"no-store"});
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const d = (await r.json())[0];
+      const v = parseInt(d.stan_wody, 10);
+      if (isNaN(v)) throw new Error("brak stanu");
+      const ostrz = parseInt(d.stan_ostrzegawczy, 10), alarm = parseInt(d.stan_alarmowy, 10);
+      // trend: zapamiętane odczyty (tylko ta przeglądarka), porównanie z odczytem sprzed >= 3 h
+      const t = Date.parse(String(d.stan_wody_data_pomiaru).replace(" ", "T")) || Date.now();
+      let hist = [];
+      try { hist = JSON.parse(localStorage.getItem("narewHist") || "[]"); } catch(e){}
+      if (!hist.length || hist[hist.length-1].t !== t) hist.push({t:t, v:v});
+      hist = hist.filter(function(h){ return t - h.t < 36*3600*1000; });
+      try { localStorage.setItem("narewHist", JSON.stringify(hist)); } catch(e){}
+      let old = null;
+      for (let i = hist.length-1; i >= 0; i--) { if (t - hist[i].t >= 3*3600*1000) { old = hist[i]; break; } }
+      const diff = old ? v - old.v : 0;
+      const arrow = !old ? "" : diff >= 2 ? " ▲" + diff : diff <= -2 ? " ▼" + (-diff) : " ▬";
+      let txt = "w normie", col = "var(--good)";
+      if (!isNaN(alarm) && v >= alarm) { txt = "ALARM"; col = "var(--hot)"; }
+      else if (!isNaN(ostrz) && v >= ostrz) { txt = "ostrzegawczy"; col = "var(--warn)"; }
+      $("narew").textContent = v;
+      $("narew").style.color = col;
+      $("narewDesc").textContent = txt + arrow;
+      $("narewDesc").style.color = col;
+      const tw = d.temperatura_wody ? " · woda " + String(d.temperatura_wody).replace(".", ",") + "°C" : "";
+      $("narew").parentNode.title = "IMGW-PIB, pomiar " + d.stan_wody_data_pomiaru + " · ostrzegawczy " + ostrz + " cm, alarmowy " + alarm + " cm" + tw;
+    } catch(e) {
+      if ($("narew").textContent === "—") $("narewDesc").textContent = "brak danych";
+    }
+  }
+  loadNarew();
+  setInterval(loadNarew, 10*60*1000);
 
 
   // przycisk pełnego ekranu — pokaż tylko gdy przeglądarka to wspiera
