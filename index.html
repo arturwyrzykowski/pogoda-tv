@@ -504,6 +504,30 @@
     .mon{ border-left:0; padding-left:0; border-top:1px solid var(--line); padding-top:14px; min-height:360px; }
   }
 
+  /* ===== pory roku: drzewo na krawedzi panelu + snieg (drzewo.js) ===== */
+  #tree { position:fixed; z-index:4; pointer-events:none; display:none; }
+  #tree.on { display:block; }
+  #tree .tr-sway { position:absolute; inset:0; transform-origin:50% 98%; will-change:transform;
+    animation:treeSway var(--sd,6s) ease-in-out infinite alternate; }
+  #tree svg { width:100%; height:100%; display:block; overflow:visible; }
+  @keyframes treeSway { from{ transform:rotate(calc(var(--sa,1deg) * -1)); } to{ transform:rotate(var(--sa,1deg)); } }
+  #tree .tr-lbl { position:absolute; left:78%; bottom:2px; font-family:var(--mono); font-size:clamp(.5rem,.72vw,.64rem);
+    letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); white-space:nowrap; }
+  #tree .tr-leaf { position:absolute; width:8px; height:5px; border-radius:60% 0; opacity:0; will-change:transform;
+    animation:leafFall var(--ld,4s) ease-in forwards; }
+  @keyframes leafFall {
+    0%{ opacity:0; transform:translate(0,0) rotate(0deg); }
+    10%{ opacity:1; }
+    85%{ opacity:1; }
+    100%{ opacity:0; transform:translate(var(--dx,20px),var(--dy,80px)) rotate(540deg); }
+  }
+  #snowLayer { position:fixed; left:0; right:0; top:0; height:200px; z-index:3; pointer-events:none; overflow:hidden; display:none; }
+  #snowLayer.on { display:block; }
+  #snowLayer .flake { position:absolute; top:-8px; border-radius:50%; background:#fff; will-change:transform;
+    animation:flakeFall 10s linear infinite; }
+  @keyframes flakeFall { to{ transform:translate(var(--fx,0px), 260px); } }
+  @media (prefers-reduced-motion:reduce){ #tree .tr-sway, #snowLayer .flake { animation:none; } }
+
   :fullscreen #fsBtn { display:none; }
 </style>
 </head>
@@ -613,6 +637,9 @@
 </div>
 
 <div id="fenceCat" aria-hidden="true"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg"><g><animateTransform attributeName="transform" type="rotate" values="-8 21 31;10 21 31;-8 21 31" dur="2.4s" repeatCount="indefinite"/><path d="M22 31 C9 29 5 19 9 7" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/><circle cx="9" cy="7" r="2.6" fill="#f4f4f4"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 30 37;24 30 37;-24 30 37" dur=".9s" begin="-.45s" repeatCount="indefinite"/><rect x="27" y="35" width="6" height="21" rx="3" fill="#0b0b0b"/><ellipse cx="31" cy="56" rx="4.2" ry="2.6" fill="#cfcfcf"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 66 37;24 66 37;-24 66 37" dur=".9s" begin="0s" repeatCount="indefinite"/><rect x="63" y="35" width="6" height="21" rx="3" fill="#0b0b0b"/><ellipse cx="67" cy="56" rx="4.2" ry="2.6" fill="#cfcfcf"/></g><ellipse cx="47" cy="32" rx="26" ry="11.5" fill="#111"/><ellipse cx="55" cy="40" rx="13" ry="3.6" fill="#f4f4f4"/><ellipse cx="68" cy="34" rx="6.5" ry="8" fill="#f4f4f4"/><g><animateTransform attributeName="transform" type="rotate" values="-24 28 37;24 28 37;-24 28 37" dur=".9s" begin="0s" repeatCount="indefinite"/><rect x="25" y="35" width="6" height="21" rx="3" fill="#111"/><ellipse cx="29" cy="56" rx="4.2" ry="2.6" fill="#f4f4f4"/></g><g><animateTransform attributeName="transform" type="rotate" values="-24 64 37;24 64 37;-24 64 37" dur=".9s" begin="-.45s" repeatCount="indefinite"/><rect x="61" y="35" width="6" height="21" rx="3" fill="#111"/><ellipse cx="65" cy="56" rx="4.2" ry="2.6" fill="#f4f4f4"/></g><polygon points="70,16 72,3 79,12" fill="#111"/><polygon points="80,12 87,3 88,16" fill="#111"/><polygon points="72,13 73,7 77,12" fill="#d48a9a"/><polygon points="82,12 86,7 86,14" fill="#d48a9a"/><circle cx="79" cy="22" r="11" fill="#111"/><path d="M79 13 L82 13 L84 24 L76 24 Z" fill="#f4f4f4"/><ellipse cx="84" cy="27" rx="6.5" ry="5" fill="#f4f4f4"/><ellipse cx="89.5" cy="24.5" rx="1.7" ry="1.2" fill="#d48a9a"/><ellipse cx="85" cy="19.5" rx="2.1" ry="2.4" fill="#d9e65a"/><ellipse cx="85.5" cy="19.5" rx=".8" ry="2" fill="#000"/><path d="M90 27 L98 25.5 M90 28.5 L98 29.5" stroke="#cfcfcf" stroke-width=".5"/></svg></div>
+
+<div id="snowLayer" aria-hidden="true"></div>
+<div id="tree" aria-hidden="true"><div class="tr-sway"><svg id="treeSvg" viewBox="0 0 200 200"></svg></div><span class="tr-lbl" id="treeLbl"></span></div>
 
 <div class="peek br" id="peek" aria-hidden="true"><div class="pk-notes"><span>♪</span><span>♫</span><span>♪</span></div><div class="pk-in"><div class="pk-glow"></div><div class="pk-dance"><img src="ziomek.png" alt=""><svg class="hat bd-only" viewBox="0 0 100 135"><use href="#bdHat"/></svg></div></div></div>
 
@@ -741,7 +768,7 @@
   window.METEO_HOOKS = METEO_HOOKS;
   async function load(){
     const url = "https://api.open-meteo.com/v1/forecast?latitude="+LAT+"&longitude="+LON
-      +"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,uv_index"
+      +"&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,surface_pressure,uv_index,snowfall,snow_depth"
       +"&hourly=temperature_2m,weather_code,cloud_cover,precipitation,wind_gusts_10m,visibility&past_hours=168&forecast_hours=72"
       +"&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=Europe%2FWarsaw&forecast_days=5";
     try {
@@ -1163,5 +1190,6 @@
   })();
 </script>
 <script src="monitor.js"></script>
+<script src="drzewo.js"></script>
 </body>
 </html>
