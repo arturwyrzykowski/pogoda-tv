@@ -27,9 +27,9 @@
   .stage {
     height:100%; max-width:1920px; margin:0 auto;
     padding:clamp(12px,2vw,34px);
-    display:grid; grid-template-rows:auto 1fr auto; gap:clamp(10px,1.4vw,22px);
+    display:grid; grid-template-rows:auto 1fr auto; grid-template-columns:minmax(0,1fr); gap:clamp(10px,1.4vw,22px);
   }
-  header { display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+  header { min-width:0; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; }
   .clock {
     display:inline-flex; align-items:baseline; align-self:flex-end;
     font-family:var(--num); font-weight:600; font-variant-numeric:tabular-nums;
@@ -384,7 +384,7 @@
 
 
   /* ===== ostrzezenia (pasek pod naglowkiem, tylko gdy jest komunikat) ===== */
-  .alerts { flex:1 1 100%; order:9; display:flex; align-items:center; gap:.8em; min-width:0;
+  .alerts { flex:1 1 100%; order:9; display:flex; align-items:center; gap:.8em; min-width:0; max-width:100%;
     border:1px solid rgba(255,207,92,.45); background:rgba(255,207,92,.06); border-radius:12px;
     padding:.45em .9em; font-size:clamp(.8rem,1.25vw,1.05rem); color:var(--ink); }
   .alerts[hidden] { display:none; }
@@ -397,7 +397,8 @@
   .alerts .al-ic { color:var(--warn); font-size:1.15em; flex:0 0 auto; }
   .alerts.loc .al-ic { color:var(--acc); } .alerts.pw .al-ic { color:#ff9f45; }
   .alerts.l2 .al-ic { color:#ff9f45; } .alerts.l3 .al-ic { color:#ff5a5a; } .alerts.own .al-ic { color:var(--ink-dim); }
-  .alerts .al-body { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; animation:alIn .5s ease-out; }
+  .alerts .al-body { flex:1 1 auto; min-width:0; overflow:hidden; white-space:normal; overflow-wrap:break-word; line-height:1.3;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; max-height:2.6em; animation:alIn .5s ease-out; }
   .alerts .al-body b { font-weight:600; }
   .alerts .al-body span { color:var(--ink-dim); }
   .alerts .al-src { margin-left:auto; flex:0 0 auto; font-family:var(--mono); font-size:.7em; letter-spacing:.1em;
