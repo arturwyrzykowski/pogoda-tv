@@ -45,6 +45,17 @@
    "wazne": false
   },
   {
+   "id": "obryte-737707801",
+   "typ": "gmina",
+   "tytul": "Apel do mieszkanców Gminy Obryte",
+   "tekst": "Drodzy Mieszkańcy Gminy Obryte, W sytuacjach kryzysowych naturalne jest, że szukamy informacji i chcemy wiedzieć, co się dzieje. Niestety, w sieci bardzo…",
+   "od": "2026-10-12T00:00+02:00",
+   "do": "2026-10-17T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/apel-do-mieszkancow-gminy-obryte,p737707801",
+   "wazne": false
+  },
+  {
    "id": "powiat-httpspowiatpultuskiplkomunikat2",
    "typ": "powiat",
    "tytul": "KOMUNIKAT",
