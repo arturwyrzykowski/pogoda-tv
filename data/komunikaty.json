@@ -1,17 +1,6 @@
 {
  "komunikaty": [
   {
-   "id": "pge-607505+606944",
-   "typ": "prad",
-   "tytul": "Wyłączenie prądu — planowane",
-   "tekst": "Gródek Rządowy, Płusy, Sadykierz",
-   "od": "2026-10-13T08:00+02:00",
-   "do": "2026-10-13T18:00+02:00",
-   "zrodlo": "PGE Dystrybucja",
-   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
-   "wazne": false
-  },
-  {
    "id": "pge-609551",
    "typ": "prad",
    "tytul": "Wyłączenie prądu — planowane",
@@ -31,17 +20,6 @@
    "do": "2026-10-17T23:59+02:00",
    "zrodlo": "Gmina Obryte",
    "link": "https://www.obryte.pl/ogloszenia/apel-do-mieszkancow-gminy-obryte,p737707801",
-   "wazne": false
-  },
-  {
-   "id": "powiat-httpspowiatpultuskiplkomunikat2",
-   "typ": "powiat",
-   "tytul": "KOMUNIKAT",
-   "tekst": "",
-   "od": "2026-10-08T14:40+02:00",
-   "do": "2026-10-13T14:40+02:00",
-   "zrodlo": "Powiat pułtuski",
-   "link": "https://powiatpultuski.pl/komunikat-2/",
    "wazne": false
   },
   {
