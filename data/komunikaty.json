@@ -1,17 +1,6 @@
 {
  "komunikaty": [
   {
-   "id": "obryte-327267316",
-   "typ": "gmina",
-   "tytul": "Awaria sieci wodociągowej",
-   "tekst": "Informujemy, że w związku z awarią sieci wodociągowej w dniu 07.10.2026 r. występuje przerwa w dostawie wody w miejscowościach: Gródek ...",
-   "od": "2026-10-07T00:00+02:00",
-   "do": "2026-10-12T23:59+02:00",
-   "zrodlo": "Gmina Obryte",
-   "link": "https://www.obryte.pl/ogloszenia/awaria-sieci-wodociagowej,p327267316",
-   "wazne": true
-  },
-  {
    "id": "pge-607505+606944",
    "typ": "prad",
    "tytul": "Wyłączenie prądu — planowane",
@@ -31,17 +20,6 @@
    "do": "2026-10-16T14:00+02:00",
    "zrodlo": "PGE Dystrybucja",
    "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
-   "wazne": false
-  },
-  {
-   "id": "obryte-1513284317",
-   "typ": "gmina",
-   "tytul": "Otrzymałeś alert RCB? Usłyszałeś syrenę alarmową? Sprawdź, jak powinieneś się zachować",
-   "tekst": "Ministerstwo Spraw Wewnętrznych i Administracji przygotowało plakaty informacyjne, które w przystępny sposób wyjaśniają, jakie działania należy podjąć, aby ...",
-   "od": "2026-10-07T00:00+02:00",
-   "do": "2026-10-12T23:59+02:00",
-   "zrodlo": "Gmina Obryte",
-   "link": "https://www.obryte.pl/ogloszenia/otrzymales-alert-rcb-uslyszales-syrene-alarmowa-sprawdz-jak-powinienes-sie-zachowac,p1513284317",
    "wazne": false
   },
   {
