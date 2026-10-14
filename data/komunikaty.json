@@ -1,6 +1,17 @@
 {
  "komunikaty": [
   {
+   "id": "obryte-496220554",
+   "typ": "gmina",
+   "tytul": "INFORMACJA O ZAMKNIĘCIU DROGI",
+   "tekst": "Szanowni Mieszkańcy, Urząd Gminy w Obrytem informuje, że w związku z remontem przepustu pod drogą gminną w miejscowości Ciółkowo Rządowe, ...",
+   "od": "2026-10-14T00:00+02:00",
+   "do": "2026-10-19T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/informacja-o-zamknieciu-drogi,p496220554",
+   "wazne": true
+  },
+  {
    "id": "pge-609551",
    "typ": "prad",
    "tytul": "Wyłączenie prądu — planowane",
@@ -20,28 +31,6 @@
    "do": "2026-10-17T23:59+02:00",
    "zrodlo": "Gmina Obryte",
    "link": "https://www.obryte.pl/ogloszenia/apel-do-mieszkancow-gminy-obryte,p737707801",
-   "wazne": false
-  },
-  {
-   "id": "powiat-zaniakryzysowegoiochronyludnoscisyrena26",
-   "typ": "powiat",
-   "tytul": "Mazowieckie ćwiczenia z zakresu zarządzania kryzysowego i ochrony ludności „Syrena-26”",
-   "tekst": "Wydział Zarzadzania Kryzysowego Starostwa Powiatowego w Pułtusku informuje, że od 12 do 16 października 2026 r. na terenie woj. mazowieckiego odbędzie się…",
-   "od": "2026-10-09T12:50+02:00",
-   "do": "2026-10-14T12:50+02:00",
-   "zrodlo": "Powiat pułtuski",
-   "link": "https://powiatpultuski.pl/mazowieckie-cwiczenia-z-zakresu-zarzadzania-kryzysowego-i-ochrony-ludnosci-syrena-26/",
-   "wazne": false
-  },
-  {
-   "id": "powiat-nieatakiemzpowietrzainstrukcjareagowania",
-   "typ": "powiat",
-   "tytul": "Zagrożenie Atakiem z Powietrza – instrukcja reagowania",
-   "tekst": "Ministerstwo Spraw Wewnętrznych i Administracji udostępniło nową Instrukcję Reagowania: Zagrożenie Atakiem z Powietrza, będącą uzupełnieniem treści z Poradnika…",
-   "od": "2026-10-09T15:06+02:00",
-   "do": "2026-10-14T15:06+02:00",
-   "zrodlo": "Powiat pułtuski",
-   "link": "https://powiatpultuski.pl/zagrozenie-atakiem-z-powietrza-instrukcja-reagowania/",
    "wazne": false
   }
  ],
