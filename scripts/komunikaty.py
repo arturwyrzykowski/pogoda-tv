@@ -92,6 +92,22 @@ def prad(now):
     return merged
 
 
+PELNY_MAKS = 1200  # tyle znaków pełnej treści ogłoszenia (pasek na TV przewija ją stronami po 2 linie)
+
+
+def pelna_tresc(link, krotki):
+    """Cała treść ogłoszenia ze strony wpisu (lista ogłoszeń daje tylko początek z wielokropkiem).
+    Przy błędzie zostaje skrót z listy."""
+    try:
+        s = get(link).decode("utf-8", "ignore")
+        m = re.search(r'<div class="description-body">(.*?)</div>', s, re.S)
+        tekst = clean(m.group(1) if m else "", PELNY_MAKS)
+        return tekst or krotki
+    except Exception as e:  # noqa: BLE001 - strona gminy bywa niedostępna; skrót z listy wystarczy
+        print("Gmina Obryte: nie pobrano treści %s (%s)" % (link, e))
+        return krotki
+
+
 def gmina(now):
     out, seen = [], set()
     for url, kat in (("https://www.obryte.pl/ogloszenia/komunikaty", True), ("https://www.obryte.pl/ogloszenia", False)):
@@ -114,6 +130,7 @@ def gmina(now):
             if do <= now:
                 continue
             seen.add(nid)
+            opis = pelna_tresc(m_t.group(1), opis)
             out.append({"id": "obryte-" + nid, "typ": "gmina", "tytul": tytul, "tekst": opis, "od": iso(d), "do": iso(do),
                         "zrodlo": "Gmina Obryte", "link": m_t.group(1), "wazne": bool(re.search(r"awari|przerw|ewakuac|utrudni|zamkni", tytul, re.I))})
     print("Gmina Obryte: %d komunikatów" % len(out))

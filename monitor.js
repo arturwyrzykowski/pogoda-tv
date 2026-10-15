@@ -128,7 +128,7 @@
   }
 
   /* ================= PANEL: przełączanie widoków ================= */
-  var VIEWS = ["narew", "temp", "radar", "sky"];
+  var VIEWS = ["narew", "temp", "sky"];   // radar tylko w burzy (burza.js -> _monRadar), bez zakladki
   var VEL = { narew:"vNarew", temp:"vTemp", radar:"vRadar", sky:"vSky" };
   var mon = $("mon"), cur = null, vi = -1, range = "24", rotT = null, pauseUntil = 0;
   var isNight = false;
@@ -136,7 +136,7 @@
   function show(v, opts){
     opts = opts || {};
     cur = v; vi = VIEWS.indexOf(v);
-    VIEWS.forEach(function(k){ $(VEL[k]).classList.toggle("on", k === v); });
+    Object.keys(VEL).forEach(function(k){ $(VEL[k]).classList.toggle("on", k === v); });
     var bs = mon.querySelectorAll(".mon-tabs button");
     for (var i = 0; i < bs.length; i++) bs[i].classList.toggle("on", bs[i].getAttribute("data-v") === v);
     var rg = $("monRange");
@@ -159,7 +159,9 @@
   function next(){
     clearTimeout(rotT);
     if (Date.now() < pauseUntil || !$("radarBig").hidden){ rotT = setTimeout(next, 5000); return; }
-    show("radar", { rest:true });   // domyslnie panel stoi na radarze (bez automatycznego przelaczania)
+    if (document.body.classList.contains("storm")){ show("radar", { rest:true }); rotT = setTimeout(next, 60000); return; }
+    var nv = VIEWS[(VIEWS.indexOf(cur) + 1) % VIEWS.length];   // po kolei: Narew, temperatura, niebo
+    show(nv); rotT = setTimeout(next, dwell(nv));
   }
   function manual(v){
     pauseUntil = Date.now() + 90000;   // reczny wybor: 90 s bez automatu
@@ -465,7 +467,7 @@
   }
   $("rmap").addEventListener("click", function(){ radarBig(); });
   // dla burza.js: pokaz radar w panelu
-  window._monRadar = function(){ if (cur !== "radar") show("radar", { rest:true }); setTimeout(placeRadar, 50); };
+  window._monRadar = function(){ clearTimeout(rotT); if (cur !== "radar") show("radar", { rest:true }); setTimeout(placeRadar, 50); rotT = setTimeout(next, 60000); };
   setInterval(function(){ if (RV.active) loadRadar(); }, 2 * 60000);   // RainViewer daje nowy pomiar co ~10 min
   setInterval(radarLabel, 30000);
 
@@ -633,7 +635,7 @@
   // Pasek pod naglowkiem: oficjalne IMGW (meteo + hydro Narew), progi z prognozy Open-Meteo,
   // komunikaty lokalne z data/komunikaty.json (PGE, gmina Obryte, powiat - zbiera GitHub Actions).
   // Kazdy wpis znika sam po wygasnieciu; przy kazdym widac czas ostatniej aktualizacji zrodla.
-  var official = [], ownW = [], localW = [], alIdx = 0, alT = null;
+  var official = [], ownW = [], localW = [], alIdx = 0, alT = null, alP = null;
   var at = { imgw:0, own:0, local:0, localFile:0 };
   var parseLocal = function(s){ return new Date(String(s).replace(" ", "T")).getTime(); };
   function loadWarnings(){
@@ -715,7 +717,7 @@
     if (/test-ostrzezenie/.test(location.hash)) all.unshift({ kind:"own", lvl:1, title:"TEST paska ostrzeżeń", from:now, to:now + 6 * H, src:"test (#test-ostrzezenie)" });
     clearTimeout(alT);
     var was = !el.hidden;
-    if (!all.length){ el.hidden = true; el.innerHTML = ""; if (was) window.dispatchEvent(new Event("resize")); return; }
+    if (!all.length){ clearInterval(alP); el.hidden = true; el.innerHTML = ""; if (was) window.dispatchEvent(new Event("resize")); return; }
     if (alIdx >= all.length) alIdx = 0;
     var w = all[alIdx], cls, ic, body, upd;
     if (w.kind === "local"){
@@ -733,11 +735,17 @@
       upd = updLbl(w.own ? at.own : at.imgw);
     }
     el.className = "alerts " + cls;
-    el.innerHTML = '<span class="al-ic">' + ic + '</span><span class="al-body">' + body + '</span><span class="al-src">'
+    el.innerHTML = '<span class="al-ic">' + ic + '</span><span class="al-body"><span class="al-in">' + body + '</span></span><span class="al-src">'
       + esc(w.src) + " · " + upd + (all.length > 1 ? " · " + (alIdx + 1) + "/" + all.length : "") + "</span>";
     el.hidden = false;
     if (!was) window.dispatchEvent(new Event("resize"));   // moneta/kot przeliczaja pozycje
-    if (all.length > 1) alT = setTimeout(function(){ alIdx++; renderAlerts(); }, 9000);
+    // tekst dluzszy niz 2 linie: kolejne strony co 6 s, potem nastepny komunikat
+    var box = el.querySelector(".al-body"), inn = box.firstChild, bh = box.clientHeight;
+    var pages = bh > 0 && inn.scrollHeight > bh + 2 ? Math.ceil(inn.scrollHeight / bh) : 1, pg = 0;
+    clearInterval(alP);
+    if (pages > 1) alP = setInterval(function(){ pg = (pg + 1) % pages; inn.style.transform = "translateY(" + (-pg * bh) + "px)"; }, 6000);
+    var dur = Math.max(9000, pages * 6000);
+    if (all.length > 1) alT = setTimeout(function(){ alIdx++; renderAlerts(); }, dur);
   }
 
   /* ================= klawisze pilota / klawiatury ================= */
@@ -746,9 +754,8 @@
     var wheel = $("wheel"); if (wheel && !wheel.hidden) return;   // kolo radia ma pierwszenstwo
     var k = e.key, big = !$("radarBig").hidden;
     if (big && (k === "Escape" || k === "Backspace" || k === "Enter" || e.keyCode === 10009)){ radarBig(false); e.preventDefault(); return; }
-    if (k === "1") manual("narew"); else if (k === "2") manual("temp"); else if (k === "3") manual("radar"); else if (k === "4") manual("sky");
+    if (k === "1") manual("narew"); else if (k === "2") manual("temp"); else if (k === "3" || k === "4") manual("sky");
     else if (k === "0") toggleRange();
-    else if (k === "5" || k === "r" || k === "R") radarBig();
   });
 
   /* ================= start ================= */
@@ -767,9 +774,9 @@
   loadLocal(); setInterval(loadLocal, 10 * 60000);
   setInterval(renderAlerts, 60000);   // wygasle znikaja same
 
-  var m = /mon=(narew|temp|radar|sky)/.exec(location.hash);
+  var m = /mon=(narew|temp|sky)/.exec(location.hash);
   if (/zakres=7/.test(location.hash)) range = "7d";
   if (m){ manual(m[1]); }
-  else next();                                      // start: radar
+  else next();                                      // start: Narew, potem rotacja
   if (/radar-duzy/.test(location.hash)) setTimeout(function(){ radarBig(true); }, 300);
 })();
