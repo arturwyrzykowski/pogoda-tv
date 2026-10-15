@@ -1040,6 +1040,32 @@
       else if(e.key==="Escape"||e.key==="Backspace"){ closeWheel(); e.preventDefault(); }
     }, true);
 
+    // Straznik polaczenia: strumien na TV potrafi stanac (siec, serwer zamyka polaczenie po kilku godzinach)
+    // i wtedy odtwarzacz milknie na stale. Jesli radio ma grac, a czas odtwarzania nie idzie do przodu
+    // przez 30 s albo przyszedl blad/koniec strumienia - laczymy sie od nowa (nowy adres, zeby nie bylo starego bufora).
+    let lastT=-1, stuck=0, retryT=null, retries=0;
+    function reconnect(){
+      if(!playing) return;
+      clearTimeout(retryT);
+      const wait = Math.min(60000, 3000 * Math.pow(2, Math.min(retries, 4)));   // 3 s, 6 s, 12 s... do 1 min
+      retryT=setTimeout(()=>{
+        if(!playing) return;
+        retries++;
+        const u=STATIONS[current].url;
+        player.src = u + (u.indexOf("?") >= 0 ? "&" : "?") + "r=" + Date.now();
+        player.play().catch(()=>{});
+      }, wait);
+    }
+    player.addEventListener("error", reconnect);
+    player.addEventListener("ended", reconnect);
+    player.addEventListener("playing", ()=>{ retries=0; stuck=0; });
+    setInterval(()=>{
+      if(!playing){ stuck=0; return; }
+      const t=player.currentTime;
+      if(player.paused || t===lastT){ if(++stuck>=2){ stuck=0; reconnect(); } } else stuck=0;
+      lastT=t;
+    }, 15000);
+
     label();
     window._radioStart = ()=>{ if(!playing) play(current); };
   })();
