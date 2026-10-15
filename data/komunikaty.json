@@ -4,7 +4,7 @@
    "id": "obryte-496220554",
    "typ": "gmina",
    "tytul": "INFORMACJA O ZAMKNIĘCIU DROGI",
-   "tekst": "Szanowni Mieszkańcy, Urząd Gminy w Obrytem informuje, że w związku z remontem przepustu pod drogą gminną w miejscowości Ciółkowo Rządowe, ...",
+   "tekst": "Szanowni Mieszkańcy, Urząd Gminy w Obrytem informuje, że w związku z remontem przepustu pod drogą gminną w miejscowości Ciółkowo Rządowe, w dniu 15 października 2026 r. (od godz. 10.00 do godz. 16.00) nie będzie możliwości przejazdu drogą z Ciółkowa Rządowego w kierunku miejscowości Ulaski, Gródek Nowy i Mokrus. Za utrudnienia przepraszamy.",
    "od": "2026-10-14T00:00+02:00",
    "do": "2026-10-19T23:59+02:00",
    "zrodlo": "Gmina Obryte",
@@ -26,11 +26,33 @@
    "id": "obryte-737707801",
    "typ": "gmina",
    "tytul": "Apel do mieszkanców Gminy Obryte",
-   "tekst": "Drodzy Mieszkańcy Gminy Obryte, W sytuacjach kryzysowych naturalne jest, że szukamy informacji i chcemy wiedzieć, co się dzieje. Niestety, w sieci bardzo…",
+   "tekst": "Drodzy Mieszkańcy Gminy Obryte, W sytuacjach kryzysowych naturalne jest, że szukamy informacji i chcemy wiedzieć, co się dzieje. Niestety, w sieci bardzo szybko pojawiają się też plotki, niesprawdzone pogłoski i tzw. fake newsy. Apelujemy do Was o ogromną rozwagę! Zanim podacie dalej jakąś wiadomość, upewnijcie się, że jest prawdziwa. Przekazywanie niesprawdzonych doniesień może wywołać niepotrzebną panikę, a także utrudnić pracę służbom, które działają na miejscu, by zapewnić nam wszystkim bezpieczeństwo. Zanim klikniesz „udostępnij” – zrób 4 proste kroki: Czytaj oficjalne źródła: Zawsze opieraj się na komunikatach Urzędu Gminy, Policji, Straży Pożarnej oraz sprawdzonych, lokalnych mediów. Odrzuć emocje: Sensacyjne nagłówki pisane wielkimi literami mają na celu przestraszyć lub zszokować. Nie daj się zmanipulować. Nie powielaj domysłów: Jeśli informacja zaczyna się od słów „ktoś słyszał, że...” albo „znajomy znajomego mówi...”, zachowaj duży dystans. Pytaj u źródła: Jeśli masz wątpliwości, zadzwoń lub napisz bezpośrednio do urzędu gminy zamiast pytać na niesprawdzonych grupach. Bądźmy odpowiedzialni za to, co publikujemy i podajemy dalej. Spokój i rzetelne fakty to nasza…",
    "od": "2026-10-12T00:00+02:00",
    "do": "2026-10-17T23:59+02:00",
    "zrodlo": "Gmina Obryte",
    "link": "https://www.obryte.pl/ogloszenia/apel-do-mieszkancow-gminy-obryte,p737707801",
+   "wazne": false
+  },
+  {
+   "id": "obryte-1404181894",
+   "typ": "gmina",
+   "tytul": "Ostrzeżenie meteorologiczne Nr 101 - Gęsta mgła",
+   "tekst": "Ostrzeżenie meteorologiczne Nr 101 - Gęsta mgła",
+   "od": "2026-10-15T00:00+02:00",
+   "do": "2026-10-20T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/ostrzezenie-meteorologiczne-nr-101-gesta-mgla,p1404181894",
+   "wazne": false
+  },
+  {
+   "id": "powiat-skiplostrzezeniemeteorologicznegestamgla",
+   "typ": "powiat",
+   "tytul": "Ostrzeżenie meteorologiczne – gęsta mgła",
+   "tekst": "",
+   "od": "2026-10-15T14:15+02:00",
+   "do": "2026-10-20T14:15+02:00",
+   "zrodlo": "Powiat pułtuski",
+   "link": "https://powiatpultuski.pl/ostrzezenie-meteorologiczne-gesta-mgla/",
    "wazne": false
   }
  ],
