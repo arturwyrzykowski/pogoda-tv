@@ -12,17 +12,6 @@
    "wazne": true
   },
   {
-   "id": "pge-609551",
-   "typ": "prad",
-   "tytul": "Wyłączenie prądu — planowane",
-   "tekst": "Płusy, Sadykierz",
-   "od": "2026-10-16T08:00+02:00",
-   "do": "2026-10-16T14:00+02:00",
-   "zrodlo": "PGE Dystrybucja",
-   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
-   "wazne": false
-  },
-  {
    "id": "pge-614435",
    "typ": "prad",
    "tytul": "Wyłączenie prądu — planowane",
@@ -34,17 +23,6 @@
    "wazne": false
   },
   {
-   "id": "obryte-737707801",
-   "typ": "gmina",
-   "tytul": "Apel do mieszkanców Gminy Obryte",
-   "tekst": "Drodzy Mieszkańcy Gminy Obryte, W sytuacjach kryzysowych naturalne jest, że szukamy informacji i chcemy wiedzieć, co się dzieje. Niestety, w sieci bardzo szybko pojawiają się też plotki, niesprawdzone pogłoski i tzw. fake newsy. Apelujemy do Was o ogromną rozwagę! Zanim podacie dalej jakąś wiadomość, upewnijcie się, że jest prawdziwa. Przekazywanie niesprawdzonych doniesień może wywołać niepotrzebną panikę, a także utrudnić pracę służbom, które działają na miejscu, by zapewnić nam wszystkim bezpieczeństwo. Zanim klikniesz „udostępnij” – zrób 4 proste kroki: Czytaj oficjalne źródła: Zawsze opieraj się na komunikatach Urzędu Gminy, Policji, Straży Pożarnej oraz sprawdzonych, lokalnych mediów. Odrzuć emocje: Sensacyjne nagłówki pisane wielkimi literami mają na celu przestraszyć lub zszokować. Nie daj się zmanipulować. Nie powielaj domysłów: Jeśli informacja zaczyna się od słów „ktoś słyszał, że...” albo „znajomy znajomego mówi...”, zachowaj duży dystans. Pytaj u źródła: Jeśli masz wątpliwości, zadzwoń lub napisz bezpośrednio do urzędu gminy zamiast pytać na niesprawdzonych grupach. Bądźmy odpowiedzialni za to, co publikujemy i podajemy dalej. Spokój i rzetelne fakty to nasza…",
-   "od": "2026-10-12T00:00+02:00",
-   "do": "2026-10-17T23:59+02:00",
-   "zrodlo": "Gmina Obryte",
-   "link": "https://www.obryte.pl/ogloszenia/apel-do-mieszkancow-gminy-obryte,p737707801",
-   "wazne": false
-  },
-  {
    "id": "obryte-1404181894",
    "typ": "gmina",
    "tytul": "Ostrzeżenie meteorologiczne Nr 101 - Gęsta mgła",
@@ -53,6 +31,28 @@
    "do": "2026-10-20T23:59+02:00",
    "zrodlo": "Gmina Obryte",
    "link": "https://www.obryte.pl/ogloszenia/ostrzezenie-meteorologiczne-nr-101-gesta-mgla,p1404181894",
+   "wazne": false
+  },
+  {
+   "id": "obryte-390050088",
+   "typ": "gmina",
+   "tytul": "Ostrzeżenie meteorologiczne Nr 102 - Gęsta mgła",
+   "tekst": "Ostrzeżenie meteorologiczne Nr 102 - Gęsta mgła",
+   "od": "2026-10-16T00:00+02:00",
+   "do": "2026-10-21T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/ostrzezenie-meteorologiczne-nr-102-gesta-mgla,p390050088",
+   "wazne": false
+  },
+  {
+   "id": "obryte-2013740222",
+   "typ": "gmina",
+   "tytul": "Zaproszenie na webinarium CEDUR „Zagrożenia i oszustwa w finansowaniu społecznościowym (crowdfundingu) w zakresie udzielania pożyczek\"",
+   "tekst": "Urząd Komisji Nadzoru Finansowego zaprasza osoby fizyczne i prawne zainteresowane rynkiem crowdfundingu jako inwestorzy lub właściciele projektów crowdfundingowych na webinarium „Zagrożenia i oszustwa w finansowaniu społecznościowym (crowdfundingu) w zakresie udzielania pożyczek” organizowane w ramach projektu Centrum Edukacji dla Uczestników Rynku – CEDUR, we współpracy z Komendą Główną Policji. Webinarium odbędzie się 28 października 2026 roku (10:00-15:30). Cel Celem webinarium jest wskazanie, jak się ustrzec przed przestępstwami powiązanymi z crowdfundingiem. Zgłoszenia Rejestracja na webinarium CEDUR odbywa się poprzez elektroniczny formularz zgłoszeniowy – link do strony z odnośnikiem do formularza: https://www.knf.gov.pl/dla_rynku/edukacja_cedur/seminaria?articleId=100122&p_id=18 Potwierdzenia możliwości udziału zostaną przesłane do 27 października 2026 roku. Formularz zgłoszeniowy będzie dostępny do dnia, w którym odbędzie się webinarium. W przypadku zgłoszeń, które wpłyną w dniu webinarium, potwierdzenia możliwości udziału oraz zaproszenia zawierające link do spotkania będą przesyłane na bieżąco w dniu wydarzenia. Nadsyłanie pytań Aby webinarium w jak największym stopniu…",
+   "od": "2026-10-16T00:00+02:00",
+   "do": "2026-10-21T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/zaproszenie-na-webinarium-cedur-zagrozenia-i-oszustwa-w-finansowaniu-spolecznosciowym-crowdfundingu-w-zakresie-udzielania-pozyczek,p2013740222",
    "wazne": false
   },
   {
