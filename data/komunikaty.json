@@ -65,10 +65,21 @@
    "zrodlo": "Powiat pułtuski",
    "link": "https://powiatpultuski.pl/ostrzezenie-meteorologiczne-gesta-mgla/",
    "wazne": false
+  },
+  {
+   "id": "powiat-kiplostrzezeniemeteorologicznegestamgla2",
+   "typ": "powiat",
+   "tytul": "Ostrzeżenie meteorologiczne – gęsta mgła",
+   "tekst": "",
+   "od": "2026-10-16T12:28+02:00",
+   "do": "2026-10-21T12:28+02:00",
+   "zrodlo": "Powiat pułtuski",
+   "link": "https://powiatpultuski.pl/ostrzezenie-meteorologiczne-gesta-mgla-2/",
+   "wazne": false
   }
  ],
  "zrodla_ok": {
-  "prad": true,
+  "prad": false,
   "gmina": true,
   "powiat": true
  }
