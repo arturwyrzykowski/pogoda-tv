@@ -80,16 +80,6 @@
     position:relative; overflow:hidden;
   }
   .hero::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background:var(--acc); opacity:.85; }
-  /* spacerujacy saperzy - nakladka na hero, nie zmienia ukladu */
-  .walkers { position:absolute; inset:0; z-index:5; pointer-events:none; overflow:hidden; }
-  .walk-train { position:absolute; left:0; bottom:0; width:100%; height:100%; display:none; will-change:transform; }
-  .walkers.go .walk-train { display:block; animation:walkAcross 22s linear 1 forwards; }
-  .walk-group { position:absolute; right:100%; bottom:0; height:92%; display:flex; align-items:flex-end; gap:6%; }
-  .walk-group img { height:100%; width:auto; display:block; }
-  .walkers.go .walk-group img { animation:walkBob .55s ease-in-out infinite alternate; }
-  .walkers.go .walk-group img + img { animation-delay:-.27s; }
-  @keyframes walkAcross { from{ transform:translateX(0); } to{ transform:translateX(135%); } }
-  @keyframes walkBob { from{ transform:translateY(0) rotate(-1.5deg); } to{ transform:translateY(-3%) rotate(1.5deg); } }
   /* kot chodzacy po gornej krawedzi hero jak po plocie - pozycje ustawia JS */
   #fenceCat { position:fixed; z-index:6; pointer-events:none; overflow:hidden; display:none; }
   #fenceCat.go { display:block; }
@@ -191,66 +181,10 @@
     .forecast{ grid-template-columns:1fr 1fr 1fr; }
     .day:nth-child(4),.day:nth-child(5){ display:none; }
   }
-  /* ziomek wyglada zza rogu i tanczy: na zmiane prawy dolny / lewy gorny (tylko transform+opacity - lekkie dla TV) */
-  .peek { position:fixed; z-index:90; pointer-events:none; height:calc(46*var(--vh)); display:none; will-change:transform; }
-  .peek .pk-in { position:relative; height:100%; }
-  .peek .pk-dance { position:relative; height:100%; transform-origin:85% 100%; will-change:transform; }
-  .peek img { position:relative; height:calc(46*var(--vh)); width:auto; display:block; }
-  .peek .pk-glow { position:absolute; left:50%; top:45%; width:calc(50*var(--vh)); height:calc(50*var(--vh)); border-radius:50%;
-    background:radial-gradient(circle, rgba(255,214,90,.55) 0%, rgba(255,214,90,.18) 38%, transparent 68%);
-    transform:translate(-50%,-50%) scale(.2); opacity:0; }
-  .peek .pk-notes { position:absolute; width:30%; height:60%; }
-  .peek.br .pk-notes { left:-18%; top:0; }
-  .peek.tl .pk-notes { right:-18%; bottom:5%; }
-  .pk-notes span { position:absolute; bottom:0; font:700 clamp(28px,calc(4.4*var(--vh)),54px)/1 var(--sans,sans-serif); color:#ffd65a; opacity:0; }
-  .pk-notes span:nth-child(1){ left:10%; } .pk-notes span:nth-child(2){ left:55%; color:#7cc4ff; } .pk-notes span:nth-child(3){ left:30%; }
-  .peek.br { right:0; bottom:0; }
-  .peek.tl { left:0; top:0; }
-  .peek.tl .pk-in { transform:rotate(180deg); }
-  .peek.go { display:block; }
-  .peek.go.br { animation:peekBR 9s ease-out 1 forwards; }
-  .peek.go.tl { animation:peekTL 9s ease-out 1 forwards; }
-  .peek.go .pk-glow { animation:peekGlow 9s ease-out 1 forwards; }
-  .peek.go .pk-dance { animation:peekDance .42s ease-in-out 1.3s 15 alternate both; }
-  .peek.go .pk-notes span { animation:peekNote 1.6s ease-out 1.4s 4; }
-  .peek.go .pk-notes span:nth-child(2){ animation-delay:1.9s; } .peek.go .pk-notes span:nth-child(3){ animation-delay:2.4s; }
-  @keyframes peekBR {
-    0%   { transform:translate(85%,85%) rotate(-28deg); }
-    7%   { transform:translate(-3%,-3%) rotate(5deg); }
-    10%  { transform:translate(1%,1%) rotate(-2deg); }
-    13%,86% { transform:translate(0,0) rotate(0); }
-    100% { transform:translate(85%,85%) rotate(-28deg); }
-  }
-  @keyframes peekTL {
-    0%   { transform:translate(-85%,-85%) rotate(-28deg); }
-    7%   { transform:translate(3%,3%) rotate(5deg); }
-    10%  { transform:translate(-1%,-1%) rotate(-2deg); }
-    13%,86% { transform:translate(0,0) rotate(0); }
-    100% { transform:translate(-85%,-85%) rotate(-28deg); }
-  }
-  @keyframes peekDance {
-    0%   { transform:scale(1.08) rotate(-6deg) translateY(0); }
-    50%  { transform:scale(1.08,1.11) rotate(0deg) translateY(-4%); }
-    100% { transform:scale(1.08,1.05) rotate(6deg) translateY(0); }
-  }
-  @keyframes peekNote {
-    0%   { opacity:0; transform:translate(0,0) rotate(-10deg) scale(.6); }
-    20%  { opacity:1; }
-    100% { opacity:0; transform:translate(25%,-220%) rotate(15deg) scale(1.1); }
-  }
-  @keyframes peekGlow {
-    0%,3% { opacity:0; transform:translate(-50%,-50%) scale(.2); }
-    8%    { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
-    18%   { opacity:.35; transform:translate(-50%,-50%) scale(.95); }
-    86%   { opacity:.25; transform:translate(-50%,-50%) scale(.95); }
-    100%  { opacity:0; transform:translate(-50%,-50%) scale(.4); }
-  }
-  @media (prefers-reduced-motion:reduce){ .peek.go.br,.peek.go.tl,.peek.go .pk-glow,.peek.go .pk-dance,.peek.go .pk-notes span{ animation-duration:.01s; } }
   /* ===== URODZINY (7 pazdziernika albo adres z #urodziny) ===== */
   .bd-only { display:none !important; }
   body.bday .bd-only { display:block !important; }
   body.bday .stage { padding-top:calc(clamp(12px,calc(2*var(--vw)),34px) + calc(4.5*var(--vh))); }
-  .peek .hat { position:absolute; width:34%; left:30%; top:-23%; transform:rotate(-12deg); overflow:visible; }
   .bd-garland { position:fixed; left:0; right:0; top:0; height:calc(6*var(--vh)); z-index:80; pointer-events:none; }
   .bd-garland svg { width:100%; height:100%; display:block; }
   body.bday .head-mid { flex:1 1 0; min-width:0; }
@@ -653,9 +587,6 @@
       <div class="st"><span class="k">Narew · stan wody</span><span class="v"><span id="narew">—</span><small>cm</small> <small id="narewDesc"></small></span></div>
     </div>
     <img class="find" src="moneta.png" alt="Moneta z wykrywacza">
-    <div class="walkers" id="walkers" aria-hidden="true">
-      <div class="walk-train"><div class="walk-group"><img src="saper1.png" alt=""><img src="saper2.png" alt=""></div></div>
-    </div>
   </div>
 
   <div class="fc">
@@ -727,7 +658,6 @@
 <div id="events" aria-hidden="true"></div>
 <div id="tree" aria-hidden="true"><div class="tr-sway"><svg id="treeSvg" viewBox="0 0 200 200"></svg></div><span class="tr-lbl" id="treeLbl"></span></div>
 
-<div class="peek br" id="peek" aria-hidden="true"><div class="pk-notes"><span>♪</span><span>♫</span><span>♪</span></div><div class="pk-in"><div class="pk-glow"></div><div class="pk-dance"><img src="ziomek.png" alt=""><svg class="hat bd-only" viewBox="0 0 100 135"><use href="#bdHat"/></svg></div></div></div>
 
 <!-- URODZINY: czapka (symbol), girlanda, balony, konfetti, postacie z bajki -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -967,15 +897,12 @@
   // radio + kolo wyboru stacji (styl GTA)
   (function(){
     const STATIONS = [
-      { name:"Nightride FM", gen:"synthwave · bez reklam",  url:"https://stream.nightride.fm/nightride.mp3" },
-      { name:"Chillsynth", gen:"synthwave chill · bez reklam", url:"https://stream.nightride.fm/chillsynth.mp3" },
-      { name:"80s80s", gen:"lata 80",                          url:"https://streams.80s80s.de/web/mp3-192/streams.80s80s.de/" },
-      { name:"Radio Paradise", gen:"mix · bez reklam", url:"https://stream.radioparadise.com/aac-128" },
-      { name:"RP Mellow", gen:"spokojne · bez reklam", url:"https://stream.radioparadise.com/mellow-128" },
-      { name:"RP Rock", gen:"rock · bez reklam",       url:"https://stream.radioparadise.com/rock-128" },
-      { name:"Swiss Pop", gen:"hity · bez reklam",     url:"https://stream.srg-ssr.ch/m/rsp/mp3_128" },
-      { name:"Swiss Jazz", gen:"jazz · bez reklam",    url:"https://stream.srg-ssr.ch/m/rsj/mp3_128" },
-      { name:"Swiss Classic", gen:"klasyka · bez reklam", url:"https://stream.srg-ssr.ch/m/rsc_de/mp3_128" }
+      { name:"Swiss Jazz", gen:"jazz · bez reklam",           url:"https://stream.srg-ssr.ch/srgssr/rsj/mp3/128" },
+      { name:"FIP Jazz", gen:"jazz · bez reklam",             url:"https://icecast.radiofrance.fr/fipjazz-midfi.mp3" },
+      { name:"Sonic Universe", gen:"nowoczesny jazz · bez reklam", url:"https://ice6.somafm.com/sonicuniverse-128-mp3" },
+      { name:"Jazz Underground", gen:"klasyczny jazz · bez reklam", url:"https://icecast.walmradio.com:8443/jazz" },
+      { name:"FIP Groove", gen:"jazz-funk, soul · bez reklam", url:"https://icecast.radiofrance.fr/fipgroove-midfi.mp3" },
+      { name:"Bossa Beyond", gen:"bossa nova · bez reklam",   url:"https://ice2.somafm.com/bossa-128-mp3" }
     ];
     const player=$("player"), rbtn=$("radioBtn"), wheel=$("wheel"), inner=$("wheelInner");
     let playing=false, current=0, sel=0;
@@ -1017,7 +944,7 @@
     }
     function label(){ $("wheelBtnName").textContent = STATIONS[current].name; }
     function play(i){
-      current=i; player.src=STATIONS[i].url;
+      current=i; retries=0; clearTimeout(retryT); retryT=null; player.src=STATIONS[i].url;
       player.play().then(()=>{ playing=true; rbtn.textContent="⏸"; rbtn.classList.add("on"); })
         .catch(()=>{ rbtn.textContent="▶"; });
       label();
@@ -1045,12 +972,13 @@
     // przez 30 s albo przyszedl blad/koniec strumienia - laczymy sie od nowa (nowy adres, zeby nie bylo starego bufora).
     let lastT=-1, stuck=0, retryT=null, retries=0;
     function reconnect(){
-      if(!playing) return;
-      clearTimeout(retryT);
-      const wait = Math.min(60000, 3000 * Math.pow(2, Math.min(retries, 4)));   // 3 s, 6 s, 12 s... do 1 min
+      if(!playing || retryT) return;   // ponowienie juz czeka - nie przestawiac go (inaczej dluzsze odstepy nigdy nie dochodzily do skutku)
+      const wait = 3000 * Math.pow(2, retries % 3);   // 3 s, 6 s, 12 s
       retryT=setTimeout(()=>{
+        retryT=null;
         if(!playing) return;
         retries++;
+        if(retries % 3 === 0){ current=(current+1)%STATIONS.length; label(); }   // stacja nie wraca -> nastepna jazzowa
         const u=STATIONS[current].url;
         player.src = u + (u.indexOf("?") >= 0 ? "&" : "?") + "r=" + Date.now();
         player.play().catch(()=>{});
@@ -1058,7 +986,7 @@
     }
     player.addEventListener("error", reconnect);
     player.addEventListener("ended", reconnect);
-    player.addEventListener("playing", ()=>{ retries=0; stuck=0; });
+    player.addEventListener("playing", ()=>{ retries=0; stuck=0; clearTimeout(retryT); retryT=null; });
     setInterval(()=>{
       if(!playing){ stuck=0; return; }
       const t=player.currentTime;
@@ -1110,14 +1038,19 @@
       const st = coin.style;
       if (window.innerWidth <= 900){ st.left = st.top = st.right = st.bottom = st.width = ""; return; }
       const h = hero.getBoundingClientRect(), v = val.getBoundingClientRect();
-      const free = h.bottom - v.bottom;            // miejsce miedzy "mm" a krawedzia panelu
-      const size = Math.max(40, Math.min(150, free * 0.7));
+      const k = (h.width / hero.offsetWidth) || 1;   // skala ekranu (dopasujEkran) - rect jest po skalowaniu, styl przed
+      const free = (h.bottom - v.bottom) / k;        // miejsce miedzy "mm" a krawedzia panelu
+      if (free < 50){ st.display = "none"; return; } // za ciasno (np. pasek ostrzezen) - lepiej schowac niz uciac
+      st.display = "";
+      const size = Math.min(150, free * 0.7);
       const gap = (free - size) / 2;
       st.right = st.bottom = "auto";
       st.width = size + "px";
-      st.left = (v.left - h.left) + "px";
-      st.top = (v.bottom - h.top + gap) + "px";
+      st.left = (v.left - h.left) / k + "px";
+      st.top = (v.bottom - h.top) / k + gap + "px";
     }
+    if (window.ResizeObserver) new ResizeObserver(place).observe(hero);   // pasek ostrzezen zmienia wysokosc panelu
+    setInterval(place, 60 * 1000);
     window.addEventListener("resize", place);
     window.addEventListener("load", place);
     setTimeout(place, 1500);
@@ -1140,36 +1073,8 @@
     setTimeout(loop, location.hash === "#test" ? 5000 : 60 * 1000);
   })();
 
-  // saperzy spaceruja po hero co jakis czas (animacja tylko w trakcie przejscia - oszczedza TV)
-  (function(){
-    const w = document.getElementById("walkers");
-    if (!w) return;
-    const train = w.querySelector(".walk-train");
-    train.addEventListener("animationend", (e)=>{ if (e.animationName === "walkAcross") w.classList.remove("go"); });
-    function walk(){ if (!w.classList.contains("go")) w.classList.add("go"); }
-    setTimeout(function(){ walk(); setInterval(walk, 5 * 60 * 1000); }, 30 * 1000);
-  })();
 
 
-  // ziomek z nienacka: losowo co 3-7 min, na zmiane prawy dolny i lewy gorny rog
-  (function(){
-    const pk = document.getElementById("peek");
-    if (!pk) return;
-    let corner = "br";
-    pk.addEventListener("animationend", (e)=>{ if (e.animationName === "peekBR" || e.animationName === "peekTL") pk.classList.remove("go"); });
-    function pop(){
-      pk.classList.remove("go", "br", "tl");
-      pk.classList.add(corner);
-      void pk.offsetWidth;
-      pk.classList.add("go");
-      corner = corner === "br" ? "tl" : "br";
-    }
-    function loop(){ pop(); setTimeout(loop, (3 + Math.random() * 4) * 60 * 1000); }
-    // test na TV: adres z #test -> pierwszy wyskok po 5 s
-    var first = (location.hash === "#test") ? 5000 : (1.5 + Math.random() * 1.5) * 60 * 1000;
-    setTimeout(loop, first);
-    window._peek = pop;
-  })();
 
   // ===== URODZINY: 7 pazdziernika (lub adres z #urodziny) =====
   (function(){
@@ -1269,16 +1174,6 @@
     const ov = $("startOverlay");
     // od razu w momencie nacisniecia (przegladarki puszczaja dzwiek tylko w tym gescie)
     if (ov){ const fire = () => window._stoLat(); ov.addEventListener("click", fire, { once:true }); document.addEventListener("keydown", fire, { once:true, capture:true }); }
-
-    // ziomek: w urodziny czesciej (co 1-2 min) i ze "Sto lat"
-    const pk = $("peek");
-    if (pk){
-      new MutationObserver(() => { if (pk.classList.contains("go") && on()) window._stoLat(); }).observe(pk, { attributes:true, attributeFilter:["class"] });
-      (function bdPeek(){
-        setTimeout(() => { if (on() && !pk.classList.contains("go") && window._peek) window._peek(); bdPeek(); },
-          (location.hash === "#urodziny" ? 25 : 60 + Math.random() * 60) * 1000);
-      })();
-    }
 
     // postacie z bajki w czapkach - wyskakuja caly czas z dolu i z bokow
     const CAST = [
