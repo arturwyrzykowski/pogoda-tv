@@ -23,6 +23,17 @@
    "wazne": false
   },
   {
+   "id": "pge-614435",
+   "typ": "prad",
+   "tytul": "Wyłączenie prądu — planowane",
+   "tekst": "Sokołowo Włościańskie",
+   "od": "2026-10-23T08:00+02:00",
+   "do": "2026-10-23T13:00+02:00",
+   "zrodlo": "PGE Dystrybucja",
+   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
+   "wazne": false
+  },
+  {
    "id": "obryte-737707801",
    "typ": "gmina",
    "tytul": "Apel do mieszkanców Gminy Obryte",
@@ -59,6 +70,6 @@
  "zrodla_ok": {
   "prad": true,
   "gmina": true,
-  "powiat": false
+  "powiat": true
  }
 }
