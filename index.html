@@ -549,6 +549,11 @@
   /* klawisz 9 = bez animacji (test, czy animacje nie zacinaja radia na TV) */
   body.calm #fenceCat, body.calm #nightSky, body.calm #snowLayer, body.calm #events, body.calm #tree { display:none !important; }
   body.calm *, body.calm *::before, body.calm *::after { animation:none !important; transition:none !important; }
+  #calmBtn { font-family:var(--mono); font-size:clamp(.6rem,1vw,.8rem); letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-dim); background:rgba(20,27,39,.85); border:1px solid var(--line); border-radius:999px;
+    padding:.45em 1em; cursor:pointer; }
+  #calmBtn:hover, #calmBtn:focus-visible { color:var(--ink); border-color:var(--acc); outline:none; }
+  body.calm #calmBtn { color:var(--sun); border-color:var(--sun); }
   #calmToast { position:fixed; left:50%; bottom:8%; transform:translateX(-50%); z-index:200; padding:.6em 1.2em;
     background:rgba(18,25,37,.95); border:1px solid var(--acc); border-radius:12px; color:var(--ink);
     font-family:var(--num); font-weight:600; font-size:clamp(.9rem,1.6vw,1.3rem); }
@@ -564,6 +569,7 @@
         <button id="radioBtn" aria-label="Włącz radio">▶</button>
         <button id="wheelBtn" aria-label="Wybierz stację"><span id="wheelBtnName">—</span><span class="caret">▾</span></button>
       </div>
+      <button id="calmBtn">Animacje: WŁ.</button>
       <div class="reminder" id="reminder"></div>
       <div class="bd-banner bd-only">🎂 <b>STO LAT!</b> Wszystkiego najlepszego, chuju piękny! <i>🎉</i></div>
     </div>
@@ -1229,16 +1235,18 @@
 <script>
   // klawisz 9 na pilocie: animacje wyl./wl. (zapamietane w przegladarce)
   (function(){
-    const toast=document.getElementById("calmToast"); let t;
+    const toast=document.getElementById("calmToast"), btn=document.getElementById("calmBtn"); let t;
     function set(on, show){
       document.body.classList.toggle("calm", on);
       document.querySelectorAll("svg").forEach(s=>{ try{ on ? s.pauseAnimations() : s.unpauseAnimations(); }catch(e){} });
       try{ localStorage.setItem("calm", on ? "1" : "0"); }catch(e){}
-      if(show){ toast.textContent = on ? "Animacje WYŁĄCZONE · 9 = włącz" : "Animacje WŁĄCZONE · 9 = wyłącz";
+      btn.textContent = on ? "Animacje: WYŁ." : "Animacje: WŁ.";
+      if(show){ toast.textContent = on ? "Animacje WYŁĄCZONE" : "Animacje WŁĄCZONE";
         toast.hidden=false; clearTimeout(t); t=setTimeout(()=>{ toast.hidden=true; }, 4000); }
     }
     let saved=false; try{ saved = localStorage.getItem("calm")==="1"; }catch(e){}
     if(saved) set(true, false);
+    btn.addEventListener("click", ()=> set(!document.body.classList.contains("calm"), true));
     document.addEventListener("keydown", e=>{
       if(document.getElementById("startOverlay")) return;
       const w=document.getElementById("wheel"); if(w && !w.hidden) return;
