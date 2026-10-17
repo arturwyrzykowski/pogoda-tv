@@ -546,6 +546,13 @@
   .storm-box.rain .sb-big { color:var(--acc); }
 
   :fullscreen #fsBtn { display:none; }
+  /* klawisz 9 = bez animacji (test, czy animacje nie zacinaja radia na TV) */
+  body.calm #fenceCat, body.calm #nightSky, body.calm #snowLayer, body.calm #events, body.calm #tree { display:none !important; }
+  body.calm *, body.calm *::before, body.calm *::after { animation:none !important; transition:none !important; }
+  #calmToast { position:fixed; left:50%; bottom:8%; transform:translateX(-50%); z-index:200; padding:.6em 1.2em;
+    background:rgba(18,25,37,.95); border:1px solid var(--acc); border-radius:12px; color:var(--ink);
+    font-family:var(--num); font-weight:600; font-size:clamp(.9rem,1.6vw,1.3rem); }
+  #calmToast[hidden] { display:none; }
 </style>
 </head>
 <body>
@@ -1218,5 +1225,26 @@
 <script src="zdarzenia.js"></script>
 <script src="noc.js"></script>
 <script src="burza.js"></script>
+<div id="calmToast" hidden></div>
+<script>
+  // klawisz 9 na pilocie: animacje wyl./wl. (zapamietane w przegladarce)
+  (function(){
+    const toast=document.getElementById("calmToast"); let t;
+    function set(on, show){
+      document.body.classList.toggle("calm", on);
+      document.querySelectorAll("svg").forEach(s=>{ try{ on ? s.pauseAnimations() : s.unpauseAnimations(); }catch(e){} });
+      try{ localStorage.setItem("calm", on ? "1" : "0"); }catch(e){}
+      if(show){ toast.textContent = on ? "Animacje WYŁĄCZONE · 9 = włącz" : "Animacje WŁĄCZONE · 9 = wyłącz";
+        toast.hidden=false; clearTimeout(t); t=setTimeout(()=>{ toast.hidden=true; }, 4000); }
+    }
+    let saved=false; try{ saved = localStorage.getItem("calm")==="1"; }catch(e){}
+    if(saved) set(true, false);
+    document.addEventListener("keydown", e=>{
+      if(document.getElementById("startOverlay")) return;
+      const w=document.getElementById("wheel"); if(w && !w.hidden) return;
+      if(e.key==="9" || e.keyCode===57){ set(!document.body.classList.contains("calm"), true); e.preventDefault(); }
+    });
+  })();
+</script>
 </body>
 </html>
