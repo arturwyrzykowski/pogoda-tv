@@ -279,8 +279,8 @@
     background:rgba(0,0,0,.66);
   }
   .wheel-inner {
-    position:relative; width:min(74vmin,540px); height:min(74vmin,540px);
-    --r:min(27vmin,196px);
+    position:relative; width:min(94vmin,760px); height:min(94vmin,760px);
+    --r:min(40vmin,330px);
     animation:wheelIn .22s ease-out;
   }
   @keyframes wheelIn { from{ transform:scale(.82); opacity:0; } to{ transform:scale(1); opacity:1; } }
@@ -297,7 +297,7 @@
     color:var(--acc); margin-top:.35em; line-height:1.05; }
   .wheel-hub .gen { font-family:var(--mono); font-size:clamp(.55rem,calc(1*var(--vw)),.72rem); color:var(--ink-dim); margin-top:.4em; letter-spacing:.1em; }
   .wheel-item {
-    position:absolute; left:50%; top:50%; width:30%;
+    position:absolute; left:50%; top:50%; width:23%;
     transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(-1 * var(--r))) rotate(calc(-1 * var(--a)));
     background:rgba(18,25,37,.92); border:1px solid var(--line); border-radius:14px;
     padding:.55em .35em; color:var(--ink-dim); cursor:pointer;
@@ -902,7 +902,12 @@
       { name:"Sonic Universe", gen:"nowoczesny jazz · bez reklam", url:"https://ice6.somafm.com/sonicuniverse-128-mp3" },
       { name:"Jazz Underground", gen:"klasyczny jazz · bez reklam", url:"https://icecast.walmradio.com:8443/jazz" },
       { name:"FIP Groove", gen:"jazz-funk, soul · bez reklam", url:"https://icecast.radiofrance.fr/fipgroove-midfi.mp3" },
-      { name:"Bossa Beyond", gen:"bossa nova · bez reklam",   url:"https://ice2.somafm.com/bossa-128-mp3" }
+      { name:"Bossa Beyond", gen:"bossa nova · bez reklam",   url:"https://ice2.somafm.com/bossa-128-mp3" },
+      { name:"Christmas Lounge", gen:"🎄 świąteczne, spokojne · bez reklam", url:"https://ice2.somafm.com/christmas-128-mp3", xmas:1 },
+      { name:"Jolly Ol' Soul", gen:"🎄 świąteczny soul · bez reklam", url:"https://ice2.somafm.com/jollysoul-128-mp3", xmas:1 },
+      { name:"Christmas Rocks", gen:"🎄 świąteczny rock · bez reklam", url:"https://ice2.somafm.com/xmasrocks-128-mp3", xmas:1 },
+      { name:"Xmas in Frisko", gen:"🎄 świąteczne, z przymrużeniem oka · bez reklam", url:"https://ice2.somafm.com/xmasinfrisko-128-mp3", xmas:1 },
+      { name:"WALM Christmas", gen:"🎄 klasyczne kolędy i standardy · bez reklam", url:"https://icecast.walmradio.com:8443/christmas", xmas:1 }
     ];
     const player=$("player"), rbtn=$("radioBtn"), wheel=$("wheel"), inner=$("wheelInner");
     let playing=false, current=0, sel=0;
@@ -978,7 +983,11 @@
         retryT=null;
         if(!playing) return;
         retries++;
-        if(retries % 3 === 0){ current=(current+1)%STATIONS.length; label(); }   // stacja nie wraca -> nastepna jazzowa
+        if(retries % 3 === 0){   // stacja nie wraca -> nastepna z tej samej grupy (jazz albo swiateczne)
+          const x=!!STATIONS[current].xmas;
+          do { current=(current+1)%STATIONS.length; } while(!!STATIONS[current].xmas !== x);
+          label();
+        }
         const u=STATIONS[current].url;
         player.src = u + (u.indexOf("?") >= 0 ? "&" : "?") + "r=" + Date.now();
         player.play().catch(()=>{});
