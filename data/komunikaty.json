@@ -80,7 +80,7 @@
  ],
  "zrodla_ok": {
   "prad": true,
-  "gmina": true,
+  "gmina": false,
   "powiat": true
  }
 }
