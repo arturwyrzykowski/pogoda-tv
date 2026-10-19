@@ -1,6 +1,17 @@
 {
  "komunikaty": [
   {
+   "id": "obryte-496220554",
+   "typ": "gmina",
+   "tytul": "INFORMACJA O ZAMKNIĘCIU DROGI",
+   "tekst": "Szanowni Mieszkańcy, Urząd Gminy w Obrytem informuje, że w związku z remontem przepustu pod drogą gminną w miejscowości Ciółkowo Rządowe, w dniu 15 października 2026 r. (od godz. 10.00 do godz. 16.00) nie będzie możliwości przejazdu drogą z Ciółkowa Rządowego w kierunku miejscowości Ulaski, Gródek Nowy i Mokrus. Za utrudnienia przepraszamy.",
+   "od": "2026-10-14T00:00+02:00",
+   "do": "2026-10-19T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/informacja-o-zamknieciu-drogi,p496220554",
+   "wazne": true
+  },
+  {
    "id": "pge-614435",
    "typ": "prad",
    "tytul": "Wyłączenie prądu — planowane",
@@ -9,6 +20,39 @@
    "do": "2026-10-23T13:00+02:00",
    "zrodlo": "PGE Dystrybucja",
    "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
+   "wazne": false
+  },
+  {
+   "id": "obryte-1404181894",
+   "typ": "gmina",
+   "tytul": "Ostrzeżenie meteorologiczne Nr 101 - Gęsta mgła",
+   "tekst": "Ostrzeżenie meteorologiczne Nr 101 - Gęsta mgła",
+   "od": "2026-10-15T00:00+02:00",
+   "do": "2026-10-20T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/ostrzezenie-meteorologiczne-nr-101-gesta-mgla,p1404181894",
+   "wazne": false
+  },
+  {
+   "id": "obryte-390050088",
+   "typ": "gmina",
+   "tytul": "Ostrzeżenie meteorologiczne Nr 102 - Gęsta mgła",
+   "tekst": "Ostrzeżenie meteorologiczne Nr 102 - Gęsta mgła",
+   "od": "2026-10-16T00:00+02:00",
+   "do": "2026-10-21T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/ostrzezenie-meteorologiczne-nr-102-gesta-mgla,p390050088",
+   "wazne": false
+  },
+  {
+   "id": "obryte-2013740222",
+   "typ": "gmina",
+   "tytul": "Zaproszenie na webinarium CEDUR „Zagrożenia i oszustwa w finansowaniu społecznościowym (crowdfundingu) w zakresie udzielania pożyczek\"",
+   "tekst": "Urząd Komisji Nadzoru Finansowego zaprasza osoby fizyczne i prawne zainteresowane rynkiem crowdfundingu jako inwestorzy lub właściciele projektów crowdfundingowych na webinarium „Zagrożenia i oszustwa w finansowaniu społecznościowym (crowdfundingu) w zakresie udzielania pożyczek” organizowane w ramach projektu Centrum Edukacji dla Uczestników Rynku – CEDUR, we współpracy z Komendą Główną Policji. Webinarium odbędzie się 28 października 2026 roku (10:00-15:30). Cel Celem webinarium jest wskazanie, jak się ustrzec przed przestępstwami powiązanymi z crowdfundingiem. Zgłoszenia Rejestracja na webinarium CEDUR odbywa się poprzez elektroniczny formularz zgłoszeniowy – link do strony z odnośnikiem do formularza: https://www.knf.gov.pl/dla_rynku/edukacja_cedur/seminaria?articleId=100122&p_id=18 Potwierdzenia możliwości udziału zostaną przesłane do 27 października 2026 roku. Formularz zgłoszeniowy będzie dostępny do dnia, w którym odbędzie się webinarium. W przypadku zgłoszeń, które wpłyną w dniu webinarium, potwierdzenia możliwości udziału oraz zaproszenia zawierające link do spotkania będą przesyłane na bieżąco w dniu wydarzenia. Nadsyłanie pytań Aby webinarium w jak największym stopniu…",
+   "od": "2026-10-16T00:00+02:00",
+   "do": "2026-10-21T23:59+02:00",
+   "zrodlo": "Gmina Obryte",
+   "link": "https://www.obryte.pl/ogloszenia/zaproszenie-na-webinarium-cedur-zagrozenia-i-oszustwa-w-finansowaniu-spolecznosciowym-crowdfundingu-w-zakresie-udzielania-pozyczek,p2013740222",
    "wazne": false
   },
   {
@@ -35,8 +79,8 @@
   }
  ],
  "zrodla_ok": {
-  "prad": true,
-  "gmina": false,
+  "prad": false,
+  "gmina": true,
   "powiat": true
  }
 }
