@@ -1,17 +1,6 @@
 {
  "komunikaty": [
   {
-   "id": "obryte-496220554",
-   "typ": "gmina",
-   "tytul": "INFORMACJA O ZAMKNIĘCIU DROGI",
-   "tekst": "Szanowni Mieszkańcy, Urząd Gminy w Obrytem informuje, że w związku z remontem przepustu pod drogą gminną w miejscowości Ciółkowo Rządowe, w dniu 15 października 2026 r. (od godz. 10.00 do godz. 16.00) nie będzie możliwości przejazdu drogą z Ciółkowa Rządowego w kierunku miejscowości Ulaski, Gródek Nowy i Mokrus. Za utrudnienia przepraszamy.",
-   "od": "2026-10-14T00:00+02:00",
-   "do": "2026-10-19T23:59+02:00",
-   "zrodlo": "Gmina Obryte",
-   "link": "https://www.obryte.pl/ogloszenia/informacja-o-zamknieciu-drogi,p496220554",
-   "wazne": true
-  },
-  {
    "id": "pge-614435",
    "typ": "prad",
    "tytul": "Wyłączenie prądu — planowane",
