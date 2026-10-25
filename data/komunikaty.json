@@ -1,5 +1,17 @@
 {
- "komunikaty": [],
+ "komunikaty": [
+  {
+   "id": "pge-620258",
+   "typ": "prad",
+   "tytul": "Wyłączenie prądu — planowane",
+   "tekst": "Zambski Stare",
+   "od": "2026-10-27T08:00+01:00",
+   "do": "2026-10-27T14:00+01:00",
+   "zrodlo": "PGE Dystrybucja",
+   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
+   "wazne": false
+  }
+ ],
  "zrodla_ok": {
   "prad": true,
   "gmina": true,
