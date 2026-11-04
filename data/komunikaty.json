@@ -1,5 +1,17 @@
 {
- "komunikaty": [],
+ "komunikaty": [
+  {
+   "id": "powiat-cjazakupumobilnegoagregatupradotworczego",
+   "typ": "powiat",
+   "tytul": "Realizacja zakupu mobilnego agregatu prądotwórczego",
+   "tekst": "W poniedziałek 2 listopada, sfinalizowany został zakup mobilnego agregatu prądotwórczego na wyposażenie powiatowego magazynu zasobów ochrony ludności i obrony…",
+   "od": "2026-11-04T13:05+01:00",
+   "do": "2026-11-09T13:05+01:00",
+   "zrodlo": "Powiat pułtuski",
+   "link": "https://powiatpultuski.pl/realizacja-zakupu-mobilnego-agregatu-pradotworczego/",
+   "wazne": false
+  }
+ ],
  "zrodla_ok": {
   "prad": true,
   "gmina": false,
