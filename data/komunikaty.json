@@ -1,17 +1,5 @@
 {
- "komunikaty": [
-  {
-   "id": "pge-628568",
-   "typ": "prad",
-   "tytul": "Wyłączenie prądu — planowane",
-   "tekst": "Ciółkowo Rządowe, Mokrus",
-   "od": "2026-11-13T08:00+01:00",
-   "do": "2026-11-13T14:00+01:00",
-   "zrodlo": "PGE Dystrybucja",
-   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
-   "wazne": false
-  }
- ],
+ "komunikaty": [],
  "zrodla_ok": {
   "prad": true,
   "gmina": false,
