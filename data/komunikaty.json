@@ -1,5 +1,17 @@
 {
- "komunikaty": [],
+ "komunikaty": [
+  {
+   "id": "powiat-iplinformacjaouniewaznieniuaukcjipojazdu",
+   "typ": "powiat",
+   "tytul": "INFORMACJA O UNIEWAŻNIENIU AUKCJI POJAZDU",
+   "tekst": "Zaplanowana na 12 listopada 2026 roku aukcja pojazdu marki Ford Transit nie odbyła się. Powodem unieważnienia postępowania był brak chętnych do wzięcia udziału…",
+   "od": "2026-11-12T12:32+01:00",
+   "do": "2026-11-17T12:32+01:00",
+   "zrodlo": "Powiat pułtuski",
+   "link": "https://powiatpultuski.pl/informacja-o-uniewaznieniu-aukcji-pojazdu/",
+   "wazne": false
+  }
+ ],
  "zrodla_ok": {
   "prad": true,
   "gmina": false,
