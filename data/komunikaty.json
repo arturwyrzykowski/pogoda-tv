@@ -1,6 +1,17 @@
 {
  "komunikaty": [
   {
+   "id": "pge-636968",
+   "typ": "prad",
+   "tytul": "Wyłączenie prądu — planowane",
+   "tekst": "Obryte",
+   "od": "2026-11-21T09:00+01:00",
+   "do": "2026-11-21T13:00+01:00",
+   "zrodlo": "PGE Dystrybucja",
+   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
+   "wazne": false
+  },
+  {
    "id": "pge-633170",
    "typ": "prad",
    "tytul": "Wyłączenie prądu — planowane",
