@@ -26,6 +26,6 @@
  "zrodla_ok": {
   "prad": true,
   "gmina": false,
-  "powiat": true
+  "powiat": false
  }
 }
