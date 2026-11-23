@@ -1,17 +1,5 @@
 {
- "komunikaty": [
-  {
-   "id": "pge-633170",
-   "typ": "prad",
-   "tytul": "Wyłączenie prądu — planowane",
-   "tekst": "Obryte, Skłudy",
-   "od": "2026-11-23T09:00+01:00",
-   "do": "2026-11-23T13:00+01:00",
-   "zrodlo": "PGE Dystrybucja",
-   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
-   "wazne": false
-  }
- ],
+ "komunikaty": [],
  "zrodla_ok": {
   "prad": true,
   "gmina": false,
