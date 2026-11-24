@@ -1,5 +1,17 @@
 {
- "komunikaty": [],
+ "komunikaty": [
+  {
+   "id": "pge-639185",
+   "typ": "prad",
+   "tytul": "Wyłączenie prądu — planowane",
+   "tekst": "Obryte",
+   "od": "2026-11-30T08:00+01:00",
+   "do": "2026-11-30T12:00+01:00",
+   "zrodlo": "PGE Dystrybucja",
+   "link": "https://pgedystrybucja.pl/wylaczenia/planowane-wylaczenia",
+   "wazne": false
+  }
+ ],
  "zrodla_ok": {
   "prad": true,
   "gmina": false,
