@@ -14,7 +14,7 @@
  ],
  "zrodla_ok": {
   "prad": true,
-  "gmina": false,
+  "gmina": true,
   "powiat": false
  }
 }
